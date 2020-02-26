@@ -4,3 +4,7 @@
 *.swp
 tags
 inn/docs/current
+.idea
+.idea/.gitignore
+venv
+.vscode/
