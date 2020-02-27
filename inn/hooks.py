@@ -86,7 +86,10 @@ doc_events = {
 	# 		"on_trash": "method"
 	#	}
 	"Inn Tax": {
-		"validate": "inn.inn.doctype.inn_tax.inn_tax.autofill_inn_tax_value"
+		"validate": "inn.inn_hotels.doctype.inn_tax.inn_tax.autofill_inn_tax_value"
+	},
+	"Inn Room": {
+		"validate": "inn.inn_hotels.doctype.inn_room.inn_room.calculate_total_amenities_cost"
 	},
 }
 
