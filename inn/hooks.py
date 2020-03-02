@@ -84,9 +84,12 @@ doc_events = {
 	# 		"on_update": "method",
 	# 		"on_cancel": "method",
 	# 		"on_trash": "method"
-	#	}
+	# }
 	"Inn Tax": {
 		"validate": "inn.inn_hotels.doctype.inn_tax.inn_tax.autofill_inn_tax_value"
+	},
+	"Inn Room Rate": {
+		"validate": "inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.calculate_total_amount"
 	},
 	"Inn Room": {
 		"validate": "inn.inn_hotels.doctype.inn_room.inn_room.calculate_total_amenities_cost"

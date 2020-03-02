@@ -10,4 +10,19 @@ from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
 class InnRoomRate(Document):
 	pass
 
-# def calculate
+def calculate_total_amount (doc, method):
+	_, _, room_rate_after_tax = calculate_inn_tax_and_charges(float(doc.room_rate), doc.room_rate_tax)
+	_, _, breakfast_rate_after_tax = calculate_inn_tax_and_charges(float(doc.breakfast_rate), doc.breakfast_tax)
+
+	doc.total_rate = doc.room_rate + doc.breakfast_rate
+	doc.rate_after_tax = float(room_rate_after_tax[0]) + float(breakfast_rate_after_tax[0])
+
+def get_room_rate_after_tax(room_rate_id):
+	doc = frappe.get_doc('Inn Room Rate', room_rate_id)
+	_, _, room_rate_after_tax = calculate_inn_tax_and_charges(float(doc.room_rate), doc.room_rate_tax)
+	return room_rate_after_tax[0]
+
+def get_breakfast_rate_after_tax(room_rate_id):
+	doc = frappe.get_doc('Inn Room Rate', room_rate_id)
+	_, _, breakfast_rate_after_tax = calculate_inn_tax_and_charges(float(doc.breakfast_rate), doc.breakfast_tax)
+	return breakfast_rate_after_tax[0]
