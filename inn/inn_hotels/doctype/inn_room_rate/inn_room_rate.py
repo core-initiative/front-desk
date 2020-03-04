@@ -66,4 +66,6 @@ def get_actual_room_rate_before_from_actual_rate(room_rate_id, actual_rate):
 					else:
 						tb_rate_after[len(room_rate_tax_breakdown_list) - int(item.breakdown_row_id)-1] = math.ceil(float(tb_rate_after[index-1])/denominator)
 						tb_rate_before[index] = float(tb_rate_after[index-1])/denominator
-	return tb_rate_before[-1]
+		return tb_rate_before[-1]
+	else:
+		return actual_room_rate
