@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 import json
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_folio.inn_folio import  create_folio
 
 class InnReservation(Document):
 	pass
@@ -26,8 +27,7 @@ def start_check_in(source, reservation):
 	elif source == 'check_in_button':
 		reservation_id = reservation
 	if frappe.db.get_value('Inn Reservation', reservation_id, 'status') == 'Reserved':
-		doc = frappe.get_doc('Inn Reservation', reservation_id)
-		# TODO: Create Folio based on this reservation
+		create_folio(reservation_id)
 		return frappe.utils.get_url_to_form('Inn Reservation', reservation_id) + '?is_check_in=true'
 	else:
 		frappe.msgprint("Reservation Status must be Reserved in order to be Checked In")
