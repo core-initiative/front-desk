@@ -24,6 +24,7 @@ frappe.ui.form.on('Inn Reservation', {
 			if (is_check_in == undefined) {
 				console.log("is_check_in undefined");
 				frm.add_custom_button(__("Start Check In Process"), function () {
+					is_check_in = "true";
 					frappe.call({
 						method:"inn.inn_hotels.doctype.inn_reservation.inn_reservation.start_check_in",
 						args: {
@@ -45,7 +46,7 @@ frappe.ui.form.on('Inn Reservation', {
 				frm.set_intro(__("In Progress Checking In Guest"));
 			}
 		}
-	},
+	}
 });
 
 // Function to extract variable's value passed on URL
