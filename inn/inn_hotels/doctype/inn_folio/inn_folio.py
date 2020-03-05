@@ -8,3 +8,12 @@ from frappe.model.document import Document
 
 class InnFolio(Document):
 	pass
+
+def create_folio(reservation_id):
+	if not frappe.db.exists('Inn Folio', {'reservation_id': reservation_id}):
+		reservation = frappe.get_doc('Inn Reservation', reservation_id)
+
+		doc = frappe.new_doc('Inn Folio')
+		doc.reservation_id = reservation_id
+		doc.customer_id = reservation.customer_id
+		doc.insert()
