@@ -19,6 +19,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('arrival', 'hidden', 0);
 			frm.set_df_property('departure', 'hidden', 0);
 			frm.set_df_property('actual_room_rate', 'hidden', 0);
+			frm.set_df_property('wifi_password', 'hidden', 0);
 
 			// Show Start Check In Process button if is_check_in flag undefined
 			if (is_check_in == undefined) {
