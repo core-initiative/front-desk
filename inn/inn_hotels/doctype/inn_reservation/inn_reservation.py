@@ -39,7 +39,6 @@ def generate_wifi_password(reservation_id):
 	reservation = frappe.get_doc('Inn Reservation', reservation_id)
 	mode = frappe.db.get_single_value('Inn Hotels Setting', 'hotspot_api_mode')
 	password = ''
-	frappe.msgprint("mode = " + mode)
 
 	if mode == 'First Name':
 		guest_name = reservation.guest_name
@@ -51,8 +50,9 @@ def generate_wifi_password(reservation_id):
 	elif mode == 'Random Number':
 		digits = string.digits
 		password = ''.join(random.choice(digits) for i in range(6))
-
-	frappe.msgprint("Wifi Password = " + password)
+	else:
+		digits = string.digits
+		password = ''.join(random.choice(digits) for i in range(6))
 
 	if reservation.wifi_password is None or reservation.wifi_password == '':
 		frappe.db.set_value('Inn Reservation', reservation_id, 'wifi_password', password)
