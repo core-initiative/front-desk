@@ -38,7 +38,6 @@ def start_check_in(source, reservation):
 def generate_wifi_password(reservation_id):
 	reservation = frappe.get_doc('Inn Reservation', reservation_id)
 	mode = frappe.db.get_single_value('Inn Hotels Setting', 'hotspot_api_mode')
-	password = ''
 
 	if mode == 'First Name':
 		guest_name = reservation.guest_name

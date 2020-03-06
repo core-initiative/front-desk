@@ -34,7 +34,8 @@ frappe.ui.form.on('Inn Reservation', {
 						},
 						callback: (r) => {
 							if (r.message) {
-								window.location.href = r.message;
+								window.open(r.message, "_self");
+								frm.reload_doc();
 							}
 						}
 					});
