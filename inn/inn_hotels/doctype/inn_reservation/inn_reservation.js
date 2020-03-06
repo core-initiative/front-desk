@@ -48,6 +48,74 @@ frappe.ui.form.on('Inn Reservation', {
 				frm.set_intro(__("In Progress Checking In Guest"));
 			}
 		}
+	},
+	room_rate: function (frm) {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
+			args: {
+				room_rate_id: frm.doc.room_rate
+			},
+			callback: (r) => {
+				if (r.message) {
+					frm.set_value('base_room_rate', r.message);
+					frm.refresh_field('base_room_rate');
+				}
+			}
+		});
+	},
+	actual_room_rate: function (frm) {
+		if (frm.doc.arrival != undefined && frm.doc.departure != undefined) {
+			if (parseFloat(frm.doc.actual_room_rate) > 0 && parseFloat(frm.doc.actual_room_rate) < parseFloat(frm.doc.base_room_rate)) {
+				frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
+				frm.set_value('actual_room_rate', 0);
+				frm.set_value('room_bill',0);
+				frm.set_value('actual_room_rate_tax', 0);
+				frm.set_value('nett_actual_room_rate', 0);
+				frm.set_value('actual_breakfast_rate_tax', 0);
+				frm.set_value('nett_actual_breakfast_rate', 0);
+			}
+			else {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
+					args: {
+						arrival: frm.doc.arrival,
+						departure: frm.doc.departure,
+						actual_rate: frm.doc.actual_room_rate
+					},
+					callback: (r) => {
+						if (r.message) {
+							console.log(r.message);
+							frm.set_value('room_bill', r.message);
+						}
+					}
+				});
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
+					args: {
+						room_rate_id: frm.doc.room_rate,
+						actual_rate: frm.doc.actual_room_rate,
+					},
+					callback: (r) => {
+						if (r.message) {
+							frm.set_value('actual_room_rate_tax', r.message[0]);
+							frm.set_value('nett_actual_room_rate', r.message[1]);
+							frm.set_value('actual_breakfast_rate_tax', r.message[2]);
+							frm.set_value('nett_actual_breakfast_rate', r.message[3]);
+						}
+					}
+				});
+			}
+		} else {
+			if (parseFloat(frm.doc.actual_room_rate) > 0) {
+				frappe.msgprint("Please fill Actual Arrival and Actual Departure first.");
+				frm.set_value('actual_room_rate', 0);
+				frm.set_value('room_bill',0);
+				frm.set_value('actual_room_rate_tax', 0);
+				frm.set_value('nett_actual_room_rate', 0);
+				frm.set_value('actual_breakfast_rate_tax', 0);
+				frm.set_value('nett_actual_breakfast_rate', 0);
+			}
+		}
 	}
 });
 

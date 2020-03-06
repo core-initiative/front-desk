@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+import datetime
 import frappe
 import json
 import random
@@ -55,3 +56,10 @@ def generate_wifi_password(reservation_id):
 
 	if reservation.wifi_password is None or reservation.wifi_password == '':
 		frappe.db.set_value('Inn Reservation', reservation_id, 'wifi_password', password)
+
+@frappe.whitelist()
+def calculate_room_bill(arrival, departure, actual_rate):
+	start = datetime.datetime.strptime(arrival, "%Y-%m-%d %H:%M:%S")
+	end = datetime.datetime.strptime(departure, "%Y-%m-%d %H:%M:%S")
+	total_day = (end - start).days
+	return float(total_day) * float(actual_rate)
