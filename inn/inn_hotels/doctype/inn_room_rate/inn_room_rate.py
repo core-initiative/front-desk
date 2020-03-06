@@ -69,3 +69,19 @@ def get_actual_room_rate_before_from_actual_rate(room_rate_id, actual_rate):
 		return tb_rate_before[-1]
 	else:
 		return actual_room_rate
+
+@frappe.whitelist()
+def get_base_room_rate(room_rate_id):
+	doc = frappe.get_doc('Inn Room Rate', room_rate_id)
+	return doc.rate_after_tax
+
+@frappe.whitelist()
+def get_actual_room_rate_breakdown(room_rate_id, actual_rate):
+	room_rate_doc = frappe.get_doc('Inn Room Rate', room_rate_id)
+
+	room_rate_tax = room_rate_doc.room_rate_tax
+	room_rate = get_actual_room_rate_before_from_actual_rate(room_rate_id, actual_rate)
+	breakfast_tax = room_rate_doc.breakfast_tax
+	breakfast_rate = room_rate_doc.breakfast_rate
+
+	return room_rate_tax, room_rate, breakfast_tax, breakfast_rate
