@@ -49,6 +49,14 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 		}
 	},
+	after_save: function(frm) {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.create_folio',
+			args: {
+				reservation_id: frm.doc.name
+			}
+		});
+	},
 	room_rate: function (frm) {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',

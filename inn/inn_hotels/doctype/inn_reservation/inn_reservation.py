@@ -9,7 +9,6 @@ import json
 import random
 import string
 from frappe.model.document import Document
-from inn.inn_hotels.doctype.inn_folio.inn_folio import  create_folio
 
 class InnReservation(Document):
 	pass
@@ -29,8 +28,8 @@ def start_check_in(source, reservation):
 		reservation_id = json.loads(reservation)[0]
 	elif source == 'check_in_button':
 		reservation_id = reservation
+
 	if frappe.db.get_value('Inn Reservation', reservation_id, 'status') == 'Reserved':
-		create_folio(reservation_id)
 		generate_wifi_password(reservation_id)
 		return frappe.utils.get_url_to_form('Inn Reservation', reservation_id) + '?is_check_in=true'
 	else:

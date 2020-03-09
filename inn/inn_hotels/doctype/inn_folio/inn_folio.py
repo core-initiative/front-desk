@@ -9,6 +9,7 @@ from frappe.model.document import Document
 class InnFolio(Document):
 	pass
 
+@frappe.whitelist()
 def create_folio(reservation_id):
 	if not frappe.db.exists('Inn Folio', {'reservation_id': reservation_id}):
 		reservation = frappe.get_doc('Inn Reservation', reservation_id)
