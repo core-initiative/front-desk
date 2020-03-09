@@ -62,3 +62,7 @@ def calculate_room_bill(arrival, departure, actual_rate):
 	end = datetime.datetime.strptime(departure, "%Y-%m-%d %H:%M:%S")
 	total_day = (end - start).days
 	return float(total_day) * float(actual_rate)
+
+@frappe.whitelist()
+def get_folio_url(reservation_id):
+	return frappe.utils.get_url_to_form('Inn Folio', frappe.db.get_value('Inn Folio', {'reservation_id': reservation_id}, ['name']))

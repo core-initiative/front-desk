@@ -12,6 +12,25 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('actual_room_rate', 'hidden', 1);
 			frm.set_df_property('sb1', 'hidden', 1); // Actual Room Rate Breakdown Section
 		}
+		// Show Folio Button
+		if (frm.doc.__islocal != 1) {
+			frm.add_custom_button(__('Show Folio'), function () {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_folio_url',
+					args: {
+						reservation_id: frm.doc.name,
+					},
+					callback: (r) => {
+						if (r.message) {
+							var w = window.open(r.message, "_blank");
+							if (!w) {
+								frappe.msgprint(__("Please enable pop-ups")); return;
+							}
+						}
+					}
+				});
+			});
+		}
 		// Reservation is Saved, and status Reserved
 		if (frm.doc.__islocal != 1 && frm.doc.status == 'Reserved') {
 			console.log("is saved");
