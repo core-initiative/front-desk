@@ -8,3 +8,11 @@ from frappe.model.document import Document
 
 class InnFolioTransactionType(Document):
 	pass
+
+@frappe.whitelist()
+def get_filtered(type):
+	return_list = []
+	type_list = frappe.get_all('Inn Folio Transaction Type', filters=[['type', '=', type]], fields=['name'])
+	for item in type_list:
+		return_list.append(item.name)
+	return return_list

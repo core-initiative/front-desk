@@ -10,6 +10,12 @@ frappe.ui.form.on('Inn Folio Transaction', {
 			frm.doc.parentfield = 'folio_transaction';
 		}
 	},
+	onload: function (frm) {
+		get_filtered_transaction_type(frm);
+	},
+	flag: function (frm) {
+		get_filtered_transaction_type(frm);
+	}
 });
 
 
@@ -20,4 +26,26 @@ function getUrlVars() {
         vars[key] = value;
     });
     return vars;
+}
+
+//Function to get filtered Transaction type by Flag
+function get_filtered_transaction_type(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_filtered',
+		args: {
+			type:frm.doc.flag
+		},
+		callback: (r) => {
+			if (r.message) {
+				console.log(r.message);
+				frm.fields_dict['transaction_type'].get_query = function () {
+					return {
+						filters: [
+							['Inn Folio Transaction Type', 'name', 'in', r.message]
+						]
+					}
+				}
+			}
+		}
+	});
 }
