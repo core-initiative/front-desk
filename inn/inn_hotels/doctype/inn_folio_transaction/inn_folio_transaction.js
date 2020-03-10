@@ -1,6 +1,7 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
 var parent = getUrlVars()['parent'];
+var is_check_in = getUrlVars()['is_check_in'];
 
 frappe.ui.form.on('Inn Folio Transaction', {
 	before_save: function(frm) {
@@ -10,12 +11,47 @@ frappe.ui.form.on('Inn Folio Transaction', {
 			frm.doc.parentfield = 'folio_transaction';
 		}
 	},
+	after_save: function() {
+		if (parent) {
+			let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + parent);
+			if (is_check_in == 'true') {
+				url = url + '?is_check_in=true';
+			}
+			var w = window.open(url, "_self");
+		}
+	},
 	refresh: function(frm) {
 		if (frm.doc.__islocal == 1) {
 			frm.set_df_property('is_void', 'hidden', 1);
 		}
 		else {
 			frm.set_df_property('is_void', 'hidden', 0);
+		}
+		if (parent) {
+			frm.add_custom_button(__('Show Folio'), function () {
+				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + parent);
+				if (is_check_in == 'true') {
+					url = url + '?is_check_in=true';
+				}
+				var w = window.open(url, "_self");
+			});
+			frm.add_custom_button(__('Show Reservation'), function () {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.get_reservation_id',
+					args: {
+						folio_id: parent
+					},
+					callback: (r) => {
+						if (r.message) {
+							let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + r.message);
+							if (is_check_in == 'true') {
+								url = url + '?is_check_in=true';
+							}
+							var w = window.open(url, "_self");
+						}
+					}
+				});
+			});
 		}
 	},
 	onload: function (frm) {

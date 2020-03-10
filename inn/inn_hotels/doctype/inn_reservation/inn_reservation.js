@@ -22,7 +22,11 @@ frappe.ui.form.on('Inn Reservation', {
 					},
 					callback: (r) => {
 						if (r.message) {
-							var w = window.open(r.message, "_blank");
+							let url = r.message;
+							if (is_check_in == 'true') {
+								url = r.message + '?is_check_in=true';
+							}
+							var w = window.open(url, "_self");
 							if (!w) {
 								frappe.msgprint(__("Please enable pop-ups")); return;
 							}

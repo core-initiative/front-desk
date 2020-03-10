@@ -18,3 +18,8 @@ def create_folio(reservation_id):
 		doc.reservation_id = reservation_id
 		doc.customer_id = reservation.customer_id
 		doc.insert()
+
+@frappe.whitelist()
+def get_reservation_id(folio_id):
+	doc = frappe.get_doc('Inn Folio', folio_id)
+	return doc.reservation_id
