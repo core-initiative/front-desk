@@ -1,15 +1,20 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
-var is_check_in = getUrlVars()['is_check_in'];
+let is_check_in = getUrlVars()['is_check_in'];
+let is_form_not_good_to_go = false;
+let is_error = false;
+let error_message = '';
 
 frappe.ui.form.on('Inn Reservation', {
 	refresh: function(frm) {
+		console.log("is error = " + is_error);
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal == 1) {
 			console.log("notsaved");
 			frm.set_df_property('arrival', 'hidden', 1);
 			frm.set_df_property('departure', 'hidden', 1);
 			frm.set_df_property('actual_room_rate', 'hidden', 1);
+			frm.set_df_property('actual_room_id', 'hidden', 1);
 			frm.set_df_property('sb1', 'hidden', 1); // Actual Room Rate Breakdown Section
 		}
 		// Show Folio Button
@@ -42,8 +47,9 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('arrival', 'hidden', 0);
 			frm.set_df_property('departure', 'hidden', 0);
 			frm.set_df_property('actual_room_rate', 'hidden', 0);
+			frm.set_df_property('actual_room_id', 'hidden', 0);
 			frm.set_df_property('wifi_password', 'hidden', 0);
-
+			console.log("is_check_in = " + is_check_in);
 			// Show Start Check In Process button if is_check_in flag undefined
 			if (is_check_in == undefined) {
 				console.log("is_check_in undefined");
@@ -68,8 +74,15 @@ frappe.ui.form.on('Inn Reservation', {
 			// from Start Check In Process Button
 			if (is_check_in == "true") {
 				frm.set_intro(__("In Progress Checking In Guest"));
-				// Finish Check In Process Button. Check if deposit already made
-				frappe.call({
+
+				is_form_not_good_to_go = is_form_good_to_in_house(frm);
+				console.log("is_form_not_good_to_go = " + is_form_not_good_to_go);
+				console.log("error_message = " + error_message);
+				if (is_form_not_good_to_go == true && (error_message != '' || error_message != 'Please fill these fields before Finishing Check In process: <br /> <ul>')) {
+					frm.set_intro(error_message);
+				}
+				else {
+					frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.allowed_to_in_house',
 					args: {
 						reservation_id: frm.doc.name
@@ -80,17 +93,28 @@ frappe.ui.form.on('Inn Reservation', {
 						}
 						else if (r.message == true) {
 							frm.add_custom_button(__("Finish Check In Process"), function () {
-								var is_error = is_form_good_to_in_house(frm);
-								if (!is_error) {
+								if (frm.doc.__unsaved != undefined && frm.doc.unsaved == 1) {
+									frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
+								}
+								else {
 									is_check_in = "false";
-									frm.set_value('status', 'In House');
-									frm.save();
-									frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+								frappe.call({
+									method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_in_reservation',
+									args: {
+										reservation_id: frm.doc.name
+									},
+									callback: (r) => {
+										if (r.message == 'In House') {
+											frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+										}
+									}
+								});
 								}
 							});
 						}
 					}
 				});
+				}
 			}
 		}
 	},
@@ -101,6 +125,11 @@ frappe.ui.form.on('Inn Reservation', {
 				reservation_id: frm.doc.name
 			}
 		});
+	},
+	before_save: function(frm) {
+		if (is_check_in == 'true') {
+
+		}
 	},
 	room_rate: function (frm) {
 		frappe.call({
@@ -183,8 +212,8 @@ function getUrlVars() {
 
 // Function to check if all fields needed to be filled are filled in order to change the reservation status to In House
 function is_form_good_to_in_house(frm) {
-	var error_message = 'Please fill these fields before Finishing Check In process: <br /> <ul>';
-	var is_error = false;
+	error_message = '';
+	is_error = false;
 	if (frm.doc.guest_name == undefined || frm.doc.guest_name == '') {
 		is_error = true;
 		error_message += '<li>Guest Name </li>';
@@ -197,6 +226,10 @@ function is_form_good_to_in_house(frm) {
 		is_error = true;
 		error_message += '<li>Actual Departure</li>';
 	}
+	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == '') {
+		is_error = true;
+		error_message += '<li>Actual Room</li>';
+	}
 	if (frm.doc.actual_room_rate == 0) {
 		is_error = true;
 		error_message += '<li>Actual Room Rate</li>';
@@ -206,8 +239,13 @@ function is_form_good_to_in_house(frm) {
 		error_message += '<li>Adult</li>';
 	}
 	error_message += '</ul>';
-	if (is_error) {
-		frappe.msgprint(error_message);
+
+	if (is_error == true) {
+		error_message = 'Please fill these fields before Finishing Check In process: <br /> <ul>' + error_message;
+	}
+	else {
+		is_error = false;
+		error_message = '';
 	}
 
 	return is_error;
