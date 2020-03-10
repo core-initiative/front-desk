@@ -67,8 +67,30 @@ frappe.ui.form.on('Inn Reservation', {
 			// Show Info that Check In is In Progress. Meaning button Check In clicked, either from Reservation List or
 			// from Start Check In Process Button
 			if (is_check_in == "true") {
-				console.log("masuk sini woy");
 				frm.set_intro(__("In Progress Checking In Guest"));
+				// Finish Check In Process Button. Check if deposit already made
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.allowed_to_in_house',
+					args: {
+						reservation_id: frm.doc.name
+					},
+					callback: (r) => {
+						if (r.message == false) {
+							frm.set_intro(__("Make Guest Deposit in Folio to continue Check In process."));
+						}
+						else if (r.message == true) {
+							frm.add_custom_button(__("Finish Check In Process"), function () {
+								var is_error = is_form_good_to_in_house(frm);
+								if (!is_error) {
+									is_check_in = "false";
+									frm.set_value('status', 'In House');
+									frm.save();
+									frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+								}
+							});
+						}
+					}
+				});
 			}
 		}
 	},
@@ -157,4 +179,36 @@ function getUrlVars() {
         vars[key] = value;
     });
     return vars;
+}
+
+// Function to check if all fields needed to be filled are filled in order to change the reservation status to In House
+function is_form_good_to_in_house(frm) {
+	var error_message = 'Please fill these fields before Finishing Check In process: <br /> <ul>';
+	var is_error = false;
+	if (frm.doc.guest_name == undefined || frm.doc.guest_name == '') {
+		is_error = true;
+		error_message += '<li>Guest Name </li>';
+	}
+	if (frm.doc.arrival == undefined || frm.doc.arrival == '') {
+		is_error = true;
+		error_message += '<li>Actual Arrival</li>';
+	}
+	if (frm.doc.departure == undefined || frm.doc.departure == '') {
+		is_error = true;
+		error_message += '<li>Actual Departure</li>';
+	}
+	if (frm.doc.actual_room_rate == 0) {
+		is_error = true;
+		error_message += '<li>Actual Room Rate</li>';
+	}
+	if (frm.doc.adult == 0) {
+		is_error = true;
+		error_message += '<li>Adult</li>';
+	}
+	error_message += '</ul>';
+	if (is_error) {
+		frappe.msgprint(error_message);
+	}
+
+	return is_error;
 }

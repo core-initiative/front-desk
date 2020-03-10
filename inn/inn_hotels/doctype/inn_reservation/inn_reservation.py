@@ -66,3 +66,10 @@ def calculate_room_bill(arrival, departure, actual_rate):
 @frappe.whitelist()
 def get_folio_url(reservation_id):
 	return frappe.utils.get_url_to_form('Inn Folio', frappe.db.get_value('Inn Folio', {'reservation_id': reservation_id}, ['name']))
+
+@frappe.whitelist()
+def allowed_to_in_house(reservation_id):
+	deposit = False
+	if frappe.db.exists('Inn Folio Transaction', {'parent': frappe.get_doc('Inn Folio', {'reservation_id': reservation_id}).name, 'transaction_type': 'Deposit'}):
+		deposit = True
+	return deposit
