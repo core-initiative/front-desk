@@ -137,6 +137,38 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 		});
 	},
+	expected_arrival: function(frm) {
+		if (frm.doc.expected_arrival < frappe.datetime.get_today()) {
+			frm.set_value('expected_arrival', frappe.datetime.now_datetime());
+			frappe.msgprint("Expected Arrival must be greater than today.");
+		}
+	},
+	expected_departure: function(frm) {
+		if (frm.doc.expected_departure < frappe.datetime.get_today()) {
+			frm.set_value('expected_departure', null);
+			frappe.msgprint("Expected Departure must be greater than today.");
+		}
+		else if (frm.doc.expected_departure < frm.doc.expected_arrival) {
+			frm.set_value('expected_departure', null);
+			frappe.msgprint("Expected Departure must be greater than Expected Arrival.");
+		}
+	},
+	arrival: function(frm) {
+		if (frm.doc.arrival < frappe.datetime.get_today()) {
+			frm.set_value('arrival', frappe.datetime.now_datetime());
+			frappe.msgprint("Actual Arrival must be greater than today.");
+		}
+	},
+	departure: function(frm) {
+		if (frm.doc.departure < frappe.datetime.get_today()) {
+			frm.set_value('departure', null);
+			frappe.msgprint("Actual Departure must be greater than today.");
+		}
+		else if (frm.doc.departure < frm.doc.arrival) {
+			frm.set_value('departure', null);
+			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
+		}
+	},
 	room_rate: function (frm) {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
