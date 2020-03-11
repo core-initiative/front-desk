@@ -106,6 +106,17 @@ frappe.ui.form.on('Inn Reservation', {
 									},
 									callback: (r) => {
 										if (r.message == 'In House') {
+											frappe.call({
+												method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+												args: {
+													reservation_id: frm.doc.name
+												},
+												callback: (r) => {
+													if (r.message) {
+														console.log(r.message);
+													}
+												}
+											});
 											frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
 										}
 									}
