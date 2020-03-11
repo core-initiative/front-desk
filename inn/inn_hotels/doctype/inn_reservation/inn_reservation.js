@@ -125,11 +125,17 @@ frappe.ui.form.on('Inn Reservation', {
 				reservation_id: frm.doc.name
 			}
 		});
-	},
-	before_save: function(frm) {
-		if (is_check_in == 'true') {
-
-		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+			args: {
+				reservation_id: frm.doc.name,
+			},
+			callback: (r) => {
+				if (r.message) {
+					console.log(r.message);
+				}
+			}
+		});
 	},
 	room_rate: function (frm) {
 		frappe.call({
