@@ -74,7 +74,8 @@ frappe.ui.form.on('Inn Reservation', {
 			// from Start Check In Process Button
 			if (is_check_in == "true") {
 				frm.set_intro(__("In Progress Checking In Guest"));
-
+				// Assign some variables from "Reservation Detail" to "Room Stay"
+				autofill(frm);
 				is_form_not_good_to_go = is_form_good_to_in_house(frm);
 				console.log("is_form_not_good_to_go = " + is_form_not_good_to_go);
 				console.log("error_message = " + error_message);
@@ -285,6 +286,27 @@ function is_form_good_to_in_house(frm) {
 		is_error = false;
 		error_message = '';
 	}
-
 	return is_error;
+}
+
+//Function to autofilled some of the Fields in Checkin In Process
+function autofill(frm) {
+	let now = new Date();
+	let expected_arrival = new Date(frm.doc.expected_arrival);
+	let expected_departure = new Date(frm.doc.expected_departure);
+	expected_arrival.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+	expected_departure.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+	if (frm.doc.guest_name == undefined || frm.doc.guest_name == null || frm.doc.guest_name == '') {
+		frm.set_value('guest_name', frm.doc.customer_id);
+	}
+	if (frm.doc.arrival == undefined || frm.doc.arrival == null || frm.doc.arrival == '') {
+		frm.set_value('arrival', expected_arrival);
+	}
+	if (frm.doc.departure == undefined || frm.doc.departure == null || frm.doc.departure == '') {
+		frm.set_value('departure', expected_departure);
+	}
+	// TODO: Check room availability for actual_room_id
+	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id == '') {
+		frm.set_value('actual_room_id', frm.doc.room_id);
+	}
 }
