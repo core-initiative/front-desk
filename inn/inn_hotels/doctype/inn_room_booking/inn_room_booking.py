@@ -175,7 +175,7 @@ def get_room_book_list(filters):
 		"and ((%s >= irb.start and %s < irb.end) "
 		"or (%s > irb.start and %s <= irb.end) "
 		"or (%s < irb.start and %s > irb.end))",
-		(filters.get('reference_type'),
+		(filters.get('reference_name'),
 		 filters.get('start'), filters.get('start'),
 		 filters.get('end'), filters.get('end'),
 		 filters.get('start'), filters.get('end'))
