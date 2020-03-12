@@ -181,6 +181,34 @@ frappe.ui.form.on('Inn Reservation', {
 			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
 		}
 	},
+	room_type: function() {
+		let phase = '';
+		if (is_check_in == 'true') {
+			phase = 'Check In';
+		}
+		manage_filters('room_type', phase);
+	},
+	bed_type: function() {
+		let phase = '';
+		if (is_check_in == 'true') {
+			phase = 'Check In';
+		}
+		manage_filters('bed_type', phase);
+	},
+	room_id: function() {
+		let phase = '';
+		if (is_check_in == 'true') {
+			phase = 'Check In';
+		}
+		manage_filters('room_id', phase);
+	},
+	actual_room_id: function(frm) {
+		let phase = '';
+		if (is_check_in == 'true') {
+			phase = 'Check In';
+		}
+		manage_filters('actual_room_id', phase);
+	},
 	room_rate: function (frm) {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
@@ -320,4 +348,104 @@ function autofill(frm) {
 	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id == '') {
 		frm.set_value('actual_room_id', frm.doc.room_id);
 	}
+}
+
+function manage_filters(fieldname, phase) {
+	let room_chooser = 'room_id';
+	if (phase == 'Check In') {
+		room_chooser = 'actual_room_id';
+	}
+	else {
+		room_chooser = 'room_id';
+	}
+
+	if (fieldname == 'room_type') {
+		cur_frm.set_value('bed_type', null);
+		cur_frm.set_value(room_chooser, null);
+		get_available('bed_type', phase);
+		get_available(room_chooser, phase);
+	}
+	else if (fieldname == 'bed_type') {
+		cur_frm.set_value(room_chooser, null);
+		get_available(room_chooser, phase);
+	}
+	else if (fieldname == 'actual_room_id') {
+		if (cur_frm.actual_room_id != undefined) {
+			frappe.db.get_value('Inn Room', cur_frm.actual_room_id, ['room_type', 'bed_type'], function (response) {
+				cur_frm.set_value('room_type', response.room_type);
+				cur_frm.set_value('bed_type', response.bed_type);
+				get_available('room_type', phase);
+				get_available('bed_type', phase);
+				get_available('actual_room_id', phase);
+			});
+		}
+	}
+	else if (fieldname == 'room_id'){
+		if (cur_frm.room_id != undefined) {
+			frappe.db.get_value('Inn Room', cur_frm.room_id, ['room_type', 'bed_type'], function (response) {
+				cur_frm.set_value('room_type', response.room_type);
+				cur_frm.set_value('bed_type', response.bed_type);
+				get_available('room_type', phase);
+				get_available('bed_type', phase);
+				get_available('room_id', phase);
+			});
+		}
+	}
+	else {
+
+	}
+}
+
+function get_available(fieldname, phase) {
+	let field = cur_frm.fields_dict[fieldname];
+	let reference_name = cur_frm.doc.name;
+	let start = undefined;
+	let end = undefined;
+
+	if (phase == 'Check In') {
+		start = formatDate(cur_frm.doc.arrival);
+		end = formatDate(cur_frm.doc.departure);
+	}
+	else {
+		start = cur_frm.doc.expected_arrival;
+		end = cur_frm.doc.expected_departure;
+	}
+
+	let query  = '';
+	if (fieldname == 'room_id' || fieldname == 'actual_room_id') {
+		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_available';
+	}
+	else if (fieldname == 'room_type') {
+		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_type_available';
+	}
+	else if (fieldname == 'bed_type') {
+		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available';
+	}
+	field.get_query = function () {
+		return {
+			query: query,
+			filters: {
+				'start': start,
+				'end': end,
+				'reference_name': reference_name,
+				'room_type': cur_frm.doc.room_type,
+				'bed_type': cur_frm.doc.bed_type,
+				'phase': phase
+			}
+		}
+	}
+}
+
+function formatDate(date) {
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear();
+
+	if (month.length < 2)
+		month = '0' + month;
+	if (day.length < 2)
+		day = '0' + day;
+
+	return [year, month, day].join('-');
 }
