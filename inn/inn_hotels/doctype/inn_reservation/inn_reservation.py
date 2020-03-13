@@ -16,9 +16,13 @@ class InnReservation(Document):
 @frappe.whitelist()
 def check_in_reservation(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
+	room_doc = frappe.get_doc('Inn Room', doc.room_id)
 	if (doc.status == 'Reserved'):
 		doc.status = 'In House'
 		doc.save()
+		if doc.status == 'In House':
+			room_doc.room_status = 'Occupied Dirty'
+			room_doc.save()
 
 	return doc.status
 
