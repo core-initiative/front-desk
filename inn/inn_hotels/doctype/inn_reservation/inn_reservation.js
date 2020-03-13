@@ -301,18 +301,39 @@ frappe.ui.form.on('Inn Reservation', {
 				frappe.msgprint("Maximum number of active card issued is reached. Cannot issue more card");
 			}
 			else {
-				// @TODO: wrap code below in tesa_check_in function to get card number first
-				let new_card = frm.add_child('issued_card');
-				let today = new Date();
-				let departure = new Date(frm.doc.departure);
-
-				new_card.card_number = 'dapet-dari-tesa';
-				new_card.room_id = frm.doc.actual_room_id;
-				new_card.issue_date = today;
-				new_card.expired_date = departure;
-
-				frm.refresh_field('issued_card');
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.issue_card',
+					args: {
+						reservation_id: frm.doc.name
+					},
+					callback: (r) => {
+						if (r.message) {
+							frm.reload_doc();
+							frappe.show_alert(__("Card " + r.message + " issued for this Reservation.")); return;
+						}
+					}
+				});
 			}
+		}
+	}
+});
+frappe.ui.form.on('Inn Key Card',{
+	erase_card: function (frm, cdt, cdn) {
+		let child = locals[cdt][cdn];
+		if (child.is_active == 1) {
+			erase_card('with', child.name);
+		}
+		else {
+			frappe.msgprint("Card already deactivated.");
+		}
+	},
+	deactivate_wo_card: function (frm, cdt, cdn) {
+		let child = locals[cdt][cdn];
+		if (child.is_active == 1) {
+			erase_card('without', child.name);
+		}
+		else {
+			frappe.msgprint("Card already deactivated.");
 		}
 	}
 });
@@ -495,6 +516,31 @@ function get_room_max_active_card() {
 			if (r.message) {
 				room_max_active_card = r.message;
 				console.log("rmesej = " + room_max_active_card);
+			}
+		}
+	});
+}
+
+function erase_card(flag, card_name) {
+	console.log('card_name = ' + card_name);
+	let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+	console.log(yesterday);
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.erase_card',
+		args: {
+			flag: flag,
+			card_name: card_name,
+			expiration_date: formatDate(yesterday)
+		},
+		callback: (r) => {
+			if (r.message == 0) {
+				cur_frm.reload_doc();
+				if (flag == 'with') {
+					frappe.show_alert(__("Card Erased.")); return;
+				}
+				else if (flag == 'without') {
+					frappe.show_alert(__("Card Deactivated")); return;
+				}
 			}
 		}
 	});

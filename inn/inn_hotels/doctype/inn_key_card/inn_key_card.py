@@ -3,6 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
+from datetime import datetime
+
 import frappe
 import requests
 from frappe.model.document import Document
@@ -13,6 +16,34 @@ class InnKeyCard(Document):
 @frappe.whitelist()
 def room_max_active_card():
 	return frappe.db.get_single_value('Inn Hotels Setting', 'room_max_active_card')
+
+@frappe.whitelist()
+def issue_card(reservation_id):
+	doc = frappe.get_doc('Inn Reservation', reservation_id)
+	new_card = frappe.new_doc('Inn Key Card')
+	# TODO: get card_number from tesa_check_in
+	new_card.card_number = 'dari fungsi tesa_check_in'
+	new_card.room_id = doc.actual_room_id
+	new_card.issue_date = datetime.today()
+	new_card.expired_date = doc.departure
+	new_card.parent = doc.name
+	new_card.parentfield = 'issued_card'
+	new_card.parenttype = 'Inn Reservation'
+	new_card.insert()
+
+	return new_card.card_number
+
+@frappe.whitelist()
+def erase_card(flag, card_name, expiration_date):
+	doc = frappe.get_doc('Inn Key Card', card_name)
+	if flag == 'with':
+		# TODO: call tesa_check_in with expiration_date
+		pass
+	doc.expired_date = expiration_date
+	doc.is_active = 0
+	doc.save()
+
+	return doc.is_active
 
 def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activationDate,
 						activationTime, expiryDate, expiryTime, grant, keypad, operator,
