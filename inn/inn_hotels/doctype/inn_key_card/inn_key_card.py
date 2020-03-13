@@ -10,6 +10,10 @@ from frappe.model.document import Document
 class InnKeyCard(Document):
 	pass
 
+@frappe.whitelist()
+def room_max_active_card():
+	return frappe.db.get_single_value('Inn Hotels Setting', 'room_max_active_card')
+
 def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activationDate,
 						activationTime, expiryDate, expiryTime, grant, keypad, operator,
 						track1=None, track2=None, room2=None, room3=None,room4=None, returnCardId=None, cardId=None):
@@ -57,6 +61,7 @@ def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activatio
 	if url is not None:
 		r = requests.post(url, data=params)
 		return r.text
+		# TODO: return only cardId. Must process the return value first
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 
