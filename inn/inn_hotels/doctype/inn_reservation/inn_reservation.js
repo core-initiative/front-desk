@@ -238,12 +238,7 @@ frappe.ui.form.on('Inn Reservation', {
 		if (frm.doc.arrival != undefined && frm.doc.departure != undefined) {
 			if (parseFloat(frm.doc.actual_room_rate) > 0 && parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)) {
 				frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
-				frm.set_value('actual_room_rate', 0);
-				frm.set_value('room_bill',0);
-				frm.set_value('actual_room_rate_tax', null);
-				frm.set_value('nett_actual_room_rate', 0);
-				frm.set_value('actual_breakfast_rate_tax', null);
-				frm.set_value('nett_actual_breakfast_rate', 0);
+				frm.set_value('actual_room_rate', frm.doc.base_room_rate);
 			}
 			else if (parseFloat(frm.doc.actual_room_rate) == 0) {
 				frm.set_value('room_bill',0);
