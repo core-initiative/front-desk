@@ -4,9 +4,14 @@ let is_check_in = getUrlVars()['is_check_in'];
 let is_form_not_good_to_go = false;
 let is_error = false;
 let error_message = '';
+let room_max_active_card = 5;
 
 frappe.ui.form.on('Inn Reservation', {
+	onload: function() {
+		get_room_max_active_card();
+	},
 	refresh: function(frm) {
+		get_room_max_active_card();
 		console.log("is error = " + is_error);
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal == 1) {
@@ -282,6 +287,31 @@ frappe.ui.form.on('Inn Reservation', {
 				frm.set_value('nett_actual_breakfast_rate', 0);
 			}
 		}
+	},
+	issue_card: function (frm) {
+		if (frm.doc.__islocal != 1 && frm.doc.status == 'In House') {
+			let current_active_card = 0;
+			let all_issued_card = frm.doc.issued_card;
+			for (let key in all_issued_card) {
+				current_active_card += all_issued_card[key].is_active;
+			}
+			if (current_active_card >= room_max_active_card) {
+				frappe.msgprint("Maximum number of active card issued is reached. Cannot issue more card");
+			}
+			else {
+				// @TODO: wrap code below in tesa_check_in function to get card number first
+				let new_card = frm.add_child('issued_card');
+				let today = new Date();
+				let departure = new Date(frm.doc.departure);
+
+				new_card.card_number = 'dapet-dari-tesa';
+				new_card.room_id = frm.doc.actual_room_id;
+				new_card.issue_date = today;
+				new_card.expired_date = departure;
+
+				frm.refresh_field('issued_card');
+			}
+		}
 	}
 });
 
@@ -454,4 +484,16 @@ function formatDate(date) {
 		day = '0' + day;
 
 	return [year, month, day].join('-');
+}
+
+function get_room_max_active_card() {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.room_max_active_card',
+		callback: (r) => {
+			if (r.message) {
+				room_max_active_card = r.message;
+				console.log("rmesej = " + room_max_active_card);
+			}
+		}
+	});
 }
