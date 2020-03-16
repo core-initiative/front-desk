@@ -29,5 +29,29 @@ frappe.listview_settings['Inn Reservation'] = {
             }
 
         });
+        listview.page.add_action_item(__('Cancel'), function () {
+            let reservation_to_cancel = listview.get_checked_items(true);
+            frappe.confirm(
+                ('You are about to Cancel Reservations ' + reservation_to_cancel + '. Are you sure?'),
+                () => {
+                    frappe.call({
+                        method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.cancel_reservation',
+                        args: {
+                            source: 'list',
+                            reservation: reservation_to_cancel
+                        },
+                        callback: (r) => {
+                            if (r.message == 1) {
+                                frappe.msgprint("Only Reservation with status Reserved can be cancelled. Please choose other Reservation");
+                            }
+                            else if (r.message == 0) {
+                                cur_list.refresh();
+                                frappe.msgprint("Reservations " + reservation_to_cancel + " successfully canceled.");
+                            }
+                        }
+                    });
+                }
+            );
+        })
     }
 }
