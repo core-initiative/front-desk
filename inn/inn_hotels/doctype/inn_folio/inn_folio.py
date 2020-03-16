@@ -37,7 +37,7 @@ def update_balance(folio_id):
 		elif trx.flag == 'Credit':
 			total_credit += float(trx.amount)
 
-	balance = total_debit - total_credit
+	balance = total_credit - total_debit
 	doc.total_debit = total_debit
 	doc.total_credit = total_credit
 	doc.balance = balance
