@@ -459,12 +459,26 @@ function manage_filters(fieldname, phase, start_date) {
 	}
 	else if (fieldname == 'actual_room_id') {
 		if(cur_frm.doc.actual_room_id != undefined) {
-			get_room_rate(start_date);
+			frappe.db.get_value('Inn Room', cur_frm.doc.actual_room_id, ['room_type', 'bed_type'], function (r) {
+				cur_frm.doc.room_type = 'Standard';
+				cur_frm.doc.bed_type = 'Single';
+				cur_frm.refresh();
+				get_available('room_type', phase);
+				get_available('bed_type', phase);
+				get_room_rate(start_date);
+			});
 		}
 	}
 	else if (fieldname == 'room_id'){
 		if (cur_frm.doc.room_id != undefined) {
-			get_room_rate(start_date);
+			frappe.db.get_value('Inn Room', cur_frm.doc.room_id, ['room_type', 'bed_type'], function (r) {
+				cur_frm.doc.room_type = r.room_type;
+				cur_frm.doc.bed_type = r.bed_type;
+				cur_frm.refresh();
+				get_available('room_type', phase);
+				get_available('bed_type', phase);
+				get_room_rate(start_date);
+			});
 		}
 	}
 	else {

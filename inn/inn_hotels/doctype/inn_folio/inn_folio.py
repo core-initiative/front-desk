@@ -42,3 +42,8 @@ def update_balance(folio_id):
 	doc.total_credit = total_credit
 	doc.balance = balance
 	doc.save()
+
+@frappe.whitelist()
+def get_balance(folio_id):
+	update_balance(folio_id)
+	return frappe.db.value('Inn Folio', folio_id, ['balance'])
