@@ -13,6 +13,12 @@ frappe.ui.form.on('Inn Folio Transaction', {
 	},
 	after_save: function() {
 		if (parent) {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+				args: {
+					folio_id: parent
+				}
+			});
 			let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + parent);
 			if (is_check_in == 'true') {
 				url = url + '?is_check_in=true';
