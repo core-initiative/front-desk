@@ -135,6 +135,27 @@ frappe.ui.form.on('Inn Reservation', {
 					});
 				}
 			}
+			//Add Cancel Button if Status still Reserved
+			frm.page.add_menu_item(__('Cancel'), function () {
+				frappe.confirm(__("You are about to Cancel this Reservation. Are you sure?"), function () {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.cancel_reservation',
+						args: {
+							source: 'cancel_button',
+							reservation: frm.doc.name,
+						},
+						callback: (r) => {
+							if (r.message == 1) {
+								frappe.msgprint("Only Reservation with status Reserved can be cancelled. Please choose other Reservation");
+							}
+							else if (r.message == 0) {
+								frm.refresh();
+								frappe.msgprint("Reservation " + frm.doc.name + " successfully canceled.");
+							}
+						}
+					});
+				});
+			});
 		}
 		if (frm.doc.__islocal != 1 && frm.doc.status == 'In House') {
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section
