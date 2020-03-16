@@ -39,6 +39,58 @@ def start_check_in(source, reservation):
 	else:
 		frappe.msgprint("Reservation Status must be Reserved in order to be Checked In")
 
+@frappe.whitelist()
+def cancel_reservation(source, reservation):
+	reservation_to_cancel = []
+	exist_status_not_reserved = []
+	exist_cancellation_fail = []
+
+	if source == 'list':
+		reservation = json.loads(reservation)
+		for item in reservation:
+			reservation_to_cancel.append(item)
+	elif source == 'cancel_button':
+		reservation_to_cancel.append(reservation)
+
+	for reservation_id in reservation_to_cancel:
+		doc = frappe.get_doc('Inn Reservation', reservation_id)
+		if doc.status != 'Reserved':
+			exist_status_not_reserved.append(reservation_id)
+
+	if len(exist_status_not_reserved) > 0:
+		return 1
+	else:
+		for reservation_id in reservation_to_cancel:
+			doc = frappe.get_doc('Inn Reservation', reservation_id)
+			cancellation_message = cancel_single_reservation(reservation_id)
+			if cancellation_message == 1:
+				exist_cancellation_fail.append(reservation_id)
+
+		if len(exist_cancellation_fail) > 0:
+			return 1
+		else:
+			return 0
+
+def cancel_single_reservation(reservation_id):
+	reservation = frappe.get_doc('Inn Reservation', reservation_id)
+	folio = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
+	room_booking = frappe.get_doc('Inn Room Booking', {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
+
+	if reservation.status != 'Cancel':
+		reservation.status = 'Cancel'
+		reservation.save()
+	if folio.status != 'Cancel':
+		folio.status = 'Cancel'
+		folio.save()
+	if room_booking.status != 'Canceled':
+		room_booking.status = 'Canceled'
+		room_booking.save()
+
+	if reservation.status == 'Cancel' and folio.status == 'Cancel' and room_booking.status == 'Canceled':
+		return 0
+	else:
+		return 1
+
 def generate_wifi_password(reservation_id):
 	reservation = frappe.get_doc('Inn Reservation', reservation_id)
 	mode = frappe.db.get_single_value('Inn Hotels Setting', 'hotspot_api_mode')
