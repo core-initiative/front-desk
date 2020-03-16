@@ -23,3 +23,22 @@ def create_folio(reservation_id):
 def get_reservation_id(folio_id):
 	doc = frappe.get_doc('Inn Folio', folio_id)
 	return doc.reservation_id
+
+@frappe.whitelist()
+def update_balance(folio_id):
+	doc = frappe.get_doc('Inn Folio', folio_id)
+	trx_list = doc.get('folio_transaction')
+	total_debit = 0.0
+	total_credit = 0.0
+	balance = 0.0
+	for trx in trx_list:
+		if trx.flag == 'Debit':
+			total_debit += float(trx.amount)
+		elif trx.flag == 'Credit':
+			total_credit += float(trx.amount)
+
+	balance = total_debit - total_credit
+	doc.total_debit = total_debit
+	doc.total_credit = total_credit
+	doc.balance = balance
+	doc.save()
