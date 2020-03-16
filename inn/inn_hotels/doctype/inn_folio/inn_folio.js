@@ -36,6 +36,14 @@ frappe.ui.form.on('Inn Folio', {
 			}
 			var w = window.open(url, "_self");
 		});
+		frm.add_custom_button(__('Update Balance'), function () {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+				args: {
+					folio_id: frm.doc.name
+				}
+			});
+		});
 	}
 });
 
