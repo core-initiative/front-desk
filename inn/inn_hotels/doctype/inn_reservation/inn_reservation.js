@@ -192,47 +192,70 @@ frappe.ui.form.on('Inn Reservation', {
 			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
 		}
 	},
-	room_type: function() {
+	room_type: function(frm) {
 		let phase = '';
+		let start_date = frm.doc.expected_arrival;
 		if (is_check_in == 'true') {
 			phase = 'Check In';
+			start_date = formatDate(frm.doc.arrival);
 		}
-		manage_filters('room_type', phase);
+		else if (frm.doc.status != 'Reserved') {
+			start_date = formatDate(frm.doc.arrival);
+		}
+		manage_filters('room_type', phase, start_date);
 	},
-	bed_type: function() {
+	bed_type: function(frm) {
 		let phase = '';
+		let start_date = frm.doc.expected_arrival;
 		if (is_check_in == 'true') {
 			phase = 'Check In';
+			start_date = formatDate(frm.doc.arrival);
 		}
-		manage_filters('bed_type', phase);
+		else if (frm.doc.status != 'Reserved') {
+			start_date = formatDate(frm.doc.arrival);
+		}
+		manage_filters('bed_type', phase, start_date);
 	},
-	room_id: function() {
+	room_id: function(frm) {
 		let phase = '';
+		let start_date = frm.doc.expected_arrival;
 		if (is_check_in == 'true') {
 			phase = 'Check In';
+			start_date = formatDate(frm.doc.arrival);
 		}
-		manage_filters('room_id', phase);
+		else if (frm.doc.status != 'Reserved') {
+			start_date = formatDate(frm.doc.arrival);
+		}
+		manage_filters('room_id', phase, start_date);
 	},
 	actual_room_id: function(frm) {
 		let phase = '';
+		let start_date = frm.doc.expected_arrival;
 		if (is_check_in == 'true') {
 			phase = 'Check In';
+			start_date = formatDate(frm.doc.arrival);
 		}
-		manage_filters('actual_room_id', phase);
+		else if (frm.doc.status != 'Reserved') {
+			start_date = formatDate(frm.doc.arrival);
+		}
+		console.log("actual room id = " + frm.doc.actual_room_id);
+		manage_filters('actual_room_id', phase, start_date);
 	},
 	room_rate: function (frm) {
-		frappe.call({
-			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
-			args: {
-				room_rate_id: frm.doc.room_rate
-			},
-			callback: (r) => {
-				if (r.message) {
-					frm.set_value('base_room_rate', r.message);
-					frm.refresh_field('base_room_rate');
+		if (frm.doc.room_rate != undefined) {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
+				args: {
+					room_rate_id: frm.doc.room_rate
+				},
+				callback: (r) => {
+					if (r.message) {
+						frm.set_value('base_room_rate', r.message);
+						frm.refresh_field('base_room_rate');
+					}
 				}
-			}
-		});
+			});
+		}
 	},
 	actual_room_rate: function (frm) {
 		if (frm.doc.arrival != undefined && frm.doc.departure != undefined) {
@@ -409,9 +432,13 @@ function autofill(frm) {
 	}
 }
 
-function manage_filters(fieldname, phase) {
+function manage_filters(fieldname, phase, start_date) {
+	console.log("masuk manage_filters from " + fieldname);
 	let room_chooser = 'room_id';
 	if (phase == 'Check In') {
+		room_chooser = 'actual_room_id';
+	}
+	else if (cur_frm.doc.status != 'Reserved') {
 		room_chooser = 'actual_room_id';
 	}
 	else {
@@ -423,31 +450,21 @@ function manage_filters(fieldname, phase) {
 		cur_frm.set_value(room_chooser, null);
 		get_available('bed_type', phase);
 		get_available(room_chooser, phase);
+		get_room_rate(start_date);
 	}
 	else if (fieldname == 'bed_type') {
 		cur_frm.set_value(room_chooser, null);
 		get_available(room_chooser, phase);
+		get_room_rate(start_date);
 	}
 	else if (fieldname == 'actual_room_id') {
-		if (cur_frm.actual_room_id != undefined) {
-			frappe.db.get_value('Inn Room', cur_frm.actual_room_id, ['room_type', 'bed_type'], function (response) {
-				cur_frm.set_value('room_type', response.room_type);
-				cur_frm.set_value('bed_type', response.bed_type);
-				get_available('room_type', phase);
-				get_available('bed_type', phase);
-				get_available('actual_room_id', phase);
-			});
+		if(cur_frm.doc.actual_room_id != undefined) {
+			get_room_rate(start_date);
 		}
 	}
 	else if (fieldname == 'room_id'){
-		if (cur_frm.room_id != undefined) {
-			frappe.db.get_value('Inn Room', cur_frm.room_id, ['room_type', 'bed_type'], function (response) {
-				cur_frm.set_value('room_type', response.room_type);
-				cur_frm.set_value('bed_type', response.bed_type);
-				get_available('room_type', phase);
-				get_available('bed_type', phase);
-				get_available('room_id', phase);
-			});
+		if (cur_frm.doc.room_id != undefined) {
+			get_room_rate(start_date);
 		}
 	}
 	else {
@@ -544,4 +561,40 @@ function erase_card(flag, card_name) {
 			}
 		}
 	});
+}
+
+function get_room_rate(start_date) {
+	console.log("masuk get_Room_rate");
+	let field = cur_frm.fields_dict['room_rate'];
+	let room_type = cur_frm.doc.room_type;
+
+	if (room_type != undefined) {
+		frappe.db.get_value("Customer", cur_frm.doc.customer_id, "customer_group", (customer) => {
+			let customer_group_list = ['All Customer Groups'];
+			customer_group_list.push(customer.customer_group);
+			console.log("filters: ");
+			console.log("room_type = " + room_type);
+			console.log("customer_group_list = " + customer_group_list);
+			console.log("start_date = " + start_date);
+			field.get_query = function () {
+				return {
+					filters: [
+						['Inn Room Rate', 'room_type', '=', room_type],
+						['Inn Room Rate', 'is_disabled', '=', 0],
+						['Inn Room Rate', 'customer_group', 'in', customer_group_list],
+						['Inn Room Rate', 'from_date', '<=', start_date],
+						['Inn Room Rate', 'to_date', '>=', start_date],
+					]
+				}
+			}
+		});
+	}
+	else {
+		let query = [];
+		field.get_query = function () {
+			return {
+				filters: query
+			}
+		}
+	}
 }
