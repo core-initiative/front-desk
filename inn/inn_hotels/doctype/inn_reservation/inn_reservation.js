@@ -7,11 +7,13 @@ let error_message = '';
 let room_max_active_card = 5;
 
 frappe.ui.form.on('Inn Reservation', {
-	onload: function() {
+	onload: function(frm) {
 		get_room_max_active_card();
+		make_read_only(frm);
 	},
 	refresh: function(frm) {
 		get_room_max_active_card();
+		make_read_only(frm);
 		console.log("is error = " + is_error);
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal == 1) {
@@ -431,7 +433,7 @@ function is_form_good_to_in_house(frm) {
 	return is_error;
 }
 
-//Function to autofilled some of the Fields in Checkin In Process
+// Function to autofilled some of the Fields in Checkin In Process
 function autofill(frm) {
 	let now = new Date();
 	let expected_arrival = new Date(frm.doc.expected_arrival);
@@ -453,6 +455,7 @@ function autofill(frm) {
 	}
 }
 
+// Function to adjust dropdown shown in cascading dropdown: room_type, bed_type, room_id/actual_room_id
 function manage_filters(fieldname, phase, start_date) {
 	console.log("masuk manage_filters from " + fieldname);
 	let room_chooser = 'room_id';
@@ -507,6 +510,7 @@ function manage_filters(fieldname, phase, start_date) {
 	}
 }
 
+// Function to get available room/room_type/bed_type based on a period of time (start -> end)
 function get_available(fieldname, phase) {
 	let field = cur_frm.fields_dict[fieldname];
 	let reference_name = cur_frm.doc.name;
@@ -547,6 +551,7 @@ function get_available(fieldname, phase) {
 	}
 }
 
+// Function to format date to Date formatted to YYYY-MM-DD
 function formatDate(date) {
 	var d = new Date(date),
 		month = '' + (d.getMonth() + 1),
@@ -561,6 +566,7 @@ function formatDate(date) {
 	return [year, month, day].join('-');
 }
 
+// Function to get maximum active card allowed to issued in one reservation
 function get_room_max_active_card() {
 	frappe.call({
 		method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.room_max_active_card',
@@ -573,6 +579,7 @@ function get_room_max_active_card() {
 	});
 }
 
+// Function to erase the priviledge of key card to open room door
 function erase_card(flag, card_name) {
 	console.log('card_name = ' + card_name);
 	let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
@@ -598,6 +605,8 @@ function erase_card(flag, card_name) {
 	});
 }
 
+// Function to get list of Room Rate in Room Rate Dropdown.
+// Filtered by room_type selected and the start date of reservation
 function get_room_rate(start_date) {
 	console.log("masuk get_Room_rate");
 	let field = cur_frm.fields_dict['room_rate'];
@@ -631,5 +640,46 @@ function get_room_rate(start_date) {
 				filters: query
 			}
 		}
+	}
+}
+
+// Function to make form disabled if certain status of reservation is achieved
+function make_read_only(frm) {
+	console.log("make_read_only called");
+	if (frm.doc.status == 'Cancel' || frm.doc.status == 'Finish') {
+		frm.disable_save();
+		frm.set_df_property('type', 'read_only', 1);
+		frm.set_df_property('channel', 'read_only', 1);
+		frm.set_df_property('group_id', 'read_only', 1);
+		frm.set_df_property('guest_name', 'read_only', 1);
+		frm.set_df_property('arrival', 'read_only', 1);
+		frm.set_df_property('departure', 'read_only', 1);
+		frm.set_df_property('room_type', 'read_only', 1);
+		frm.set_df_property('bed_type', 'read_only', 1);
+		frm.set_df_property('room_rate', 'read_only', 1);
+		frm.set_df_property('actual_room_id', 'read_only', 1);
+		frm.set_df_property('actual_room_rate', 'read_only', 1);
+		frm.set_df_property('adult', 'read_only', 1);
+		frm.set_df_property('child', 'read_only', 1);
+		frm.set_df_property('extra_bed', 'read_only', 1);
+		frm.set_df_property('sb4', 'hidden', 1);
+	}
+	else {
+		frm.enable_save();
+		frm.set_df_property('type', 'read_only', 0);
+		frm.set_df_property('channel', 'read_only', 0);
+		frm.set_df_property('group_id', 'read_only', 0);
+		frm.set_df_property('guest_name', 'read_only', 0);
+		frm.set_df_property('arrival', 'read_only', 0);
+		frm.set_df_property('departure', 'read_only', 0);
+		frm.set_df_property('room_type', 'read_only', 0);
+		frm.set_df_property('bed_type', 'read_only', 0);
+		frm.set_df_property('room_rate', 'read_only', 0);
+		frm.set_df_property('actual_room_id', 'read_only', 0);
+		frm.set_df_property('actual_room_rate', 'read_only', 0);
+		frm.set_df_property('adult', 'read_only', 0);
+		frm.set_df_property('child', 'read_only', 0);
+		frm.set_df_property('extra_bed', 'read_only', 0);
+		frm.set_df_property('sb4', 'hidden', 0);
 	}
 }
