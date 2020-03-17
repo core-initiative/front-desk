@@ -21,3 +21,12 @@ def get_filtered(type):
 def get_accounts_from_id(id):
 	doc = frappe.get_doc('Inn Folio Transaction Type', id)
 	return doc.debit_account, doc.credit_account
+
+@frappe.whitelist()
+def get_transaction_type(type):
+	return_list = []
+	type_list = frappe.get_all('Inn Folio Transaction Type', filters=[['type', '=', type]], fields=['name'])
+	for item in type_list:
+		option_item = {'label': item.name, 'value': item.name}
+		return_list.append(option_item)
+	return return_list
