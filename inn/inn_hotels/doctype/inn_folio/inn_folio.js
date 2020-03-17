@@ -8,22 +8,22 @@ frappe.ui.form.on('Inn Folio', {
 		make_read_only(frm);
 	},
 	add_charge: function (frm) {
-		let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio%20Transaction/New%20Inn%20Folio%20Transaction%201?flag=Debit&parent=' + frm.doc.name)
+		let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio%20Transaction/New%20Inn%20Folio%20Transaction%201?trx_flag=Debit&parent=' + frm.doc.name)
 		if (is_check_in == 'true') {
 			url = url + '&is_check_in=true'
 		}
-		var w = window.open(url, '_self');
+		var w = window.open(url, '_blank');
 
 		if (!w) {
 			frappe.msgprint(__("Please enable pop-ups")); return;
 		}
 	},
 	add_payment: function (frm) {
-		let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio%20Transaction/New%20Inn%20Folio%20Transaction%201?flag=Credit&parent=' + frm.doc.name)
+		let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio%20Transaction/New%20Inn%20Folio%20Transaction%201?trx_flag=Credit&parent=' + frm.doc.name)
 		if (is_check_in == 'true') {
 			url = url + '&is_check_in=true'
 		}
-		var w = window.open(url, '_self');
+		var w = window.open(url, '_blank');
 
 		if (!w) {
 			frappe.msgprint(__("Please enable pop-ups")); return;
