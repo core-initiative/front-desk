@@ -2,40 +2,49 @@
 // For license information, please see license.txt
 var parent = getUrlVars()['parent'];
 var is_check_in = getUrlVars()['is_check_in'];
+var trx_flag = getUrlVars()['trx_flag'];
 
 frappe.ui.form.on('Inn Folio Transaction', {
 	before_save: function(frm) {
+		make_mandatory(frm);
 		if (parent) {
 			frm.doc.parent = parent;
 			frm.doc.parenttype = 'Inn Folio';
 			frm.doc.parentfield = 'folio_transaction';
 		}
 	},
-	after_save: function() {
-		if (parent) {
-			frappe.call({
-				method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
-				args: {
-					folio_id: parent
-				}
-			});
-			let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + parent);
-			if (is_check_in == 'true') {
-				url = url + '?is_check_in=true';
-			}
-			var w = window.open(url, "_self");
-		}
+	after_save: function(frm) {
+		// if (frm.doc.parent) {
+		// 	frappe.call({
+		// 		method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+		// 		args: {
+		// 			folio_id: parent
+		// 		}
+		// 	});
+		// 	let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + frm.doc.parent);
+		// 	if (is_check_in == 'true') {
+		// 		url = url + '?is_check_in=true';
+		// 	}
+		// 	var w = window.open(url, "_self");
+		// }
 	},
 	refresh: function(frm) {
+		console.log("masuk refresh");
+		parent = getUrlVars()['parent'];
+		is_check_in = getUrlVars()['is_check_in'];
+		trx_flag = getUrlVars()['trx_flag'];
+		if (trx_flag != undefined) {
+			frm.set_value('flag', trx_flag);
+		}
 		if (frm.doc.__islocal == 1) {
 			frm.set_df_property('is_void', 'hidden', 1);
 		}
 		else {
 			frm.set_df_property('is_void', 'hidden', 0);
 		}
-		if (parent) {
+		if (frm.doc.parent) {
 			frm.add_custom_button(__('Show Folio'), function () {
-				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + parent);
+				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + frm.doc.parent);
 				if (is_check_in == 'true') {
 					url = url + '?is_check_in=true';
 				}
@@ -45,7 +54,7 @@ frappe.ui.form.on('Inn Folio Transaction', {
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.get_reservation_id',
 					args: {
-						folio_id: parent
+						folio_id: frm.doc.parent
 					},
 					callback: (r) => {
 						if (r.message) {
@@ -114,7 +123,7 @@ function getUrlVars() {
     return vars;
 }
 
-//Function to get filtered Transaction type by Flag
+// Function to get filtered Transaction type by Flag
 function get_filtered_transaction_type(frm) {
 	frappe.call({
 		method: 'inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_filtered',
@@ -134,4 +143,14 @@ function get_filtered_transaction_type(frm) {
 			}
 		}
 	});
+}
+
+// Function make Mode of Payment Mandatory
+function make_mandatory(frm) {
+	if (frm.doc.flag == 'Credit') {
+		if (frm.doc.mode_of_payment == undefined || frm.doc.mode_of_payment == null) {
+			frappe.validated = false;
+			frappe.msgprint("Please fill Mode of Payment");
+		}
+	}
 }
