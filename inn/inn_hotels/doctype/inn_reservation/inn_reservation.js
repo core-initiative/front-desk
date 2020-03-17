@@ -645,41 +645,29 @@ function get_room_rate(start_date) {
 
 // Function to make form disabled if certain status of reservation is achieved
 function make_read_only(frm) {
-	console.log("make_read_only called");
+	let active_flag = 0;
 	if (frm.doc.status == 'Cancel' || frm.doc.status == 'Finish') {
 		frm.disable_save();
-		frm.set_df_property('type', 'read_only', 1);
-		frm.set_df_property('channel', 'read_only', 1);
-		frm.set_df_property('group_id', 'read_only', 1);
-		frm.set_df_property('guest_name', 'read_only', 1);
-		frm.set_df_property('arrival', 'read_only', 1);
-		frm.set_df_property('departure', 'read_only', 1);
-		frm.set_df_property('room_type', 'read_only', 1);
-		frm.set_df_property('bed_type', 'read_only', 1);
-		frm.set_df_property('room_rate', 'read_only', 1);
-		frm.set_df_property('actual_room_id', 'read_only', 1);
-		frm.set_df_property('actual_room_rate', 'read_only', 1);
-		frm.set_df_property('adult', 'read_only', 1);
-		frm.set_df_property('child', 'read_only', 1);
-		frm.set_df_property('extra_bed', 'read_only', 1);
-		frm.set_df_property('sb4', 'hidden', 1);
+		active_flag = 1;
 	}
 	else {
 		frm.enable_save();
-		frm.set_df_property('type', 'read_only', 0);
-		frm.set_df_property('channel', 'read_only', 0);
-		frm.set_df_property('group_id', 'read_only', 0);
-		frm.set_df_property('guest_name', 'read_only', 0);
-		frm.set_df_property('arrival', 'read_only', 0);
-		frm.set_df_property('departure', 'read_only', 0);
-		frm.set_df_property('room_type', 'read_only', 0);
-		frm.set_df_property('bed_type', 'read_only', 0);
-		frm.set_df_property('room_rate', 'read_only', 0);
-		frm.set_df_property('actual_room_id', 'read_only', 0);
-		frm.set_df_property('actual_room_rate', 'read_only', 0);
-		frm.set_df_property('adult', 'read_only', 0);
-		frm.set_df_property('child', 'read_only', 0);
-		frm.set_df_property('extra_bed', 'read_only', 0);
-		frm.set_df_property('sb4', 'hidden', 0);
+		active_flag = 0;
 	}
+
+	frm.set_df_property('type', 'read_only', active_flag);
+	frm.set_df_property('channel', 'read_only', active_flag);
+	frm.set_df_property('group_id', 'read_only', active_flag);
+	frm.set_df_property('guest_name', 'read_only', active_flag);
+	frm.set_df_property('arrival', 'read_only', active_flag);
+	frm.set_df_property('departure', 'read_only', active_flag);
+	frm.set_df_property('room_type', 'read_only', active_flag);
+	frm.set_df_property('bed_type', 'read_only', active_flag);
+	frm.set_df_property('room_rate', 'read_only', active_flag);
+	frm.set_df_property('actual_room_id', 'read_only', active_flag);
+	frm.set_df_property('actual_room_rate', 'read_only', active_flag);
+	frm.set_df_property('adult', 'read_only', active_flag);
+	frm.set_df_property('child', 'read_only', active_flag);
+	frm.set_df_property('extra_bed', 'read_only', active_flag);
+	frm.set_df_property('sb4', 'hidden', active_flag);
 }
