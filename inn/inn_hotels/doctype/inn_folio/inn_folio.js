@@ -11,15 +11,7 @@ frappe.ui.form.on('Inn Folio', {
 		add_charge(frm);
 	},
 	add_payment: function (frm) {
-		let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio%20Transaction/New%20Inn%20Folio%20Transaction%201?trx_flag=Credit&parent=' + frm.doc.name)
-		if (is_check_in == 'true') {
-			url = url + '&is_check_in=true'
-		}
-		var w = window.open(url, '_blank');
-
-		if (!w) {
-			frappe.msgprint(__("Please enable pop-ups")); return;
-		}
+		add_payment(frm);
 	},
 	refresh: function (frm) {
 		make_read_only(frm);
@@ -152,3 +144,94 @@ function add_charge(frm) {
 	});
 }
 
+function add_payment(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type',
+		args: {
+			type: 'Credit'
+		},
+		callback: (r)=> {
+			let fields = [
+				{
+					'label': __('Transaction Type'),
+					'fieldname': 'transaction_type',
+					'fieldtype': 'Select',
+					'options': r.message,
+					'reqd': 1
+				},
+				{
+					'fieldname': 'accb0',
+					'fieldtype': 'Column Break'
+				},
+				{
+					'label': __('Amount'),
+					'fieldname': 'amount',
+					'fieldtype': 'Currency',
+					'columns': 2,
+					'reqd': 1
+				},
+				{
+					'fieldname': 'acsb0',
+					'fieldtype': 'Section Break'
+				},
+				{
+					'label': __('Mode of Payment'),
+					'fieldname': 'mode_of_payment',
+					'fieldtype': 'Link',
+					'options': 'Mode of Payment',
+					'reqd': 1
+				},
+				{
+					'fieldname': 'accb1',
+					'fieldtype': 'Column Break'
+				},
+				{
+					'label': __('Sub Folio'),
+					'fieldname': 'sub_folio',
+					'fieldtype': 'Select',
+					'options': [{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'}, {'label': __('C'), 'value': 'C'}],
+					'default': 'A',
+					'reqd':1
+				},
+				{
+					'fieldname': 'acsb1',
+					'fieldtype': 'Section Break'
+				},
+				{
+					'label': 'Remark',
+					'fieldname': 'remark',
+					'fieldtype': 'Small Text',
+				},
+			]
+			var d = new frappe.ui.Dialog({
+				title: __('Add New Payment for Folio ' + frm.doc.name),
+				fields: fields,
+			});
+			d.set_primary_action(__('Save'), () => {
+				let remark_to_save = '';
+				if (d.get_values.remark != undefined || d.get_values.remark != null) {
+					remark_to_save = d.get_values.remark;
+				}
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_payment',
+					args: {
+						transaction_type: d.get_values().transaction_type,
+						amount: d.get_values().amount,
+						mode_of_payment: d.get_values().mode_of_payment,
+						sub_folio: d.get_values().sub_folio,
+						remark: remark_to_save,
+						parent: frm.doc.name
+					},
+					callback: (r) => {
+						if (r.message) {
+							frappe.msgprint('Payment with ID ' + r.message + " successfully added");
+							frm.reload_doc();
+						}
+					}
+				});
+				d.hide();
+			});
+			d.show();
+		}
+	});
+}
