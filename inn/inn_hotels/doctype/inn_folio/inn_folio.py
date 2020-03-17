@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
 from frappe.model.document import Document
 
 class InnFolio(Document):
@@ -47,3 +48,18 @@ def update_balance(folio_id):
 def get_balance(folio_id):
 	update_balance(folio_id)
 	return frappe.db.value('Inn Folio', folio_id, ['balance'])
+
+@frappe.whitelist()
+def transfer_to_another_folio(trx_list, old_parent, new_parent):
+	exist_error = 0
+	list_json = json.loads(trx_list)
+	for trx in list_json:
+		trx_doc = frappe.get_doc('Inn Folio Transaction', trx)
+		if trx_doc.parent == old_parent:
+			trx_doc.parent = new_parent
+			trx_doc.remark = 'Transferred from ' + old_parent + ' to Folio ' + new_parent
+			trx_doc.save()
+		else:
+			exist_error = 1
+
+	return exist_error
