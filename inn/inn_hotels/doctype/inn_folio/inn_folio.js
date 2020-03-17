@@ -7,6 +7,20 @@ frappe.ui.form.on('Inn Folio', {
 		frm.get_field("folio_transaction").grid.only_sortable();
 		make_read_only(frm);
 	},
+	transfer_to_another_folio: function(frm) {
+		if (frm.doc.__islocal !== 1) {
+			let trx_selected = frm.get_field("folio_transaction").grid.get_selected();
+			if (trx_selected.length == 0) {
+				frappe.msgprint('Please select at least one transaction to be transfered');
+			}
+			else {
+				transfer_to_another_folio(frm, trx_selected);
+			}
+		}
+	},
+	add_package: function(frm) {
+		frappe.msgprint("Coming Soon");
+	},
 	add_charge: function (frm) {
 		add_charge(frm);
 	},
@@ -47,7 +61,7 @@ function getUrlVars() {
 // Function to make form disabled if status cancel
 function make_read_only(frm) {
 	let active_flag = 0;
-	if (frm.doc.status == 'Cancel') {
+	if (frm.doc.status != 'Open') {
 		active_flag = 1;
 		frm.disable_save();
 	}
@@ -57,6 +71,7 @@ function make_read_only(frm) {
 	}
 
 	frm.set_df_property('sb4', 'hidden', active_flag);
+	frm.set_df_property('transfer_to_another_folio', 'hidden', active_flag);
 	frm.set_df_property('reservation_id', 'read_only', active_flag);
 	frm.set_df_property('customer_id', 'read_only', active_flag);
 	frm.set_df_property('type', 'read_only', active_flag);
@@ -234,4 +249,45 @@ function add_payment(frm) {
 			d.show();
 		}
 	});
+}
+
+function transfer_to_another_folio(frm, trx_selected) {
+	var d = new frappe.ui.Dialog({
+		title: __('Transfer Transactions to Another Folio'),
+		fields: [
+			{
+				'label': 'Transfer to Folio: ',
+				'fieldname': 'receiving_folio',
+				'fieldtype': 'Link',
+				'options': 'Inn Folio',
+				'get_query': function () {
+					return {
+						filters: [
+							['Inn Folio', 'name', '!=', frm.doc.name],
+							['Inn Folio', 'status', '=', 'Open'],
+						]
+					}
+				},
+				reqd: 1
+			},
+		]
+	});
+	d.set_primary_action(__('Transfer'), () => {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.transfer_to_another_folio',
+			args: {
+				trx_list: trx_selected,
+				old_parent: frm.doc.name,
+				new_parent: d.get_values().receiving_folio,
+			},
+			callback: (r) => {
+				if (r.message == 0) {
+					frappe.msgprint('Transactions  transfered to Folio ' + d.get_values().receiving_folio + ' successfully');
+					frm.reload_doc();
+				}
+			}
+		});
+		d.hide();
+	});
+	d.show();
 }
