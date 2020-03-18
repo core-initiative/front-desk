@@ -30,6 +30,22 @@ frappe.ui.form.on('Inn Folio', {
 	refresh: function (frm) {
 		make_read_only(frm);
 		if (frm.doc.__islocal != 1) {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+				args: {
+					folio_id: frm.doc.name
+				},
+				callback: (r) => {
+					if (r.message) {
+						frm.doc.total_debit = r.message[0];
+						frm.doc.total_credit = r.message[1];
+						frm.doc.balance = r.message[2];
+						frm.refresh_field('total_debit');
+						frm.refresh_field('total_credit');
+						frm.refresh_field('balance');
+					}
+				}
+			});
 			toggle_visibility_buttons(frm, 0);
 			toogle_guest_in_type(frm, 0);
 			// Show Reservation Button
@@ -49,6 +65,17 @@ frappe.ui.form.on('Inn Folio', {
 						method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
 						args: {
 							folio_id: frm.doc.name
+						},
+						callback: (r) => {
+							if (r.message) {
+								frappe.show_alert("Balance updated.");
+								frm.doc.total_debit = r.message[0];
+								frm.doc.total_credit = r.message[1];
+								frm.doc.balance = r.message[2];
+								frm.refresh_field('total_debit');
+								frm.refresh_field('total_credit');
+								frm.refresh_field('balance');
+							}
 						}
 					});
 				});

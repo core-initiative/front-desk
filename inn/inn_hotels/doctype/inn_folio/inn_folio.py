@@ -38,12 +38,13 @@ def update_balance(folio_id):
 			total_debit += float(trx.amount)
 		elif trx.flag == 'Credit' and trx.is_void == 0:
 			total_credit += float(trx.amount)
-
 	balance = total_credit - total_debit
-	doc.total_debit = total_debit
-	doc.total_credit = total_credit
-	doc.balance = balance
-	doc.save()
+
+	frappe.db.set_value('Inn Folio', doc.name, 'total_debit', total_debit)
+	frappe.db.set_value('Inn Folio', doc.name, 'total_credit', total_credit)
+	frappe.db.set_value('Inn Folio', doc.name, 'balance', balance)
+
+	return total_debit, total_credit, balance
 
 @frappe.whitelist()
 def get_balance(folio_id):
