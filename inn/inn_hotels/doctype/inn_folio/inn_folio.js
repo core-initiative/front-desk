@@ -121,7 +121,10 @@ function add_charge(frm) {
 					'label': __('Sub Folio'),
 					'fieldname': 'sub_folio',
 					'fieldtype': 'Select',
-					'options': [{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'}, {'label': __('C'), 'value': 'C'}],
+					'options': [
+						{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'},
+						{'label': __('C'), 'value': 'C'}, {'label': __('D'), 'value': 'D'}
+						],
 					'default': 'A',
 					'reqd':1
 				},
@@ -213,7 +216,10 @@ function add_payment(frm) {
 					'label': __('Sub Folio'),
 					'fieldname': 'sub_folio',
 					'fieldtype': 'Select',
-					'options': [{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'}, {'label': __('C'), 'value': 'C'}],
+					'options': [
+						{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'},
+						{'label': __('C'), 'value': 'C'}, {'label': __('D'), 'value': 'D'}
+						],
 					'default': 'A',
 					'reqd':1
 				},
