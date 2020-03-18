@@ -13,21 +13,6 @@ frappe.ui.form.on('Inn Folio Transaction', {
 			frm.doc.parentfield = 'folio_transaction';
 		}
 	},
-	after_save: function(frm) {
-		// if (frm.doc.parent) {
-		// 	frappe.call({
-		// 		method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
-		// 		args: {
-		// 			folio_id: parent
-		// 		}
-		// 	});
-		// 	let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + frm.doc.parent);
-		// 	if (is_check_in == 'true') {
-		// 		url = url + '?is_check_in=true';
-		// 	}
-		// 	var w = window.open(url, "_self");
-		// }
-	},
 	refresh: function(frm) {
 		console.log("masuk refresh");
 		parent = getUrlVars()['parent'];
@@ -109,6 +94,18 @@ frappe.ui.form.on('Inn Folio Transaction', {
 					}
 				}
 			});
+		}
+	},
+	void_transaction: function (frm) {
+		if (frm.doc.is_void == 0) {
+			frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
+				frm.doc.is_void = 1;
+				frm.save();
+				frappe.show_alert('Transaction with ID ' + frm.doc.name + ' voided successfully.');
+			});
+		}
+		else {
+			frappe.msgprint("Transaction already voided.");
 		}
 	}
 });

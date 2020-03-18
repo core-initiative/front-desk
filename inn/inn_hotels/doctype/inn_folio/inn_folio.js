@@ -49,6 +49,13 @@ frappe.ui.form.on('Inn Folio', {
 	}
 });
 
+frappe.ui.form.on('Inn Folio Transaction', {
+	void_transaction: function (frm, cdt, cdn) {
+		let child = locals[cdt][cdn];
+		void_transaction(child);
+	}
+});
+
 // Function to extract variable's value passed on URL
 function getUrlVars() {
     var vars = {};
@@ -78,6 +85,7 @@ function make_read_only(frm) {
 	frm.set_df_property('group_id', 'read_only', active_flag);
 
 }
+
 // Function to show pop up Dialog for adding new charge to the folio
 function add_charge(frm) {
 	frappe.call({
@@ -159,6 +167,7 @@ function add_charge(frm) {
 	});
 }
 
+// Function to show pop up Dialog for adding new payment to the folio
 function add_payment(frm) {
 	frappe.call({
 		method: 'inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type',
@@ -251,6 +260,7 @@ function add_payment(frm) {
 	});
 }
 
+// Function to show pop up Dialog for transferring transaction selected to another folio
 function transfer_to_another_folio(frm, trx_selected) {
 	var d = new frappe.ui.Dialog({
 		title: __('Transfer Transactions to Another Folio'),
@@ -290,4 +300,18 @@ function transfer_to_another_folio(frm, trx_selected) {
 		d.hide();
 	});
 	d.show();
+}
+
+// Function to void single folio transaction
+function void_transaction(child) {
+	frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
+		if (child.is_void == 0) {
+			child.is_void = 1;
+			cur_frm.save();
+			frappe.show_alert('Transaction with ID ' + child.name + ' voided successfully.');
+		}
+		else {
+			frappe.msgprint("This transaction already voided.");
+		}
+	});
 }
