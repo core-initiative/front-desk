@@ -31,6 +31,7 @@ frappe.ui.form.on('Inn Folio', {
 		make_read_only(frm);
 		if (frm.doc.__islocal != 1) {
 			toggle_visibility_buttons(frm, 0);
+			toogle_guest_in_type(frm, 0);
 			// Show Reservation Button
 			if (frm.doc.reservation_id != undefined || frm.doc.reservation_id != null) {
 				frm.add_custom_button(__('Show Reservation'), function () {
@@ -55,6 +56,7 @@ frappe.ui.form.on('Inn Folio', {
 		}
 		else {
 			toggle_visibility_buttons(frm, 1);
+			toogle_guest_in_type(frm, 1);
 		}
 	}
 });
@@ -100,6 +102,17 @@ function make_read_only(frm) {
 function toggle_visibility_buttons(frm, active_flag) {
 	frm.set_df_property('sb4', 'hidden', active_flag);
 	frm.set_df_property('transfer_to_another_folio', 'hidden', active_flag);
+}
+
+// Function to toggle visibility of Guest options in Type
+function toogle_guest_in_type(frm, is_new) {
+	if (is_new == 1) {
+		frm.set_df_property('type', 'options', ['Master', 'Desk'])
+	}
+	else {
+		frm.set_df_property('type', 'options', ['Guest', 'Master', 'Desk'])
+	}
+	frm.refresh_field('type');
 }
 
 // Function to show pop up Dialog for adding new charge to the folio
