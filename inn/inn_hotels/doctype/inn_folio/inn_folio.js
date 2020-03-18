@@ -46,7 +46,9 @@ frappe.ui.form.on('Inn Folio', {
 					}
 				}
 			});
-			toggle_visibility_buttons(frm, 0);
+			if (frm.doc.status == 'Open') {
+				toggle_visibility_buttons(frm, 0);
+			}
 			toogle_guest_in_type(frm, 0);
 			// Show Reservation Button
 			if (frm.doc.reservation_id != undefined || frm.doc.reservation_id != null) {
