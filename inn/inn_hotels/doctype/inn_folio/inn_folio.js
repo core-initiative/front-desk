@@ -29,22 +29,32 @@ frappe.ui.form.on('Inn Folio', {
 	},
 	refresh: function (frm) {
 		make_read_only(frm);
-		frm.add_custom_button(__('Show Reservation'), function () {
-			let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + frm.doc.reservation_id);
-			if (is_check_in == 'true') {
-				url = url + '?is_check_in=true'
-			}
-			var w = window.open(url, "_self");
-		});
-		if (frm.doc.status != 'Cancel') {
-			frm.add_custom_button(__('Update Balance'), function () {
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
-					args: {
-						folio_id: frm.doc.name
-					}
-				});
+		if (frm.doc.__islocal != 1) {
+			toggle_visibility_buttons(frm, 0);
+			// Show Reservation Button
+			if (frm.doc.reservation_id != undefined || frm.doc.reservation_id != null) {
+				frm.add_custom_button(__('Show Reservation'), function () {
+				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + frm.doc.reservation_id);
+				if (is_check_in == 'true') {
+					url = url + '?is_check_in=true'
+				}
+				var w = window.open(url, "_self");
 			});
+			}
+			// Update Balance Button
+			if (frm.doc.status != 'Cancel') {
+				frm.add_custom_button(__('Update Balance'), function () {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+						args: {
+							folio_id: frm.doc.name
+						}
+					});
+				});
+			}
+		}
+		else {
+			toggle_visibility_buttons(frm, 1);
 		}
 	}
 });
@@ -84,6 +94,12 @@ function make_read_only(frm) {
 	frm.set_df_property('type', 'read_only', active_flag);
 	frm.set_df_property('group_id', 'read_only', active_flag);
 
+}
+
+// Function to toggle visibility of buttons when necessary
+function toggle_visibility_buttons(frm, active_flag) {
+	frm.set_df_property('sb4', 'hidden', active_flag);
+	frm.set_df_property('transfer_to_another_folio', 'hidden', active_flag);
 }
 
 // Function to show pop up Dialog for adding new charge to the folio
