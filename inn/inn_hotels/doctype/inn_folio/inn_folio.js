@@ -27,6 +27,9 @@ frappe.ui.form.on('Inn Folio', {
 	add_payment: function (frm) {
 		add_payment(frm);
 	},
+	add_refund: function (frm) {
+		add_refund(frm);
+	},
 	refresh: function (frm) {
 		make_read_only(frm);
 		if (frm.doc.__islocal != 1) {
@@ -322,6 +325,73 @@ function add_payment(frm) {
 			d.show();
 		}
 	});
+}
+
+// Function to show pop up Dialog for Adding Refund to folio
+function add_refund(frm) {
+	var d = new frappe.ui.Dialog({
+		title: __('Add New Refund to Folio ' + frm.doc.name),
+		fields: [
+			{
+				'label': __('Amount'),
+				'fieldname': 'amount',
+				'fieldtype': 'Currency',
+				'columns': 2,
+				'reqd': 1
+			},
+			{
+				'fieldname': 'arcb0',
+				'fieldtype': 'Column Break'
+			},
+			{
+				'label': __('Sub Folio'),
+				'fieldname': 'sub_folio',
+				'fieldtype': 'Select',
+				'options': [
+					{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'},
+					{'label': __('C'), 'value': 'C'}, {'label': __('D'), 'value': 'D'}
+					],
+				'default': 'A',
+				'reqd':1
+			},
+			{
+				'fieldname': 'arsb0',
+				'fieldtype': 'Section Break'
+			},
+			{
+				'label': 'Remark',
+				'fieldname': 'remark',
+				'fieldtype': 'Small Text',
+			},
+		]
+	});
+	if (frm.doc.balance > 0) {
+		d.set_value('amount', frm.doc.balance);
+	}
+	d.set_primary_action(__('Save'), () => {
+		let remark_to_save = '';
+		if (d.get_values.remark != undefined || d.get_values.remark != null) {
+			remark_to_save = d.get_values.remark;
+		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_charge',
+			args: {
+				transaction_type: 'Refund',
+				amount: d.get_values().amount,
+				sub_folio: d.get_values().sub_folio,
+				remark: remark_to_save,
+				parent: frm.doc.name
+			},
+			callback: (r) => {
+				if (r.message) {
+					frappe.msgprint('Refund with ID ' + r.message + " successfully added");
+					frm.reload_doc();
+				}
+			}
+		});
+		d.hide();
+	});
+	d.show();
 }
 
 // Function to show pop up Dialog for transferring transaction selected to another folio
