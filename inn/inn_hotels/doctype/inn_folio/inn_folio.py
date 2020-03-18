@@ -16,6 +16,7 @@ def create_folio(reservation_id):
 		reservation = frappe.get_doc('Inn Reservation', reservation_id)
 
 		doc = frappe.new_doc('Inn Folio')
+		doc.type = 'Guest'
 		doc.reservation_id = reservation_id
 		doc.customer_id = reservation.customer_id
 		doc.insert()
