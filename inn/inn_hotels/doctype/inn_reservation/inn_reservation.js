@@ -453,9 +453,22 @@ function autofill(frm) {
 	if (frm.doc.departure == undefined || frm.doc.departure == null || frm.doc.departure == '') {
 		frm.set_value('departure', expected_departure);
 	}
-	// TODO: Check room availability for actual_room_id
 	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id == '') {
-		frm.set_value('actual_room_id', frm.doc.room_id);
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room.inn_room.get_room_status',
+			args: {
+				room_id: frm.doc.room_id
+			},
+			callback: (r) => {
+				if (r.message == 'Vacant Ready') {
+					frm.set_value('actual_room_id', frm.doc.room_id);
+				}
+				else {
+					frappe.msgprint("Currently, Room " + frm.doc.room_id + " status is not Vacant Ready." +
+						"Please consult with Room Service or choose another Room to continue Checking In.")
+				}
+			}
+		});
 	}
 }
 
