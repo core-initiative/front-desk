@@ -49,7 +49,13 @@ def update_balance(folio_id):
 @frappe.whitelist()
 def get_balance(folio_id):
 	update_balance(folio_id)
-	return frappe.db.value('Inn Folio', folio_id, ['balance'])
+	return frappe.db.get_value('Inn Folio', folio_id, ['balance'])
+
+@frappe.whitelist()
+def get_balance_by_reservation(reservation_id):
+	folio = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
+	balance = get_balance(folio.name)
+	return balance
 
 @frappe.whitelist()
 def transfer_to_another_folio(trx_list, old_parent, new_parent):

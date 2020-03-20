@@ -162,6 +162,10 @@ frappe.ui.form.on('Inn Reservation', {
 		if (frm.doc.__islocal != 1 && frm.doc.status == 'In House') {
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section
 			frm.set_df_property('sb4', 'hidden', 0); // Issue Card Buttons Section
+
+			frm.page.add_menu_item(__('Check Out'), function () {
+				process_check_out(frm);
+			});
 		}
 	},
 	after_save: function(frm) {
@@ -670,4 +674,56 @@ function make_read_only(frm) {
 	frm.set_df_property('child', 'read_only', active_flag);
 	frm.set_df_property('extra_bed', 'read_only', active_flag);
 	frm.set_df_property('sb4', 'hidden', active_flag);
+}
+
+// Function to check out reservation
+function process_check_out(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.get_balance_by_reservation',
+		args: {
+			reservation_id: frm.doc.name
+		},
+		callback: (r) => {
+			if (r.message != 0) {
+				frappe.msgprint('There are several outstanding payments. <br />' +
+					'Please go to the Folio page to complete payment process before Checking Out');
+			}
+			else if (r.message == 0) {
+				let current_active_card = 0;
+				let all_issued_card = frm.doc.issued_card;
+				for (let key in all_issued_card) {
+					current_active_card += all_issued_card[key].is_active;
+				}
+				if (current_active_card > 0) {
+					frappe.msgprint("There are " + current_active_card + " key card(s) still active.<br />" +
+						" Please Deactivate all key cards issued before Checking Out");
+				}
+				else {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_out_reservation',
+						args: {
+							reservation_id: frm.doc.name,
+						},
+						callback: (r) => {
+							if (r.message == 'Finish') {
+									frappe.call({
+										method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+										args: {
+											reservation_id: frm.doc.name
+										},
+										callback: (r) => {
+											if (r.message) {
+												console.log(r.message);
+											}
+										}
+									});
+									frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+									frappe.show_alert('Successfully Check Out Reservation: ' + frm.doc.name);
+								}
+						}
+					});
+				}
+			}
+		}
+	});
 }

@@ -91,6 +91,27 @@ def cancel_single_reservation(reservation_id):
 	else:
 		return 1
 
+@frappe.whitelist()
+def check_out_reservation(reservation_id):
+	doc = frappe.get_doc('Inn Reservation', reservation_id)
+	room_doc = frappe.get_doc('Inn Room', doc.room_id)
+	folio_doc = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
+	if (doc.status == 'In House'):
+		doc.status = 'Finish'
+		doc.save()
+		if doc.status == 'Finish':
+			# Change room status
+			room_doc.room_status = 'Vacant Dirty'
+			room_doc.save()
+
+			# Change folio status
+			folio_doc.status = 'Closed'
+			folio_doc.save()
+
+			# TODO: Journal Entry for Checking out
+
+	return doc.status
+
 def generate_wifi_password(reservation_id):
 	reservation = frappe.get_doc('Inn Reservation', reservation_id)
 	mode = frappe.db.get_single_value('Inn Hotels Setting', 'hotspot_api_mode')
