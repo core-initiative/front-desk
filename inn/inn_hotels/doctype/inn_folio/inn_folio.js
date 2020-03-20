@@ -33,22 +33,24 @@ frappe.ui.form.on('Inn Folio', {
 	refresh: function (frm) {
 		make_read_only(frm);
 		if (frm.doc.__islocal != 1) {
-			frappe.call({
-				method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
-				args: {
-					folio_id: frm.doc.name
-				},
-				callback: (r) => {
-					if (r.message) {
-						frm.doc.total_debit = r.message[0];
-						frm.doc.total_credit = r.message[1];
-						frm.doc.balance = r.message[2];
-						frm.refresh_field('total_debit');
-						frm.refresh_field('total_credit');
-						frm.refresh_field('balance');
+			if (frm.doc.status == 'Open') {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+					args: {
+						folio_id: frm.doc.name
+					},
+					callback: (r) => {
+						if (r.message) {
+							frm.doc.total_debit = r.message[0];
+							frm.doc.total_credit = r.message[1];
+							frm.doc.balance = r.message[2];
+							frm.refresh_field('total_debit');
+							frm.refresh_field('total_credit');
+							frm.refresh_field('balance');
+						}
 					}
-				}
-			});
+				});
+			}
 			if (frm.doc.status == 'Open') {
 				toggle_visibility_buttons(frm, 0);
 			}
@@ -114,11 +116,9 @@ function make_read_only(frm) {
 	let active_flag = 0;
 	if (frm.doc.status != 'Open') {
 		active_flag = 1;
-		frm.disable_save();
 	}
 	else {
 		active_flag = 0;
-		frm.enable_save();
 	}
 
 	frm.set_df_property('sb4', 'hidden', active_flag);
@@ -127,6 +127,14 @@ function make_read_only(frm) {
 	frm.set_df_property('customer_id', 'read_only', active_flag);
 	frm.set_df_property('type', 'read_only', active_flag);
 	frm.set_df_property('group_id', 'read_only', active_flag);
+
+	frappe.meta.get_docfield('Inn Folio Transaction', 'void_transaction', frm.doc.name).hidden = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'flag', frm.doc.name).read_only = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'transaction_type', frm.doc.name).read_only = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'amount', frm.doc.name).read_only = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'debit_account', frm.doc.name).read_only = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'credit_account', frm.doc.name).read_only = active_flag;
+	frappe.meta.get_docfield('Inn Folio Transaction', 'remark', frm.doc.name).read_only = active_flag;
 
 }
 

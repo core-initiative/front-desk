@@ -14,7 +14,7 @@ frappe.ui.form.on('Inn Folio Transaction', {
 		}
 	},
 	refresh: function(frm) {
-		console.log("masuk refresh");
+		make_read_only(frm);
 		parent = getUrlVars()['parent'];
 		is_check_in = getUrlVars()['is_check_in'];
 		trx_flag = getUrlVars()['trx_flag'];
@@ -150,4 +150,19 @@ function make_mandatory(frm) {
 			frappe.msgprint("Please fill Mode of Payment");
 		}
 	}
+}
+
+// Function to disable all changes when Parent Folio is not Open
+function make_read_only(frm) {
+	frappe.db.get_value('Inn Folio', frm.doc.parent, 'status').then((r) => {
+		if (r.message.status != 'Open') {
+			frm.set_df_property('void_transaction', 'hidden', 1);
+			frm.set_df_property('flag', 'read_only', 1);
+			frm.set_df_property('transaction_type', 'read_only', 1);
+			frm.set_df_property('amount', 'read_only', 1);
+			frm.set_df_property('debit_account', 'read_only', 1);
+			frm.set_df_property('credit_account', 'read_only', 1);
+			frm.set_df_property('remark', 'read_only', 1);
+		}
+	});
 }
