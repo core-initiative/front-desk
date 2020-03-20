@@ -109,26 +109,28 @@ frappe.ui.form.on('Inn Floor Plan', {
 		for (var i = 0; i < all.length; i++) {
 			all[i].style.display = "none";
 		}
-
-		//@TODO: bagaimana display variable status dari Inn Room
-		frappe.db.get_list('Inn Room', {fields: ['name', 'status']}).then(function(resp){
-			resp.forEach(element => {
-				if (element.status == 'AV') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#33a02c;');
-				} else if (element.status == 'RS') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#1f78b4;');
-				} else if (element.status == 'RC') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#a6cee3;');
-				} else if (element.status == 'OU') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#ff7f00;');
-				} else if (element.status == 'HU') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fdbf6f;');
-				} else if (element.status == 'OO') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#e31a1c;');
-				} else if (element.status == 'UC') {
-					document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fb9a99;');
-				}
-			});
+		
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_all_room_with_room_booking_status',
+			callback: (resp) => {
+				resp.forEach(element => {
+					if (element.status == 'AV') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#33a02c;');
+					} else if (element.status == 'RS') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#1f78b4;');
+					} else if (element.status == 'RC') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#a6cee3;');
+					} else if (element.status == 'OU') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#ff7f00;');
+					} else if (element.status == 'HU') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fdbf6f;');
+					} else if (element.status == 'OO') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#e31a1c;');
+					} else if (element.status == 'UC') {
+						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fb9a99;');
+					}
+				});
+			}
 		});
 
 		var information = '' +
