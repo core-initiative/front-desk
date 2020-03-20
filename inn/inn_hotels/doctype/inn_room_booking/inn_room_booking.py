@@ -203,30 +203,23 @@ def get_all_room_with_room_booking_status():
 	room_booking_list = frappe.get_all('Inn Room Booking', filters={'status': ['in', ['Booked', 'Stayed']]}, fields=['*'])
 
 	for room in room_list:
+		return_item = {'name': room.name, 'status': 'AV'}
 		for room_booking in room_booking_list:
-			if room.name == room_booking.room_id:
+			if room_booking.room_id == room.name:
 				if room_booking.room_availability == 'Room Sold':
-					return_item = {'name': room.name, 'status': 'RS'}
-					return_list.append(return_item)
+					return_item['status'] = 'RS'
 				elif room_booking.room_availability == 'Under Construction':
-					return_item = {'name': room.name, 'status': 'UC'}
-					return_list.append(return_item)
+					return_item['status'] = 'UC'
 				elif room_booking.room_availability == 'Office Use':
-					return_item = {'name': room.name, 'status': 'OU'}
-					return_list.append(return_item)
+					return_item['status'] = 'OU'
 				elif room_booking.room_availability == 'Out of Order':
-					return_item = {'name': room.name, 'status': 'OO'}
-					return_list.append(return_item)
+					return_item['status'] = 'OO'
 				elif room_booking.room_availability == 'House Use':
-					return_item = {'name': room.name, 'status': 'HU'}
-					return_list.append(return_item)
+					return_item['status'] = 'HU'
 				elif room_booking.room_availability == 'Room Compliment':
-					return_item = {'name': room.name, 'status': 'RC'}
-					return_list.append(return_item)
-				else:
-					pass
+					return_item['status'] = 'RC'
 			else:
-				return_item = {'name': room.name, 'status': 'AV'}
-				return_list.append(return_item)
+				pass
+		return_list.append(return_item)
 
 	return return_list
