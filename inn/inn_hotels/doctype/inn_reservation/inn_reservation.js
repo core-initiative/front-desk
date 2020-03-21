@@ -755,6 +755,12 @@ function move_room(frm) {
 		title: __('Move Room'),
 		fields: [
 			{
+				'label': __('Reason for Room Changes'),
+				'fieldname': 'mv_reason',
+				'fieldtype': 'Small Text',
+				'reqd': 1
+			},
+			{
 				'label': __('Room Type'),
 				'fieldname': 'mv_room_type',
 				'fieldtype': 'Link',
@@ -762,6 +768,22 @@ function move_room(frm) {
 				'reqd': 1,
 				'onchange': () => {
 					console.log('Milih room type');
+					if (d.fields_dict['mv_room_type'].get_value() != '') {
+						d.set_df_property('mv_bed_type', 'hidden', 0);
+						d.fields_dict['mv_bed_type'].get_query = function () {
+							return {
+								query: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available',
+								filters: {
+									'start': formatDate(new Date()),
+									'end': formatDate(frm.doc.departure),
+									'reference_name': frm.doc.name,
+									'room_type': d.fields_dict['mv_room_type'].get_value(),
+									'bed_type': d.fields_dict['mv_bed_type'].get_value(),
+									'phase': 'Check In'
+								}
+							}
+						}
+					}
 				}
 			},
 			{
@@ -772,6 +794,22 @@ function move_room(frm) {
 				'reqd': 1,
 				'onchange': () => {
 					console.log("milih bed type");
+					if (d.fields_dict['mv_bed_type'].get_value() != '') {
+						d.set_df_property('mv_room_id', 'hidden', 0);
+						d.fields_dict['mv_room_id'].get_query = function () {
+							return {
+								query: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_available',
+								filters: {
+									'start': formatDate(new Date()),
+									'end': formatDate(frm.doc.departure),
+									'reference_name': frm.doc.name,
+									'room_type': d.fields_dict['mv_room_type'].get_value(),
+									'bed_type': d.fields_dict['mv_bed_type'].get_value(),
+									'phase': 'Check In'
+								}
+							}
+						}
+					}
 				}
 			},
 			{
@@ -783,12 +821,6 @@ function move_room(frm) {
 				'onchange': () => {
 					console.log('milih room id');
 				}
-			},
-			{
-				'label': __('Reason for Room Changes'),
-				'fieldname': 'mv_reason',
-				'fieldtype': 'Small Text',
-				'reqd': 1
 			},
 			{
 				'label': __('Change Room Rate'),
@@ -864,5 +896,7 @@ function move_room(frm) {
 			d.hide();
 		}
 	});
+	d.set_df_property('mv_bed_type', 'hidden', 1);
+	d.set_df_property('mv_room_id', 'hidden', 1);
 	d.show();
 }
