@@ -759,6 +759,7 @@ function move_room(frm) {
 				'fieldname': 'mv_room_type',
 				'fieldtype': 'Link',
 				'options': 'Inn Room Type',
+				'reqd': 1,
 				'onchange': () => {
 					console.log('Milih room type');
 				}
@@ -768,6 +769,7 @@ function move_room(frm) {
 				'fieldname': 'mv_bed_type',
 				'fieldtype': 'Link',
 				'options': 'Inn Bed Type',
+				'reqd': 1,
 				'onchange': () => {
 					console.log("milih bed type");
 				}
@@ -777,9 +779,16 @@ function move_room(frm) {
 				'fieldname': 'mv_room_id',
 				'fieldtype': 'Link',
 				'options': 'Inn Room',
+				'reqd': 1,
 				'onchange': () => {
 					console.log('milih room id');
 				}
+			},
+			{
+				'label': __('Reason for Room Changes'),
+				'fieldname': 'mv_reason',
+				'fieldtype': 'Small Text',
+				'reqd': 1
 			},
 			{
 				'label': __('Change Room Rate'),
@@ -792,16 +801,68 @@ function move_room(frm) {
 				'fieldname': 'mv_room_rate',
 				'fieldtype': 'Link',
 				'options': 'Inn Room Rate',
-				'depends_on': 'eval:doc.mv_change_rate==1'
+				'depends_on': 'eval:doc.mv_change_rate==1',
+				'onchange': () => {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
+						args: {
+							room_rate_id: d.get_values().mv_room_rate
+						},
+						callback: (r) => {
+							if (r.message) {
+								d.set_value('mv_actual_room_rate', r.message);
+							}
+						}
+					});
+				}
 			},
 			{
 				'label': __('Actual Room Rate Nominal'),
 				'fieldname': 'mv_actual_room_rate',
 				'fieldtype': 'Currency',
 				'depends_on': 'eval:doc.mv_change_rate==1'
-			}
-			
+			},
 		]
+	});
+	d.set_primary_action(__('Move Room'), () => {
+		let new_room_rate = null;
+		let new_actual_room_rate = 0.0;
+		let good_to_go = 1;
+		if (d.get_values().mv_change_rate == 1) {
+			if (d.get_values().mv_room_rate == undefined || d.get_values().mv_room_rate == '' ||
+			 	d.get_values().mv_actual_room_rate == undefined || d.get_values().mv_actual_room_rate == 0) {
+				frappe.msgprint("Change Rate is checked. Please fill Room Rate and Actual Room Rate Nominal");
+				good_to_go = 0;
+			}
+			else {
+				new_room_rate = d.get_values().mv_room_rate;
+				new_actual_room_rate = d.get_values().mv_actual_room_rate;
+			}
+		}
+		if (good_to_go == 1) {
+			console.log(new_room_rate);
+			console.log(new_actual_room_rate);
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_move_room.inn_move_room.create_move_room_by_reservation',
+				args: {
+					reservation_id: frm.doc.name,
+					mv_room_type: d.get_values().mv_room_type,
+					mv_bed_type: d.get_values().mv_bed_type,
+					mv_room_id: d.get_values().mv_room_id,
+					mv_reason: d.get_values().mv_reason,
+					mv_change_rate: d.get_values().mv_change_rate,
+					mv_room_rate: new_room_rate,
+					mv_actual_room_rate: new_actual_room_rate
+				},
+				callback: (r) => {
+					if (r.message == 1) {
+						frappe.msgprint('Successfully move room.');
+						frm.reload_doc();
+					}
+				}
+			});
+			d.hide();
+		}
 	});
 	d.show();
 }
