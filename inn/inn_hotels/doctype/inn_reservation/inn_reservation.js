@@ -820,6 +820,21 @@ function move_room(frm) {
 				'reqd': 1,
 				'onchange': () => {
 					console.log('milih room id');
+					frappe.db.get_value("Customer", frm.doc.customer_id, "customer_group", (customer) => {
+						let customer_group_list = ['All Customer Groups'];
+						customer_group_list.push(customer.customer_group);
+						d.fields_dict['mv_room_rate'].get_query = function () {
+							return {
+								filters: [
+									['Inn Room Rate', 'room_type', '=', d.fields_dict['mv_room_type'].get_value()],
+									['Inn Room Rate', 'is_disabled', '=', 0],
+									['Inn Room Rate', 'customer_group', 'in', customer_group_list],
+									['Inn Room Rate', 'from_date', '<=', formatDate(new Date())],
+									['Inn Room Rate', 'to_date', '>=', formatDate(new Date())],
+								]
+							}
+						}
+					});
 				}
 			},
 			{
