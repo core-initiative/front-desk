@@ -20,6 +20,7 @@ frappe.ui.form.on('Inn Folio', {
 	},
 	add_package: function(frm) {
 		frappe.msgprint("Coming Soon");
+		// TODO: add package in folio
 	},
 	add_charge: function (frm) {
 		add_charge(frm);

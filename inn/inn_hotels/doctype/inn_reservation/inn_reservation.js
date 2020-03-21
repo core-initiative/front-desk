@@ -166,6 +166,10 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.page.add_menu_item(__('Check Out'), function () {
 				process_check_out(frm);
 			});
+
+			frm.page.add_menu_item(__('Move Room'), function () {
+				move_room(frm);
+			});
 		}
 	},
 	after_save: function(frm) {
@@ -365,6 +369,10 @@ frappe.ui.form.on('Inn Reservation', {
 				});
 			}
 		}
+	},
+	verify_card: function frm() {
+		frappe.msgprint("coming soon");
+		// TODO: verify card in reservation
 	}
 });
 frappe.ui.form.on('Inn Key Card',{
@@ -739,4 +747,61 @@ function process_check_out(frm) {
 			}
 		}
 	});
+}
+
+// Function to move reservation's room to another room
+function move_room(frm) {
+	var d = new frappe.ui.Dialog({
+		title: __('Move Room'),
+		fields: [
+			{
+				'label': __('Room Type'),
+				'fieldname': 'mv_room_type',
+				'fieldtype': 'Link',
+				'options': 'Inn Room Type',
+				'onchange': () => {
+					console.log('Milih room type');
+				}
+			},
+			{
+				'label': __('Bed Type'),
+				'fieldname': 'mv_bed_type',
+				'fieldtype': 'Link',
+				'options': 'Inn Bed Type',
+				'onchange': () => {
+					console.log("milih bed type");
+				}
+			},
+			{
+				'label': __('Room ID'),
+				'fieldname': 'mv_room_id',
+				'fieldtype': 'Link',
+				'options': 'Inn Room',
+				'onchange': () => {
+					console.log('milih room id');
+				}
+			},
+			{
+				'label': __('Change Room Rate'),
+				'fieldname': 'mv_change_rate',
+				'fieldtype': 'Check',
+				'default': 0
+			},
+			{
+				'label': __('Room Rate'),
+				'fieldname': 'mv_room_rate',
+				'fieldtype': 'Link',
+				'options': 'Inn Room Rate',
+				'depends_on': 'eval:doc.mv_change_rate==1'
+			},
+			{
+				'label': __('Actual Room Rate Nominal'),
+				'fieldname': 'mv_actual_room_rate',
+				'fieldtype': 'Currency',
+				'depends_on': 'eval:doc.mv_change_rate==1'
+			}
+			
+		]
+	});
+	d.show();
 }
