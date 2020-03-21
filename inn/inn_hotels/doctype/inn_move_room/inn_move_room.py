@@ -51,4 +51,22 @@ def create_move_room_by_reservation(reservation_id, mv_room_type, mv_bed_type, m
 
 	reservation_doc.save()
 
+	# Update room booking
+	old_room_booking = frappe.get_doc('Inn Room Booking',
+									  {'reference_name': reservation_id, 'room_id': move_room_doc.old_room_id,
+									   'status': 'Stayed'})
+
+	if move_room_doc.old_room_id != move_room_doc.new_room:
+		old_room_booking.status = 'Finished'
+		old_room_booking.save()
+		new_room_booking = frappe.new_doc('Inn Room Booking')
+		new_room_booking.start = datetime.date.today().strftime('%Y-%m-%d')
+		new_room_booking.end = old_room_booking.end
+		new_room_booking.room_id = move_room_doc.new_room
+		new_room_booking.room_availability = 'Room Sold'
+		new_room_booking.reference_type = 'Inn Reservation'
+		new_room_booking.reference_name = reservation_id
+		new_room_booking.status = 'Booked'
+		new_room_booking.insert()
+
 	return 1
