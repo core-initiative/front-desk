@@ -214,8 +214,8 @@ function add_charge(frm) {
 			});
 			d.set_primary_action(__('Save'), () => {
 				let remark_to_save = '';
-				if (d.get_values.remark != undefined || d.get_values.remark != null) {
-					remark_to_save = d.get_values.remark;
+				if (d.get_values().remark != undefined || d.get_values().remark != null) {
+					remark_to_save = d.get_values().remark;
 				}
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_charge',
