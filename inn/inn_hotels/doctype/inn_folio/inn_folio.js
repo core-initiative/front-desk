@@ -10,7 +10,7 @@ frappe.ui.form.on('Inn Folio', {
 	transfer_to_another_folio: function(frm) {
 		if (frm.doc.__islocal !== 1) {
 			let trx_selected = frm.get_field("folio_transaction").grid.get_selected();
-			if (trx_selected.length == 0) {
+			if (trx_selected.length === 0) {
 				frappe.msgprint('Please select at least one transaction to be transfered');
 			}
 			else {
@@ -33,15 +33,17 @@ frappe.ui.form.on('Inn Folio', {
 	},
 	refresh: function (frm) {
 		make_read_only(frm);
-		if (frm.doc.__islocal != 1) {
+		if (frm.doc.__islocal !== 1) {
 			if (frm.doc.status === 'Open') {
+				toggle_visibility_buttons(frm, 0);
+				// Auto update balance if needed
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.need_to_update_balance',
 					args: {
 						folio_id: frm.doc.name
 					},
 					callback: (r) => {
-						if (r.message == 1) {
+						if (r.message === 1) {
 							// update needed
 							frappe.call({
 								method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
@@ -62,23 +64,31 @@ frappe.ui.form.on('Inn Folio', {
 						}
 					}
 				});
+				// Close folio manually for Folio type master or desk
+				if (frm.doc.type !== 'Guest') {
+					frm.page.add_menu_item(__('Close Folio'), function () {
+						if (frm.doc.balance !== 0) {
+							frappe.msgprint("Balance is not 0. There are still transactions needed to be resolved.");
+						}
+						else {
+							close_folio(frm);
+						}
+					});
+				}
 			}
-			if (frm.doc.status === 'Open') {
-				toggle_visibility_buttons(frm, 0);
-			}
-			toggle_guest_in_type(frm, 1);
+			toggle_guest_in_type(frm, 0);
 			// Show Reservation Button
-			if (frm.doc.reservation_id != undefined || frm.doc.reservation_id != null) {
+			if (frm.doc.reservation_id !== undefined) {
 				frm.add_custom_button(__('Show Reservation'), function () {
 				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + frm.doc.reservation_id);
-				if (is_check_in == 'true') {
+				if (is_check_in === 'true') {
 					url = url + '?is_check_in=true'
 				}
 				var w = window.open(url, "_self");
 			});
 			}
 			// Update Balance Button
-			if (frm.doc.status != 'Cancel') {
+			if (frm.doc.status !== 'Cancel') {
 				frm.add_custom_button(__('Update Balance'), function () {
 					frappe.call({
 						method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.need_to_update_balance',
@@ -86,7 +96,7 @@ frappe.ui.form.on('Inn Folio', {
 							folio_id: frm.doc.name
 						},
 						callback: (r) => {
-							if (r.message == 1) {
+							if (r.message === 1) {
 								frappe.call({
 									method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
 									args: {
@@ -139,7 +149,7 @@ function getUrlVars() {
 // Function to make form disabled if status cancel
 function make_read_only(frm) {
 	let active_flag = 0;
-	if (frm.doc.status != 'Open') {
+	if (frm.doc.status !== 'Open') {
 		active_flag = 1;
 	}
 	else {
@@ -171,11 +181,17 @@ function toggle_visibility_buttons(frm, active_flag) {
 
 // Function to toggle visibility of Guest options in Type
 function toggle_guest_in_type(frm, is_new) {
-	if (is_new == 1) {
+	if (is_new === 1) {
 		frm.set_df_property('type', 'options', ['Master', 'Desk'])
 	}
 	else {
-		frm.set_df_property('type', 'options', ['Guest', 'Master', 'Desk'])
+		if (frm.doc.type === 'Guest') {
+			frm.set_df_property('type', 'read_only', 1);
+			frm.set_df_property('type', 'options', ['Guest', 'Master', 'Desk'])
+		}
+		else {
+			frm.set_df_property('type', 'options', ['Master', 'Desk'])
+		}
 	}
 	frm.refresh_field('type');
 }
@@ -231,14 +247,14 @@ function add_charge(frm) {
 					'fieldname': 'remark',
 					'fieldtype': 'Small Text',
 				},
-			]
+			];
 			var d = new frappe.ui.Dialog({
 				title: __('Add New Charge for Folio ' + frm.doc.name),
 				fields: fields,
 			});
 			d.set_primary_action(__('Save'), () => {
 				let remark_to_save = '';
-				if (d.get_values().remark != undefined || d.get_values().remark != null) {
+				if (d.get_values().remark !== undefined || d.get_values().remark != null) {
 					remark_to_save = d.get_values().remark;
 				}
 				frappe.call({
@@ -326,14 +342,14 @@ function add_payment(frm) {
 					'fieldname': 'remark',
 					'fieldtype': 'Small Text',
 				},
-			]
+			];
 			var d = new frappe.ui.Dialog({
 				title: __('Add New Payment for Folio ' + frm.doc.name),
 				fields: fields,
 			});
 			d.set_primary_action(__('Save'), () => {
 				let remark_to_save = '';
-				if (d.get_values.remark != undefined || d.get_values.remark != null) {
+				if (d.get_values.remark !== undefined) {
 					remark_to_save = d.get_values.remark;
 				}
 				frappe.call({
@@ -403,7 +419,7 @@ function add_refund(frm) {
 	}
 	d.set_primary_action(__('Save'), () => {
 		let remark_to_save = '';
-		if (d.get_values.remark != undefined || d.get_values.remark != null) {
+		if (d.get_values.remark !== undefined) {
 			remark_to_save = d.get_values.remark;
 		}
 		frappe.call({
@@ -458,7 +474,7 @@ function transfer_to_another_folio(frm, trx_selected) {
 				new_parent: d.get_values().receiving_folio,
 			},
 			callback: (r) => {
-				if (r.message == 0) {
+				if (r.message === 0) {
 					frappe.msgprint('Transactions  transfered to Folio ' + d.get_values().receiving_folio + ' successfully');
 					frm.reload_doc();
 				}
@@ -472,7 +488,7 @@ function transfer_to_another_folio(frm, trx_selected) {
 // Function to void single folio transaction
 function void_transaction(child) {
 	frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
-		if (child.is_void == 0) {
+		if (child.is_void === 0) {
 			child.is_void = 1;
 			cur_frm.save();
 			frappe.show_alert('Transaction with ID ' + child.name + ' voided successfully.');
@@ -480,5 +496,14 @@ function void_transaction(child) {
 		else {
 			frappe.msgprint("This transaction already voided.");
 		}
+	});
+}
+
+// Function to manually close folio
+function close_folio(frm) {
+	frappe.confirm(__("You are about to Close this Folio. Are you sure?"), function () {
+		frm.set_value('status', 'Closed');
+		frm.save()
+		frappe.show_alert("Folio Closed successfully");
 	});
 }
