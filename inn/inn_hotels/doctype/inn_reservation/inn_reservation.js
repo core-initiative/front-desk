@@ -435,7 +435,7 @@ function is_form_good_to_in_house(frm) {
 	}
 	error_message += '</ul>';
 
-	if (is_error == true) {
+	if (is_error === true) {
 		error_message = 'Please fill these fields before Finishing Check In process: <br /> <ul>' + error_message;
 	}
 	else {
