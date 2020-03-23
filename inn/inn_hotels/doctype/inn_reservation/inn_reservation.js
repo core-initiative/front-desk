@@ -472,7 +472,7 @@ function autofill(frm) {
 					frm.set_value('actual_room_id', frm.doc.room_id);
 				}
 				else {
-					frappe.msgprint("Currently, Room " + frm.doc.room_id + " status is not Vacant Ready." +
+					frappe.msgprint("Currently, Room " + frm.doc.room_id + " status is not Vacant Ready. " +
 						"Please consult with Room Service or choose another Room to continue Checking In.")
 				}
 			}
