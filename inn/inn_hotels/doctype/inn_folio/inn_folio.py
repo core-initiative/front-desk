@@ -19,6 +19,8 @@ def create_folio(reservation_id):
 		doc.type = 'Guest'
 		doc.reservation_id = reservation_id
 		doc.customer_id = reservation.customer_id
+		doc.open = reservation.expected_arrival
+		doc.close = reservation.expected_departure
 		doc.insert()
 
 @frappe.whitelist()
@@ -32,7 +34,6 @@ def update_balance(folio_id):
 	trx_list = doc.get('folio_transaction')
 	total_debit = 0.0
 	total_credit = 0.0
-	balance = 0.0
 	for trx in trx_list:
 		if trx.flag == 'Debit' and trx.is_void == 0:
 			total_debit += float(trx.amount)
@@ -40,11 +41,32 @@ def update_balance(folio_id):
 			total_credit += float(trx.amount)
 	balance = total_credit - total_debit
 
-	frappe.db.set_value('Inn Folio', doc.name, 'total_debit', total_debit)
-	frappe.db.set_value('Inn Folio', doc.name, 'total_credit', total_credit)
-	frappe.db.set_value('Inn Folio', doc.name, 'balance', balance)
+	if balance != doc.balance:
+		frappe.db.set_value('Inn Folio', doc.name, 'total_debit', total_debit)
+		frappe.db.set_value('Inn Folio', doc.name, 'total_credit', total_credit)
+		frappe.db.set_value('Inn Folio', doc.name, 'balance', balance)
 
 	return total_debit, total_credit, balance
+
+@frappe.whitelist()
+def need_to_update_balance(folio_id):
+	doc = frappe.get_doc('Inn Folio', folio_id)
+	trx_list = doc.get('folio_transaction')
+
+	total_debit = 0.0
+	total_credit = 0.0
+	for trx in trx_list:
+		if trx.flag == 'Debit' and trx.is_void == 0:
+			total_debit += float(trx.amount)
+		elif trx.flag == 'Credit' and trx.is_void == 0:
+			total_credit += float(trx.amount)
+	balance = total_credit - total_debit
+
+	if balance != doc.balance:
+		return 1
+	else:
+		return 0
+
 
 @frappe.whitelist()
 def get_balance(folio_id):
