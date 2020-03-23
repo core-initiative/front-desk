@@ -158,6 +158,8 @@ function make_read_only(frm) {
 
 	frm.set_df_property('sb4', 'hidden', active_flag);
 	frm.set_df_property('transfer_to_another_folio', 'hidden', active_flag);
+	frm.set_df_property('open', 'read_only', active_flag);
+	frm.set_df_property('close', 'read_only', active_flag);
 	frm.set_df_property('reservation_id', 'read_only', active_flag);
 	frm.set_df_property('customer_id', 'read_only', active_flag);
 	frm.set_df_property('type', 'read_only', active_flag);
