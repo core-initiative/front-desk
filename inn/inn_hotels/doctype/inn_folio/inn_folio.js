@@ -127,6 +127,12 @@ frappe.ui.form.on('Inn Folio', {
 			toggle_visibility_buttons(frm, 1);
 			toggle_guest_in_type(frm, 1);
 		}
+	},
+	close: function (frm) {
+		if (frm.doc.close < frm.doc.open) {
+			frm.set_value('close', null);
+			frappe.msgprint('Close Date must be greater than Open Date');
+		}
 	}
 });
 
