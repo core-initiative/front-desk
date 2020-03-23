@@ -66,7 +66,7 @@ frappe.ui.form.on('Inn Folio', {
 			if (frm.doc.status === 'Open') {
 				toggle_visibility_buttons(frm, 0);
 			}
-			toogle_guest_in_type(frm, 0);
+			toggle_guest_in_type(frm, 1);
 			// Show Reservation Button
 			if (frm.doc.reservation_id != undefined || frm.doc.reservation_id != null) {
 				frm.add_custom_button(__('Show Reservation'), function () {
@@ -115,7 +115,7 @@ frappe.ui.form.on('Inn Folio', {
 		}
 		else {
 			toggle_visibility_buttons(frm, 1);
-			toogle_guest_in_type(frm, 1);
+			toggle_guest_in_type(frm, 1);
 		}
 	}
 });
@@ -170,7 +170,7 @@ function toggle_visibility_buttons(frm, active_flag) {
 }
 
 // Function to toggle visibility of Guest options in Type
-function toogle_guest_in_type(frm, is_new) {
+function toggle_guest_in_type(frm, is_new) {
 	if (is_new == 1) {
 		frm.set_df_property('type', 'options', ['Master', 'Desk'])
 	}
