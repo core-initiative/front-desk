@@ -159,6 +159,27 @@ frappe.ui.form.on('Inn Reservation', {
 					});
 				});
 			});
+			// Add No Show Button if Status still Reserved
+			frm.page.add_menu_item(__('No Show'), function () {
+				frappe.confirm(__("You are about to mark the guest as No Show. Are you Sure?"), function () {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.no_show_reservation',
+						args: {
+							source: 'no_show_button',
+							reservation: frm.doc.name,
+						},
+						callback: (r) => {
+							if (r.message === 1) {
+								frappe.msgprint("Only Reservation with status Reserved can be set to No Show. Please choose other Reservation");
+							}
+							else if (r.message === 0) {
+								frm.refresh();
+								frappe.msgprint("Reservation " + frm.doc.name + " successfully set to No Show.");
+							}
+						}
+					});
+				})
+			})
 		}
 		if (frm.doc.__islocal !== 1 && frm.doc.status === 'In House') {
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section

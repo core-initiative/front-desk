@@ -61,7 +61,6 @@ def cancel_reservation(source, reservation):
 		return 1
 	else:
 		for reservation_id in reservation_to_cancel:
-			doc = frappe.get_doc('Inn Reservation', reservation_id)
 			cancellation_message = cancel_single_reservation(reservation_id)
 			if cancellation_message == 1:
 				exist_cancellation_fail.append(reservation_id)
@@ -87,6 +86,58 @@ def cancel_single_reservation(reservation_id):
 		room_booking.save()
 
 	if reservation.status == 'Cancel' and folio.status == 'Cancel' and room_booking.status == 'Canceled':
+		return 0
+	else:
+		return 1
+
+@frappe.whitelist()
+def no_show_reservation(source, reservation):
+	reservation_to_no_show = []
+	exist_status_not_reserved = []
+	exist_no_show_fail = []
+
+	if source == 'list':
+		reservation = json.loads(reservation)
+		for item in reservation:
+			reservation_to_no_show.append(item)
+	elif source == 'no_show_button':
+		reservation_to_no_show.append(reservation)
+
+	for reservation_id in reservation_to_no_show:
+		doc = frappe.get_doc('Inn Reservation', reservation_id)
+		if doc.status != 'Reserved':
+			exist_status_not_reserved.append(reservation_id)
+
+	if len(exist_status_not_reserved) > 0:
+		return 1
+	else:
+		for reservation_id in reservation_to_no_show:
+			no_show_message = no_show_single_reservation(reservation_id)
+			if no_show_message == 1:
+				exist_no_show_fail.append(reservation_id)
+
+		if len(exist_no_show_fail) > 0:
+			return 1
+		else:
+			return 0
+
+def no_show_single_reservation(reservation_id):
+	reservation = frappe.get_doc('Inn Reservation', reservation_id)
+	folio = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
+	room_booking = frappe.get_doc('Inn Room Booking',
+								  {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
+
+	if reservation.status != 'No Show':
+		reservation.status = 'No Show'
+		reservation.save()
+	if folio.status != 'Cancel':
+		folio.status = 'Cancel'
+		folio.save()
+	if room_booking.status != 'Canceled':
+		room_booking.status = 'Canceled'
+		room_booking.save()
+
+	if reservation.status == 'No Show' and folio.status == 'Cancel' and room_booking.status == 'Canceled':
 		return 0
 	else:
 		return 1

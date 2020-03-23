@@ -293,7 +293,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2020-03-10 16:56:37.754155",
+ "modified": "2020-03-23 16:12:52.486534",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Room Booking",
@@ -326,6 +326,7 @@
  "show_name_in_global_search": 0,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "room_id",
  "track_changes": 1,
  "track_seen": 0,
  "track_views": 0

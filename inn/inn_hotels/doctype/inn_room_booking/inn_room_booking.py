@@ -45,8 +45,11 @@ def update_by_reservation(reservation_id):
 		room_booking_doc.save()
 		return_message = room_booking_doc.name + ' Updated by Checking In Process in Reservation: ' + reservation_doc.name
 	elif reservation_doc.status == 'No Show':
-		pass
-	# TODO: update room booking if reservation no show
+		room_booking_doc = frappe.get_doc('Inn Room Booking',
+										  {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
+		room_booking_doc.status = 'Canceled'
+		room_booking_doc.save()
+		return_message = room_booking_doc.name + 'Status is Canceled by No Show of Reservation: ' + reservation_id
 	else:
 		# Reservation status is Reserved
 		if not frappe.db.exists('Inn Room Booking',
