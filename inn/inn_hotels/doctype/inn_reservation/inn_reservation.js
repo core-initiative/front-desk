@@ -16,7 +16,7 @@ frappe.ui.form.on('Inn Reservation', {
 		make_read_only(frm);
 		console.log("is error = " + is_error);
 		// Hide some variables that not needed to be filled first time Reservation Created
-		if (frm.doc.__islocal == 1) {
+		if (frm.doc.__islocal === 1) {
 			console.log("notsaved");
 			frm.set_df_property('arrival', 'hidden', 1);
 			frm.set_df_property('departure', 'hidden', 1);
@@ -27,7 +27,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('sb4', 'hidden', 1); // Issue Card Buttons Section
 		}
 		// Show Folio Button
-		if (frm.doc.__islocal != 1) {
+		if (frm.doc.__islocal !== 1) {
 			frm.add_custom_button(__('Show Folio'), function () {
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_folio_url',
@@ -50,7 +50,7 @@ frappe.ui.form.on('Inn Reservation', {
 			});
 		}
 		// Reservation is Saved, and status Reserved
-		if (frm.doc.__islocal != 1 && frm.doc.status == 'Reserved') {
+		if (frm.doc.__islocal !== 1 && frm.doc.status === 'Reserved') {
 			console.log("is saved");
 			// Set all variables that hidden to be shown again
 			frm.set_df_property('arrival', 'hidden', 0);
@@ -60,7 +60,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('wifi_password', 'hidden', 0);
 			console.log("is_check_in = " + is_check_in);
 			// Show Start Check In Process button if is_check_in flag undefined
-			if (is_check_in == undefined) {
+			if (is_check_in === undefined) {
 				console.log("is_check_in undefined");
 				frm.add_custom_button(__("Start Check In Process"), function () {
 					is_check_in = "true";
@@ -81,14 +81,14 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 			// Show Info that Check In is In Progress. Meaning button Check In clicked, either from Reservation List or
 			// from Start Check In Process Button
-			if (is_check_in == "true") {
+			if (is_check_in === "true") {
 				frm.set_intro(__("In Progress Checking In Guest"));
 				// Assign some variables from "Reservation Detail" to "Room Stay"
 				autofill(frm);
 				is_form_not_good_to_go = is_form_good_to_in_house(frm);
 				console.log("is_form_not_good_to_go = " + is_form_not_good_to_go);
 				console.log("error_message = " + error_message);
-				if (is_form_not_good_to_go == true && (error_message != '' || error_message != 'Please fill these fields before Finishing Check In process: <br /> <ul>')) {
+				if (is_form_not_good_to_go === true && (error_message !== '' || error_message !== 'Please fill these fields before Finishing Check In process: <br /> <ul>')) {
 					frm.set_intro(error_message);
 				}
 				else {
@@ -98,12 +98,12 @@ frappe.ui.form.on('Inn Reservation', {
 							reservation_id: frm.doc.name
 						},
 						callback: (r) => {
-							if (r.message == false) {
+							if (r.message === false) {
 								frm.set_intro(__("Make Guest Deposit in Folio to continue Check In process."));
 							}
-							else if (r.message == true) {
+							else if (r.message === true) {
 								frm.add_custom_button(__("Finish Check In Process"), function () {
-									if (frm.doc.__unsaved != undefined && frm.doc.unsaved == 1) {
+									if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
 										frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
 									}
 									else {
@@ -114,7 +114,7 @@ frappe.ui.form.on('Inn Reservation', {
 												reservation_id: frm.doc.name
 											},
 											callback: (r) => {
-												if (r.message == 'In House') {
+												if (r.message === 'In House') {
 													frappe.call({
 														method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
 														args: {
@@ -147,10 +147,10 @@ frappe.ui.form.on('Inn Reservation', {
 							reservation: frm.doc.name,
 						},
 						callback: (r) => {
-							if (r.message == 1) {
+							if (r.message === 1) {
 								frappe.msgprint("Only Reservation with status Reserved can be cancelled. Please choose other Reservation");
 							}
-							else if (r.message == 0) {
+							else if (r.message === 0) {
 								frm.refresh();
 								frappe.msgprint("Reservation " + frm.doc.name + " successfully canceled.");
 							}
@@ -159,7 +159,7 @@ frappe.ui.form.on('Inn Reservation', {
 				});
 			});
 		}
-		if (frm.doc.__islocal != 1 && frm.doc.status == 'In House') {
+		if (frm.doc.__islocal !== 1 && frm.doc.status === 'In House') {
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section
 			frm.set_df_property('sb4', 'hidden', 0); // Issue Card Buttons Section
 
@@ -226,11 +226,11 @@ frappe.ui.form.on('Inn Reservation', {
 	room_type: function(frm) {
 		let phase = '';
 		let start_date = frm.doc.expected_arrival;
-		if (is_check_in == 'true') {
+		if (is_check_in === 'true') {
 			phase = 'Check In';
 			start_date = formatDate(frm.doc.arrival);
 		}
-		else if (frm.doc.status != 'Reserved') {
+		else if (frm.doc.status !== 'Reserved') {
 			start_date = formatDate(frm.doc.arrival);
 		}
 		manage_filters('room_type', phase, start_date);
@@ -238,11 +238,11 @@ frappe.ui.form.on('Inn Reservation', {
 	bed_type: function(frm) {
 		let phase = '';
 		let start_date = frm.doc.expected_arrival;
-		if (is_check_in == 'true') {
+		if (is_check_in === 'true') {
 			phase = 'Check In';
 			start_date = formatDate(frm.doc.arrival);
 		}
-		else if (frm.doc.status != 'Reserved') {
+		else if (frm.doc.status !== 'Reserved') {
 			start_date = formatDate(frm.doc.arrival);
 		}
 		manage_filters('bed_type', phase, start_date);
@@ -250,11 +250,11 @@ frappe.ui.form.on('Inn Reservation', {
 	room_id: function(frm) {
 		let phase = '';
 		let start_date = frm.doc.expected_arrival;
-		if (is_check_in == 'true') {
+		if (is_check_in === 'true') {
 			phase = 'Check In';
 			start_date = formatDate(frm.doc.arrival);
 		}
-		else if (frm.doc.status != 'Reserved') {
+		else if (frm.doc.status !== 'Reserved') {
 			start_date = formatDate(frm.doc.arrival);
 		}
 		manage_filters('room_id', phase, start_date);
@@ -262,18 +262,18 @@ frappe.ui.form.on('Inn Reservation', {
 	actual_room_id: function(frm) {
 		let phase = '';
 		let start_date = frm.doc.expected_arrival;
-		if (is_check_in == 'true') {
+		if (is_check_in === 'true') {
 			phase = 'Check In';
 			start_date = formatDate(frm.doc.arrival);
 		}
-		else if (frm.doc.status != 'Reserved') {
+		else if (frm.doc.status !== 'Reserved') {
 			start_date = formatDate(frm.doc.arrival);
 		}
 		console.log("actual room id = " + frm.doc.actual_room_id);
 		manage_filters('actual_room_id', phase, start_date);
 	},
 	room_rate: function (frm) {
-		if (frm.doc.room_rate != undefined) {
+		if (frm.doc.room_rate !== undefined) {
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
 				args: {
@@ -289,12 +289,12 @@ frappe.ui.form.on('Inn Reservation', {
 		}
 	},
 	actual_room_rate: function (frm) {
-		if (frm.doc.arrival != undefined && frm.doc.departure != undefined) {
+		if (frm.doc.arrival !== undefined && frm.doc.departure !== undefined) {
 			if (parseFloat(frm.doc.actual_room_rate) > 0 && parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)) {
 				frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
 				frm.set_value('actual_room_rate', frm.doc.base_room_rate);
 			}
-			else if (parseFloat(frm.doc.actual_room_rate) == 0) {
+			else if (parseFloat(frm.doc.actual_room_rate) === 0) {
 				frm.set_value('room_bill',0);
 				frm.set_value('actual_room_rate_tax', null);
 				frm.set_value('nett_actual_room_rate', 0);
@@ -345,7 +345,7 @@ frappe.ui.form.on('Inn Reservation', {
 		}
 	},
 	issue_card: function (frm) {
-		if (frm.doc.__islocal != 1 && frm.doc.status == 'In House') {
+		if (frm.doc.__islocal !== 1 && frm.doc.status === 'In House') {
 			let current_active_card = 0;
 			let all_issued_card = frm.doc.issued_card;
 			for (let key in all_issued_card) {
@@ -378,7 +378,7 @@ frappe.ui.form.on('Inn Reservation', {
 frappe.ui.form.on('Inn Key Card',{
 	erase_card: function (frm, cdt, cdn) {
 		let child = locals[cdt][cdn];
-		if (child.is_active == 1) {
+		if (child.is_active === 1) {
 			erase_card('with', child.name);
 		}
 		else {
@@ -387,7 +387,7 @@ frappe.ui.form.on('Inn Key Card',{
 	},
 	deactivate_wo_card: function (frm, cdt, cdn) {
 		let child = locals[cdt][cdn];
-		if (child.is_active == 1) {
+		if (child.is_active === 1) {
 			erase_card('without', child.name);
 		}
 		else {
@@ -409,27 +409,27 @@ function getUrlVars() {
 function is_form_good_to_in_house(frm) {
 	error_message = '';
 	is_error = false;
-	if (frm.doc.guest_name == undefined || frm.doc.guest_name == '') {
+	if (frm.doc.guest_name === undefined || frm.doc.guest_name === '') {
 		is_error = true;
 		error_message += '<li>Guest Name </li>';
 	}
-	if (frm.doc.arrival == undefined || frm.doc.arrival == '') {
+	if (frm.doc.arrival === undefined || frm.doc.arrival === '') {
 		is_error = true;
 		error_message += '<li>Actual Arrival</li>';
 	}
-	if (frm.doc.departure == undefined || frm.doc.departure == '') {
+	if (frm.doc.departure === undefined || frm.doc.departure === '') {
 		is_error = true;
 		error_message += '<li>Actual Departure</li>';
 	}
-	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == '') {
+	if (frm.doc.actual_room_id === undefined || frm.doc.actual_room_id === '') {
 		is_error = true;
 		error_message += '<li>Actual Room</li>';
 	}
-	if (frm.doc.actual_room_rate == 0) {
+	if (frm.doc.actual_room_rate === 0) {
 		is_error = true;
 		error_message += '<li>Actual Room Rate</li>';
 	}
-	if (frm.doc.adult == 0) {
+	if (frm.doc.adult === 0) {
 		is_error = true;
 		error_message += '<li>Adult</li>';
 	}
@@ -452,23 +452,23 @@ function autofill(frm) {
 	let expected_departure = new Date(frm.doc.expected_departure);
 	expected_arrival.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
 	expected_departure.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-	if (frm.doc.guest_name == undefined || frm.doc.guest_name == null || frm.doc.guest_name == '') {
+	if (frm.doc.guest_name === undefined || frm.doc.guest_name == null || frm.doc.guest_name === '') {
 		frm.set_value('guest_name', frm.doc.customer_id);
 	}
-	if (frm.doc.arrival == undefined || frm.doc.arrival == null || frm.doc.arrival == '') {
+	if (frm.doc.arrival === undefined || frm.doc.arrival == null || frm.doc.arrival === '') {
 		frm.set_value('arrival', expected_arrival);
 	}
-	if (frm.doc.departure == undefined || frm.doc.departure == null || frm.doc.departure == '') {
+	if (frm.doc.departure === undefined || frm.doc.departure == null || frm.doc.departure === '') {
 		frm.set_value('departure', expected_departure);
 	}
-	if (frm.doc.actual_room_id == undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id == '') {
+	if (frm.doc.actual_room_id === undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id === '') {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room.inn_room.get_room_status',
 			args: {
 				room_id: frm.doc.room_id
 			},
 			callback: (r) => {
-				if (r.message == 'Vacant Ready') {
+				if (r.message === 'Vacant Ready') {
 					frm.set_value('actual_room_id', frm.doc.room_id);
 				}
 				else {
@@ -484,30 +484,30 @@ function autofill(frm) {
 function manage_filters(fieldname, phase, start_date) {
 	console.log("masuk manage_filters from " + fieldname);
 	let room_chooser = 'room_id';
-	if (phase == 'Check In') {
+	if (phase === 'Check In') {
 		room_chooser = 'actual_room_id';
 	}
-	else if (cur_frm.doc.status != 'Reserved') {
+	else if (cur_frm.doc.status !== 'Reserved') {
 		room_chooser = 'actual_room_id';
 	}
 	else {
 		room_chooser = 'room_id';
 	}
 
-	if (fieldname == 'room_type') {
+	if (fieldname === 'room_type') {
 		cur_frm.set_value('bed_type', null);
 		cur_frm.set_value(room_chooser, null);
 		get_available('bed_type', phase);
 		get_available(room_chooser, phase);
 		get_room_rate(start_date);
 	}
-	else if (fieldname == 'bed_type') {
+	else if (fieldname === 'bed_type') {
 		cur_frm.set_value(room_chooser, null);
 		get_available(room_chooser, phase);
 		get_room_rate(start_date);
 	}
-	else if (fieldname == 'actual_room_id') {
-		if(cur_frm.doc.actual_room_id != undefined) {
+	else if (fieldname === 'actual_room_id') {
+		if(cur_frm.doc.actual_room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.actual_room_id, ['room_type', 'bed_type'], function (r) {
 				cur_frm.doc.room_type = 'Standard';
 				cur_frm.doc.bed_type = 'Single';
@@ -518,8 +518,8 @@ function manage_filters(fieldname, phase, start_date) {
 			});
 		}
 	}
-	else if (fieldname == 'room_id'){
-		if (cur_frm.doc.room_id != undefined) {
+	else if (fieldname === 'room_id'){
+		if (cur_frm.doc.room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.room_id, ['room_type', 'bed_type'], function (r) {
 				cur_frm.doc.room_type = r.room_type;
 				cur_frm.doc.bed_type = r.bed_type;
@@ -542,7 +542,7 @@ function get_available(fieldname, phase) {
 	let start = undefined;
 	let end = undefined;
 
-	if (phase == 'Check In') {
+	if (phase === 'Check In') {
 		start = formatDate(cur_frm.doc.arrival);
 		end = formatDate(cur_frm.doc.departure);
 	}
@@ -552,13 +552,13 @@ function get_available(fieldname, phase) {
 	}
 
 	let query  = '';
-	if (fieldname == 'room_id' || fieldname == 'actual_room_id') {
+	if (fieldname === 'room_id' || fieldname === 'actual_room_id') {
 		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_available';
 	}
-	else if (fieldname == 'room_type') {
+	else if (fieldname === 'room_type') {
 		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_type_available';
 	}
-	else if (fieldname == 'bed_type') {
+	else if (fieldname === 'bed_type') {
 		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available';
 	}
 	field.get_query = function () {
@@ -617,12 +617,12 @@ function erase_card(flag, card_name) {
 			expiration_date: formatDate(yesterday)
 		},
 		callback: (r) => {
-			if (r.message == 0) {
+			if (r.message === 0) {
 				cur_frm.reload_doc();
-				if (flag == 'with') {
+				if (flag === 'with') {
 					frappe.show_alert(__("Card Erased.")); return;
 				}
-				else if (flag == 'without') {
+				else if (flag === 'without') {
 					frappe.show_alert(__("Card Deactivated")); return;
 				}
 			}
@@ -637,7 +637,7 @@ function get_room_rate(start_date) {
 	let field = cur_frm.fields_dict['room_rate'];
 	let room_type = cur_frm.doc.room_type;
 
-	if (room_type != undefined) {
+	if (room_type !== undefined) {
 		frappe.db.get_value("Customer", cur_frm.doc.customer_id, "customer_group", (customer) => {
 			let customer_group_list = ['All Customer Groups'];
 			customer_group_list.push(customer.customer_group);
@@ -671,7 +671,7 @@ function get_room_rate(start_date) {
 // Function to make form disabled if certain status of reservation is achieved
 function make_read_only(frm) {
 	let active_flag = 0;
-	if (frm.doc.status == 'Cancel' || frm.doc.status == 'Finish') {
+	if (frm.doc.status === 'Cancel' || frm.doc.status === 'Finish') {
 		frm.disable_save();
 		active_flag = 1;
 	}
@@ -705,7 +705,7 @@ function process_check_out(frm) {
 			reservation_id: frm.doc.name
 		},
 		callback: (r) => {
-			if (r.message != 0) {
+			if (r.message !== 0) {
 				frappe.msgprint('There are several outstanding payments. <br />' +
 					'Please go to the Folio page to complete payment process before Checking Out');
 			}
@@ -768,7 +768,7 @@ function move_room(frm) {
 				'reqd': 1,
 				'onchange': () => {
 					console.log('Milih room type');
-					if (d.fields_dict['mv_room_type'].get_value() != '') {
+					if (d.fields_dict['mv_room_type'].get_value() !== '') {
 						d.set_df_property('mv_bed_type', 'hidden', 0);
 						d.fields_dict['mv_bed_type'].get_query = function () {
 							return {
@@ -794,7 +794,7 @@ function move_room(frm) {
 				'reqd': 1,
 				'onchange': () => {
 					console.log("milih bed type");
-					if (d.fields_dict['mv_bed_type'].get_value() != '') {
+					if (d.fields_dict['mv_bed_type'].get_value() !== '') {
 						d.set_df_property('mv_room_id', 'hidden', 0);
 						d.fields_dict['mv_room_id'].get_query = function () {
 							return {
@@ -875,9 +875,9 @@ function move_room(frm) {
 		let new_room_rate = null;
 		let new_actual_room_rate = 0.0;
 		let good_to_go = 1;
-		if (d.get_values().mv_change_rate == 1) {
-			if (d.get_values().mv_room_rate == undefined || d.get_values().mv_room_rate == '' ||
-			 	d.get_values().mv_actual_room_rate == undefined || d.get_values().mv_actual_room_rate == 0) {
+		if (d.get_values().mv_change_rate === 1) {
+			if (d.get_values().mv_room_rate === undefined || d.get_values().mv_room_rate === '' ||
+			 	d.get_values().mv_actual_room_rate === undefined || d.get_values().mv_actual_room_rate === 0) {
 				frappe.msgprint("Change Rate is checked. Please fill Room Rate and Actual Room Rate Nominal");
 				good_to_go = 0;
 			}
@@ -886,7 +886,7 @@ function move_room(frm) {
 				new_actual_room_rate = d.get_values().mv_actual_room_rate;
 			}
 		}
-		if (good_to_go == 1) {
+		if (good_to_go === 1) {
 			console.log(new_room_rate);
 			console.log(new_actual_room_rate);
 			frappe.call({
@@ -902,7 +902,7 @@ function move_room(frm) {
 					mv_actual_room_rate: new_actual_room_rate
 				},
 				callback: (r) => {
-					if (r.message == 1) {
+					if (r.message === 1) {
 						frappe.msgprint('Successfully move room.');
 						frm.reload_doc();
 					}
