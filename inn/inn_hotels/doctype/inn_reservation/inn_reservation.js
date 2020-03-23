@@ -693,7 +693,7 @@ function get_room_rate(start_date) {
 // Function to make form disabled if certain status of reservation is achieved
 function make_read_only(frm) {
 	let active_flag = 0;
-	if (frm.doc.status === 'Cancel' || frm.doc.status === 'Finish') {
+	if (frm.doc.status === 'Cancel' || frm.doc.status === 'Finish' || frm.doc.status === 'No Show') {
 		frm.disable_save();
 		active_flag = 1;
 	}
