@@ -34,25 +34,36 @@ frappe.ui.form.on('Inn Folio', {
 	refresh: function (frm) {
 		make_read_only(frm);
 		if (frm.doc.__islocal != 1) {
-			if (frm.doc.status == 'Open') {
+			if (frm.doc.status === 'Open') {
 				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+					method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.need_to_update_balance',
 					args: {
 						folio_id: frm.doc.name
 					},
 					callback: (r) => {
-						if (r.message) {
-							frm.doc.total_debit = r.message[0];
-							frm.doc.total_credit = r.message[1];
-							frm.doc.balance = r.message[2];
-							frm.refresh_field('total_debit');
-							frm.refresh_field('total_credit');
-							frm.refresh_field('balance');
+						if (r.message == 1) {
+							// update needed
+							frappe.call({
+								method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+								args: {
+									folio_id: frm.doc.name
+								},
+								callback: (r) => {
+									if (r.message) {
+										frm.doc.total_debit = r.message[0];
+										frm.doc.total_credit = r.message[1];
+										frm.doc.balance = r.message[2];
+										frm.refresh_field('total_debit');
+										frm.refresh_field('total_credit');
+										frm.refresh_field('balance');
+									}
+								}
+							});
 						}
 					}
 				});
 			}
-			if (frm.doc.status == 'Open') {
+			if (frm.doc.status === 'Open') {
 				toggle_visibility_buttons(frm, 0);
 			}
 			toogle_guest_in_type(frm, 0);
@@ -70,19 +81,32 @@ frappe.ui.form.on('Inn Folio', {
 			if (frm.doc.status != 'Cancel') {
 				frm.add_custom_button(__('Update Balance'), function () {
 					frappe.call({
-						method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+						method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.need_to_update_balance',
 						args: {
 							folio_id: frm.doc.name
 						},
 						callback: (r) => {
-							if (r.message) {
-								frappe.show_alert("Balance updated.");
-								frm.doc.total_debit = r.message[0];
-								frm.doc.total_credit = r.message[1];
-								frm.doc.balance = r.message[2];
-								frm.refresh_field('total_debit');
-								frm.refresh_field('total_credit');
-								frm.refresh_field('balance');
+							if (r.message == 1) {
+								frappe.call({
+									method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.update_balance',
+									args: {
+										folio_id: frm.doc.name
+									},
+									callback: (r) => {
+										if (r.message) {
+											frappe.show_alert("Balance updated.");
+											frm.doc.total_debit = r.message[0];
+											frm.doc.total_credit = r.message[1];
+											frm.doc.balance = r.message[2];
+											frm.refresh_field('total_debit');
+											frm.refresh_field('total_credit');
+											frm.refresh_field('balance');
+										}
+									}
+								});
+							}
+							else {
+								frappe.show_alert('Balance already updated.');
 							}
 						}
 					});
