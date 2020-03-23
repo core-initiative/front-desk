@@ -1,6 +1,6 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
-let is_check_in = getUrlVars()['is_check_in'];
+let is_check_in = 'false';
 let is_form_not_good_to_go = false;
 let is_error = false;
 let error_message = '';
@@ -12,6 +12,7 @@ frappe.ui.form.on('Inn Reservation', {
 		make_read_only(frm);
 	},
 	refresh: function(frm) {
+		is_check_in = getUrlVars()['is_check_in'];
 		get_room_max_active_card();
 		make_read_only(frm);
 		console.log("is error = " + is_error);
@@ -509,8 +510,8 @@ function manage_filters(fieldname, phase, start_date) {
 	else if (fieldname === 'actual_room_id') {
 		if(cur_frm.doc.actual_room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.actual_room_id, ['room_type', 'bed_type'], function (r) {
-				cur_frm.doc.room_type = 'Standard';
-				cur_frm.doc.bed_type = 'Single';
+				cur_frm.doc.room_type = r.room_type;
+				cur_frm.doc.bed_type = r.bed_type;
 				cur_frm.refresh();
 				get_available('room_type', phase);
 				get_available('bed_type', phase);
@@ -518,7 +519,7 @@ function manage_filters(fieldname, phase, start_date) {
 			});
 		}
 	}
-	else if (fieldname === 'room_id'){
+	else if (fieldname === 'room_id') {
 		if (cur_frm.doc.room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.room_id, ['room_type', 'bed_type'], function (r) {
 				cur_frm.doc.room_type = r.room_type;
