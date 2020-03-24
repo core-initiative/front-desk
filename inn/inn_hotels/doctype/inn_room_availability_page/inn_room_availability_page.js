@@ -139,9 +139,9 @@ function search(doc) {
 								var td = document.createElement('td');
 								td.className = 'grid-static-col';
 								td.innerHTML = resp.message;
-								// td.ondblclick = function() {
-								// 	book_dialog(elm.name, dateCopied, resp.message);
-								// }
+								td.ondblclick = function() {
+									book_dialog(elm.name, dateCopied, resp.message);
+								}
 								tr.appendChild(td);
 
 								fun();
@@ -168,4 +168,159 @@ function formatDate(date) {
         day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+var dialog = undefined;
+
+function book_dialog(room_id, date, current_status) {
+	if (current_status != 'Room Sold') {
+		if (current_status == '') {
+			dialog = new frappe.ui.Dialog({
+				'title': 'Book Room ' + room_id,
+				'fields': [
+					{'label': 'Start', 'fieldname': 'start', 'fieldtype': 'Date', 'default': date},
+					{'label': 'End', 'fieldname': 'end', 'fieldtype': 'Date', 'default': date},
+					{
+						'label': 'Availability',
+						'fieldname': 'availability',
+						'fieldtype': 'Select',
+						'options': ['Office Use', 'House Use', 'Out of Order', 'Under Construction'],
+					},
+					{'label': 'Description', 'fieldname': 'description', 'fieldtype': 'Small Text'}
+				],
+				primary_action: function() {
+					var form = dialog.get_values();
+					if (form.start == undefined) {
+						frappe.msgprint(__('Choose start')); return;
+					} else if (form.end == undefined) {
+						frappe.msgprint(__('Choose end')); return;
+					} else if (form.end <= form.start) {
+						frappe.msgprint(__('Conflict: End cannot be the same or less than start')); return;
+					} else if (form.availability == undefined) {
+						frappe.msgprint(__('Choose availability')); return;
+					} else {
+						process_booking(room_id, form, 'new', '');
+					}
+				}
+			});
+			dialog.show();
+		} else {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_booking',
+				args: {
+					room_id: room_id,
+					date: date
+				},
+				callback: (resp) => {
+					console.log(resp);
+					console.log(date);
+					dialog = new frappe.ui.Dialog({
+						'title': 'Book Room ' + room_id,
+						'fields': [
+							{'label': 'Start', 'fieldname': 'start', 'fieldtype': 'Date', 'default': resp.message[0][1]},
+							{'label': 'End', 'fieldname': 'end', 'fieldtype': 'Date', 'default': resp.message[0][2]},
+							{
+								'label': 'Availability',
+								'fieldname': 'availability',
+								'fieldtype': 'Select',
+								'options': ['Office Use', 'House Use', 'Out of Order', 'Under Construction'],
+								'default': resp.message[0][3]
+							},
+							{'label': 'Description', 'fieldname': 'description', 'fieldtype': 'Small Text', 'default': resp.message[0][4]},
+							{'label': __('Cancel Booking'), 'fieldname': 'cancel_booking', 'fieldtype': 'Button'},
+							{'label': __('Done'), 'fieldname': 'done_booking', 'fieldtype': 'Button'}
+						],
+						primary_action: function() {
+							var form = dialog.get_values();
+							if (form.start == undefined) {
+								frappe.msgprint(__('Choose start')); return;
+							} else if (form.end == undefined) {
+								frappe.msgprint(__('Choose end')); return;
+							} else if (form.end <= form.start) {
+								frappe.msgprint(__('Conflict: End cannot be the same or less than start')); return;
+							} else if (form.availability == undefined) {
+								frappe.msgprint(__('Choose availability')); return;
+							} else {
+								process_booking(room_id, form, 'update', resp.message[0][0]);
+							}
+						}
+					});
+
+					dialog.fields_dict['cancel_booking'].input.onclick = function() {
+						frappe.db.set_value('Inn Room Booking', resp.message[0][0], {
+							status: 'Canceled'
+						}).then(r => {
+							search(doc);
+							dialog.hide();
+							frappe.msgprint(__('Success cancel book room ' + room_id));
+						})
+					};
+
+					dialog.fields_dict['done_booking'].input.onclick = function() {
+						frappe.db.set_value('Inn Room Booking', resp.message[0][0], {
+							status: 'Finished'
+						}).then(r => {
+							frappe.db.set_value('Inn Room Booking', resp.message[0][0], {
+							end: date
+							}).then(r => {
+								frappe.db.set_value('Inn Room', room_id, {
+								room_status: 'Vacant Dirty'
+								}).then(r => {
+									search(doc);
+									dialog.hide();
+									frappe.msgprint(__('Room Booking of Room No. ' + room_id + ' Finished.'));
+								})
+							})
+						})
+					};
+
+					dialog.show();
+				}
+			});
+		}
+	}
+}
+
+function process_booking(room_id, form, flag, name) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.is_available',
+		args: {
+			room_id: room_id,
+			start: form.start,
+			end: form.end,
+			name: name
+		},
+		callback: (resp) => {
+			if (resp.message == true) {
+				if (flag == 'new') {
+					frappe.db.insert({
+						doctype: 'Inn Room Booking',
+						status: 'Booked',
+						room_id: room_id,
+						start: form.start,
+						end: form.end,
+						room_availability: form.availability,
+						note: form.description
+					}).then(r => {
+						search(doc);
+						dialog.hide();
+						frappe.msgprint(__('Success book room ' + room_id + ' from ' + form.start + ' until ' + form.end));
+					})
+				} else if (flag == 'update') {
+					frappe.db.set_value('Inn Room Booking', name, {
+						start: form.start,
+						end: form.end,
+						room_availability: form.availability,
+						note: form.description
+					}).then(r => {
+						search(doc);
+						dialog.hide();
+						frappe.msgprint(__('Success book room ' + room_id + ' from ' + form.start + ' until ' + form.end));
+					})
+				}
+			} else {
+				frappe.msgprint(__('Conflict date')); return;
+			}
+		}
+	});
 }

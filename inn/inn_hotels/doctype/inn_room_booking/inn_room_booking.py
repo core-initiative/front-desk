@@ -226,3 +226,31 @@ def get_all_room_with_room_booking_status():
 		return_list.append(return_item)
 
 	return return_list
+
+@frappe.whitelist()
+def is_available(room_id, start, end, name):
+	if name:
+		result = frappe.db.sql(
+			'SELECT room_id FROM `tabInn Room Booking` '
+			'WHERE %s != name AND %s = room_id AND status = "Booked" AND (start != end) AND '
+			'((%s >= start AND %s < end) OR (%s > start AND %s <= end) OR (%s < start AND %s > end))',
+			(name, room_id, start, start, end, end, start, end)
+		)
+	else:
+		result = frappe.db.sql(
+			'SELECT room_id FROM `tabInn Room Booking` '
+			'WHERE %s = room_id AND status = "Booked" AND (start != end) AND '
+			'((%s >= start AND %s < end) OR (%s > start AND %s <= end) OR (%s < start AND %s > end))',
+			(room_id, start, start, end, end, start, end)
+		)
+
+	if result:
+		return False
+	else:
+		return True
+
+@frappe.whitelist()
+def get_room_booking(room_id, date):
+	return frappe.db.sql(
+		'SELECT name, start, end, room_availability, note FROM `tabInn Room Booking` WHERE status = "Booked" AND room_id = %s AND %s >= start AND %s < end',
+		(room_id, date, date))
