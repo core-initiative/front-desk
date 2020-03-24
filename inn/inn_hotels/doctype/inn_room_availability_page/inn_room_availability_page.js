@@ -196,6 +196,8 @@ function book_dialog(room_id, date, current_status) {
 						frappe.msgprint(__('Choose end')); return;
 					} else if (form.end <= form.start) {
 						frappe.msgprint(__('Conflict: End cannot be the same or less than start')); return;
+					} else if (form.start < frappe.datetime.get_today() || form.end < frappe.datetime.get_today()) {
+						frappe.msgprint(__('Cannot book room for the past. Please select date later than today')); return;
 					} else if (form.availability == undefined) {
 						frappe.msgprint(__('Choose availability')); return;
 					} else {
@@ -238,7 +240,10 @@ function book_dialog(room_id, date, current_status) {
 								frappe.msgprint(__('Choose end')); return;
 							} else if (form.end <= form.start) {
 								frappe.msgprint(__('Conflict: End cannot be the same or less than start')); return;
-							} else if (form.availability == undefined) {
+							} else if (form.start < frappe.datetime.get_today() || form.end < frappe.datetime.get_today()) {
+								frappe.msgprint(__('Cannot book room for the past. Please select date later than today')); return;
+							}
+							else if (form.availability == undefined) {
 								frappe.msgprint(__('Choose availability')); return;
 							} else {
 								process_booking(room_id, form, 'update', resp.message[0][0]);
