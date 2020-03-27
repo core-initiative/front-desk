@@ -48,6 +48,22 @@ frappe.ui.form.on('Inn Shift', {
 				frm.disable_save();
 			}
 		}
+	},
+	close_shift_button: function (frm) {
+		frappe.confirm(__("You are about to close the shift. Are you sure?"), function() {
+			frappe.call({
+				method: "inn.inn_hotels.doctype.inn_shift.inn_shift.close_shift",
+				args: {
+					shift_id: frm.doc.name,
+				},
+				callback: (r) => {
+					if (r.message) {
+						frappe.show_alert(__("Shift Closed."));
+						frm.reload_doc();
+					}
+				}
+			});
+		});
 	}
 });
 frappe.ui.form.on('Inn CC Detail',{
@@ -69,7 +85,7 @@ frappe.ui.form.on('Inn CC Detail',{
 });
 
 function set_all_read_only() {
-	cur_frm.set_df_property('close_shift', 'hidden', 1);
+	cur_frm.set_df_property('close_shift_button', 'hidden', 1);
 	cur_frm.get_field("cc_detail").grid.only_sortable();
 	cur_frm.get_field("payment_detail").grid.only_sortable();
 	cur_frm.get_field("refund_detail").grid.only_sortable();

@@ -3,6 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+
+from datetime import datetime
+
 import frappe
 from frappe.model.document import Document
 
@@ -251,3 +254,16 @@ def populate_cr_refund(shift_id):
 	returned_cr_refund_detail_list.append(cr_refund)
 
 	return transaction_list, returned_cr_refund_detail_list
+
+@frappe.whitelist()
+def close_shift(shift_id):
+	doc = frappe.get_doc('Inn Shift', shift_id)
+	doc.time_out = datetime.now()
+	doc.username = frappe.session.user
+	doc.status = 'Closed'
+	doc.save()
+
+	if frappe.db.get_value('Inn Shift', {'name': shift_id}, ['status']) == 'Closed':
+		return True
+	else:
+		return False
