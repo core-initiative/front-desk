@@ -21,7 +21,7 @@ def check_in_reservation(reservation_id):
 		doc.status = 'In House'
 		doc.save()
 		if doc.status == 'In House':
-			room_doc.room_status = 'Occupied Dirty'
+			room_doc.room_status = 'Occupied Clean'
 			room_doc.save()
 
 	return doc.status
