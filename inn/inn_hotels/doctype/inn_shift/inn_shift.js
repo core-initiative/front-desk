@@ -33,10 +33,11 @@ frappe.ui.form.on('Inn Shift', {
 							item.amount = 0;
 						}
 						frm.refresh_field('cc_detail');
+
+						populate_payment_refund(frm, null);
 					}
 				}
 			});
-			populate_payment_refund(frm, null);
 		}
 		else {
 			if (frm.doc.status === 'Open') {
