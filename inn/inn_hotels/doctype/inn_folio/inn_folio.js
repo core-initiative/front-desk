@@ -1,6 +1,8 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
 var is_check_in = getUrlVars()['is_check_in'];
+var void_shown = false;
+var folio_transaction = null;
 
 frappe.ui.form.on('Inn Folio', {
 	onload: function(frm) {
@@ -31,7 +33,24 @@ frappe.ui.form.on('Inn Folio', {
 	add_refund: function (frm) {
 		add_refund(frm);
 	},
-	refresh: function (frm) {
+	toggle_void_transaction: function(frm, cdt, cdn) {
+		folio_transaction = frm.get_doc(cdt, cdn).folio_transaction;
+		if (void_shown == false) {
+			folio_transaction.forEach(showVoid);
+			void_shown = true;
+			frm.fields_dict['toggle_void_transaction'].label = 'Hide Void Transaction';
+			frm.refresh_field('toggle_void_transaction');
+		}
+		else {
+			folio_transaction.forEach(hideVoid);
+			void_shown = false;
+			frm.fields_dict['toggle_void_transaction'].label = 'Show Void Transaction';
+			frm.refresh_field('toggle_void_transaction');
+		}
+	},
+	refresh: function (frm, cdt, cdn) {
+		var x = frappe.get_doc(cdt, cdn).folio_transaction;
+		x.forEach(hideVoid);
 		make_read_only(frm);
 		if (frm.doc.__islocal !== 1) {
 			if (frm.doc.status === 'Open') {
@@ -514,4 +533,18 @@ function close_folio(frm) {
 		frm.save()
 		frappe.show_alert("Folio Closed successfully");
 	});
+}
+
+// Function to showing voided transaction
+function showVoid(item, index) {
+	if(item.is_void === 1) {
+		$('[data-name='+item.name+']').show();
+	}
+}
+
+// Function to hiding voided transaction
+function hideVoid(item, index) {
+	if(item.is_void === 1) {
+		$('[data-name='+item.name+']').hide();
+	}
 }
