@@ -67,6 +67,23 @@ frappe.ui.form.on('Inn Shift', {
 			}
 		}
 	},
+	print_cashier_report_button: function(frm, cdt, cdn) {
+		if (frm.doc.__unsaved) {
+			frappe.msgprint("Please save the document changes first, before printing report");
+		}
+		else {
+			let w = window.open(frappe.urllib.get_full_url("/printview?"
+				+"doctype="+encodeURIComponent("Inn Shift")
+				+"&name="+encodeURIComponent(cdn)
+				+"&format="+encodeURIComponent("Cashier Report")
+				+"&no_letterhead=0"
+				));
+
+			if (!w) {
+				frappe.msgprint(__("Please enable pop-ups")); return;
+			}
+		}
+	},
 	close_shift_button: function (frm) {
 		frappe.confirm(__("You are about to close the shift. Are you sure?"), function() {
 			frappe.call({
