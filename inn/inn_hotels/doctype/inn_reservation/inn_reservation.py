@@ -173,7 +173,7 @@ def generate_wifi_password(reservation_id):
 			password = guest_name.partition(' ')[0]
 		else:
 			name = reservation.customer_id
-			password = name.partition(' ')[0]
+			password = name.partition(' ')[0].lower()
 	elif mode == 'Random Number':
 		digits = string.digits
 		password = ''.join(random.choice(digits) for i in range(6))
