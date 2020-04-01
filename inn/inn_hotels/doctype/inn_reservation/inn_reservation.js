@@ -93,49 +93,81 @@ frappe.ui.form.on('Inn Reservation', {
 					frm.set_intro(error_message);
 				}
 				else {
-					frappe.call({
-						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.allowed_to_in_house',
-						args: {
-							reservation_id: frm.doc.name
-						},
-						callback: (r) => {
-							if (r.message === false) {
-								frm.set_intro(__("Make Guest Deposit in Folio to continue Check In process."));
-							}
-							else if (r.message === true) {
-								frm.add_custom_button(__("Finish Check In Process"), function () {
-									if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
-										frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
-									}
-									else {
-										is_check_in = "false";
+
+					frm.add_custom_button(__("Finish Check In Process"), function () {
+						if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
+							frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
+						}
+						else {
+							is_check_in = "false";
+							frappe.call({
+								method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_in_reservation',
+								args: {
+									reservation_id: frm.doc.name
+								},
+								callback: (r) => {
+									if (r.message === 'In House') {
 										frappe.call({
-											method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_in_reservation',
+											method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
 											args: {
 												reservation_id: frm.doc.name
 											},
 											callback: (r) => {
-												if (r.message === 'In House') {
-													frappe.call({
-														method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
-														args: {
-															reservation_id: frm.doc.name
-														},
-														callback: (r) => {
-															if (r.message) {
-																console.log(r.message);
-															}
-														}
-													});
-													frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+												if (r.message) {
+													console.log(r.message);
 												}
 											}
 										});
+										frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
 									}
-								});
-							}
+								}
+							});
 						}
 					});
+					// Checking if deposit is made before allow to finish checking in
+					// frappe.call({
+					// 	method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.allowed_to_in_house',
+					// 	args: {
+					// 		reservation_id: frm.doc.name
+					// 	},
+					// 	callback: (r) => {
+					// 		if (r.message === false) {
+					// 			frm.set_intro(__("Make Guest Deposit in Folio to continue Check In process."));
+					// 		}
+					// 		else if (r.message === true) {
+					// 			frm.add_custom_button(__("Finish Check In Process"), function () {
+					// 				if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
+					// 					frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
+					// 				}
+					// 				else {
+					// 					is_check_in = "false";
+					// 					frappe.call({
+					// 						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_in_reservation',
+					// 						args: {
+					// 							reservation_id: frm.doc.name
+					// 						},
+					// 						callback: (r) => {
+					// 							if (r.message === 'In House') {
+					// 								frappe.call({
+					// 									method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+					// 									args: {
+					// 										reservation_id: frm.doc.name
+					// 									},
+					// 									callback: (r) => {
+					// 										if (r.message) {
+					// 											console.log(r.message);
+					// 										}
+					// 									}
+					// 								});
+					// 								frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+					// 							}
+					// 						}
+					// 					});
+					// 				}
+					// 			});
+					// 		}
+					// 	}
+					// });
 				}
 			}
 			//Add Cancel Button if Status still Reserved
