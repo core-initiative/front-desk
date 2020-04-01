@@ -79,4 +79,4 @@ frappe.listview_settings['Inn Reservation'] = {
             );
         });
     }
-}
+};
