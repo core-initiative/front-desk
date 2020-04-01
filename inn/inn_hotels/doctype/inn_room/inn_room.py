@@ -43,7 +43,7 @@ def get_all_inn_room():
 							 order_by='name asc')
 
 @frappe.whitelist()
-def update_room_status(rooms):
+def update_room_status(rooms, mode):
 	is_failed = []
 	is_housekeeping_assistant = False
 	is_housekeeping_supervisor = False
@@ -57,21 +57,37 @@ def update_room_status(rooms):
 		elif role == 'Administrator':
 			is_administrator = True
 
-	for room in  json.loads(rooms):
-		door_status = frappe.db.get_value('Inn Room', room, 'door_status')
-		room_status = frappe.db.get_value('Inn Room', room, 'room_status')
+	if mode == 'clean':
+		for room in  json.loads(rooms):
+			door_status = frappe.db.get_value('Inn Room', room, 'door_status')
+			room_status = frappe.db.get_value('Inn Room', room, 'room_status')
 
-		if door_status == 'No Status' or door_status == 'Sleeping Out':
-			if room_status == 'Vacant Dirty':
-				frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Clean')
-			elif room_status == 'Occupied Dirty':
-				frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Clean')
-			elif room_status == 'Vacant Clean' and (is_housekeeping_supervisor or is_housekeeping_assistant or is_administrator):
-				frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Ready')
+			if door_status == 'No Status' or door_status == 'Sleeping Out':
+				if room_status == 'Vacant Dirty':
+					frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Clean')
+				elif room_status == 'Occupied Dirty':
+					frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Clean')
+				elif room_status == 'Vacant Clean' and (is_housekeeping_supervisor or is_housekeeping_assistant or is_administrator):
+					frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Ready')
+				else:
+					is_failed.append(room)
+
+		if len(is_failed) > 0:
+			return 'Some Rooms status updated. Some room status cannot be updated: ' + str(is_failed)
+		else:
+			return ' All Room status updated successfully.'
+	elif mode == 'dirty':
+		for room in json.loads(rooms):
+			room_status = frappe.db.get_value('Inn Room', room, 'room_status')
+
+			if room_status == 'Vacant Clean' or room_status == 'Vacant Ready':
+				frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Dirty')
+			elif room_status == 'Occupied Clean':
+				frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Dirty')
 			else:
 				is_failed.append(room)
 
-	if len(is_failed) > 0:
-		return 'some Rooms status updated. Some room status cannot be updated: ' + str(is_failed)
-	else:
-		return ' All Room status updated successfully.'
+		if len(is_failed) > 0:
+			return 'Some Rooms status updated. Some room status cannot be updated: ' + str(is_failed)
+		else:
+			return ' All Room status updated successfully.'
