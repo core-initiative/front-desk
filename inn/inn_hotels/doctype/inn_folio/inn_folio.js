@@ -49,10 +49,12 @@ frappe.ui.form.on('Inn Folio', {
 		}
 	},
 	refresh: function (frm, cdt, cdn) {
-		var x = frappe.get_doc(cdt, cdn).folio_transaction;
-		x.forEach(hideVoid);
 		make_read_only(frm);
 		if (frm.doc.__islocal !== 1) {
+			var x = frappe.get_doc(cdt, cdn).folio_transaction;
+			if (x) {
+				x.forEach(hideVoid);
+			}
 			if (frm.doc.status === 'Open') {
 				toggle_visibility_buttons(frm, 0);
 				// Auto update balance if needed
@@ -209,15 +211,16 @@ function toggle_visibility_buttons(frm, active_flag) {
 // Function to toggle visibility of Guest options in Type
 function toggle_guest_in_type(frm, is_new) {
 	if (is_new === 1) {
-		frm.set_df_property('type', 'options', ['Master', 'Desk'])
+		frm.set_df_property('type', 'options', ['Master', 'Desk']);
+		frm.set_value('type', 'Master');
 	}
 	else {
 		if (frm.doc.type === 'Guest') {
 			frm.set_df_property('type', 'read_only', 1);
-			frm.set_df_property('type', 'options', ['Guest', 'Master', 'Desk'])
+			frm.set_df_property('type', 'options', ['Guest', 'Master', 'Desk']);
 		}
 		else {
-			frm.set_df_property('type', 'options', ['Master', 'Desk'])
+			frm.set_df_property('type', 'options', ['Master', 'Desk']);
 		}
 	}
 	frm.refresh_field('type');
