@@ -84,6 +84,7 @@ frappe.ui.form.on('Inn Reservation', {
 			// from Start Check In Process Button
 			if (is_check_in === "true") {
 				frm.set_intro(__("In Progress Checking In Guest"));
+				manage_filters('actual_room_id', 'Check In', formatDate(frm.doc.arrival));
 				// Assign some variables from "Reservation Detail" to "Room Stay"
 				autofill(frm);
 				is_form_not_good_to_go = is_form_good_to_in_house(frm);
@@ -303,7 +304,10 @@ frappe.ui.form.on('Inn Reservation', {
 	},
 	room_id: function(frm) {
 		let phase = '';
-		let start_date = frm.doc.expected_arrival;
+		let start_date = undefined;
+		if (frm.doc.expected_arrival !== undefined) {
+			start_date = frm.doc.expected_arrival;
+		}
 		if (is_check_in === 'true') {
 			phase = 'Check In';
 			start_date = formatDate(frm.doc.arrival);
@@ -311,7 +315,9 @@ frappe.ui.form.on('Inn Reservation', {
 		else if (frm.doc.status !== 'Reserved') {
 			start_date = formatDate(frm.doc.arrival);
 		}
-		manage_filters('room_id', phase, start_date);
+		if (start_date !== undefined) {
+			manage_filters('room_id', phase, start_date);
+		}
 	},
 	actual_room_id: function(frm) {
 		let phase = '';
@@ -561,6 +567,7 @@ function manage_filters(fieldname, phase, start_date) {
 		get_room_rate(start_date);
 	}
 	else if (fieldname === 'actual_room_id') {
+		get_available(room_chooser, phase);
 		if(cur_frm.doc.actual_room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.actual_room_id, ['room_type', 'bed_type'], function (r) {
 				cur_frm.doc.room_type = r.room_type;
@@ -573,6 +580,7 @@ function manage_filters(fieldname, phase, start_date) {
 		}
 	}
 	else if (fieldname === 'room_id') {
+		get_available(room_chooser, phase);
 		if (cur_frm.doc.room_id !== undefined) {
 			frappe.db.get_value('Inn Room', cur_frm.doc.room_id, ['room_type', 'bed_type'], function (r) {
 				cur_frm.doc.room_type = r.room_type;
@@ -615,6 +623,7 @@ function get_available(fieldname, phase) {
 	else if (fieldname === 'bed_type') {
 		query = 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available';
 	}
+	console.log("query " + query);
 	field.get_query = function () {
 		return {
 			query: query,
