@@ -91,3 +91,52 @@ def update_room_status(rooms, mode):
 			return 'Some Rooms status updated. Some room status cannot be updated: ' + str(is_failed)
 		else:
 			return ' All Room status updated successfully.'
+
+@frappe.whitelist()
+def update_single_room_status(room, mode):
+	is_failed = False
+	is_housekeeping_assistant = False
+	is_housekeeping_supervisor = False
+	is_administrator = False
+
+	for role in frappe.get_roles(frappe.session.user):
+		if role == 'Housekeeping Assistant':
+			is_housekeeping_assistant = True
+		elif role == 'Housekeeping Supervisor':
+			is_housekeeping_supervisor = True
+		elif role == 'Administrator':
+			is_administrator = True
+
+	if mode == 'clean':
+		door_status = frappe.db.get_value('Inn Room', room, 'door_status')
+		room_status = frappe.db.get_value('Inn Room', room, 'room_status')
+		if door_status == 'No Status' or door_status == 'Sleeping Out':
+			if room_status == 'Vacant Dirty':
+				frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Clean')
+			elif room_status == 'Occupied Dirty':
+				frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Clean')
+			elif room_status == 'Vacant Clean' and (
+					is_housekeeping_supervisor or is_housekeeping_assistant or is_administrator):
+				frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Ready')
+			else:
+				is_failed = True
+
+		if is_failed:
+			return 'Room Status cannot be updated. Please try again.'
+		else:
+			return 'Room ' + room + ' Status updated successfully'
+
+	elif mode == 'dirty':
+		room_status = frappe.db.get_value('Inn Room', room, 'room_status')
+
+		if room_status == 'Vacant Clean' or room_status == 'Vacant Ready':
+			frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Dirty')
+		elif room_status == 'Occupied Clean':
+			frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Dirty')
+		else:
+			is_failed = True
+
+		if is_failed:
+			return 'Room Status cannot be updated. Please try again.'
+		else:
+			return 'Room ' + room + ' Status updated successfully'
