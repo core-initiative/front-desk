@@ -28,28 +28,29 @@ def get_posted_lists():
 	folio_list = frappe.get_all('Inn Folio', filters={'status': 'Open', 'type': 'Guest'}, fields=['*'])
 	for item in folio_list:
 		reservation = frappe.get_doc('Inn Reservation', item.reservation_id)
-		room_charge_remark = 'Room Charge: ' + reservation.actual_room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
-		if frappe.db.exists('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
-			folio_trx = frappe.get_doc('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge',
-																 'remark': room_charge_remark})
-			posted = frappe.new_doc('Inn Room Charge Posted')
-			posted.reservation_id = item.reservation_id
-			posted.folio_id = item.name
-			posted.room_id = reservation.actual_room_id
-			posted.customer_id = reservation.customer_id
-			posted.room_rate_id = reservation.room_rate
-			posted.actual_room_rate = reservation.actual_room_rate
-			posted.folio_transaction_id = folio_trx.name
-			already_posted_list.append(posted)
-		else:
-			tobe_posted = frappe.new_doc('Inn Room Charge To Be Posted')
-			tobe_posted.reservation_id = item.reservation_id
-			tobe_posted.folio_id = item.name
-			tobe_posted.room_id = reservation.actual_room_id
-			tobe_posted.customer_id = reservation.customer_id
-			tobe_posted.room_rate_id = reservation.room_rate
-			tobe_posted.actual_room_rate = reservation.actual_room_rate
-			tobe_posted_list.append(tobe_posted)
+		if reservation.status == 'In House' or reservation.status == 'Finish':
+			room_charge_remark = 'Room Charge: ' + reservation.actual_room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			if frappe.db.exists('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
+				folio_trx = frappe.get_doc('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge',
+																	 'remark': room_charge_remark})
+				posted = frappe.new_doc('Inn Room Charge Posted')
+				posted.reservation_id = item.reservation_id
+				posted.folio_id = item.name
+				posted.room_id = reservation.actual_room_id
+				posted.customer_id = reservation.customer_id
+				posted.room_rate_id = reservation.room_rate
+				posted.actual_room_rate = reservation.actual_room_rate
+				posted.folio_transaction_id = folio_trx.name
+				already_posted_list.append(posted)
+			else:
+				tobe_posted = frappe.new_doc('Inn Room Charge To Be Posted')
+				tobe_posted.reservation_id = item.reservation_id
+				tobe_posted.folio_id = item.name
+				tobe_posted.room_id = reservation.actual_room_id
+				tobe_posted.customer_id = reservation.customer_id
+				tobe_posted.room_rate_id = reservation.room_rate
+				tobe_posted.actual_room_rate = reservation.actual_room_rate
+				tobe_posted_list.append(tobe_posted)
 
 	return tobe_posted_list, already_posted_list
 
