@@ -28,6 +28,8 @@ def process_dayend_close(doc_id):
 			if trx.is_void == 0 and trx.journal_entry_id is None:
 				if trx.remark is None:
 					remark = trx.transaction_type + ' ' + trx.parent
+				elif trx.remark == '':
+					remark = trx.transaction_type + ' ' + trx.parent
 				else:
 					remark = trx.remark
 				customer_name = frappe.db.get_value('Inn Folio', trx.parent, 'customer_id')
@@ -47,7 +49,7 @@ def process_dayend_close(doc_id):
 				doc_jea_debit.debit_in_account_currency = trx.amount
 				doc_jea_debit.party_type = 'Customer'
 				doc_jea_debit.party = customer_name
-				doc_jea_debit.user_remark = trx.remark
+				doc_jea_debit.user_remark = remark
 
 				doc_jea_credit = frappe.new_doc('Journal Entry Account')
 				doc_jea_credit.account = trx.credit_account
@@ -55,7 +57,7 @@ def process_dayend_close(doc_id):
 				doc_jea_credit.credit_in_account_currency = trx.amount
 				doc_jea_credit.party_type = 'Customer'
 				doc_jea_credit.party = customer_name
-				doc_jea_credit.user_remark = trx.remark
+				doc_jea_credit.user_remark = remark
 
 				doc_je.append('accounts', doc_jea_debit)
 				doc_je.append('accounts', doc_jea_credit)

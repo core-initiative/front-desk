@@ -113,7 +113,7 @@ function populate_child(frm) {
 										callback: (response) => {
 											if (response.message === 'Closed') {
 												frm.reload_doc();
-												frm.msgprint('Day ' + frm.doc.audit_date + ' Closed');
+												frappe.msgprint('Day ' + frm.doc.audit_date + ' Closed');
 											}
 										}
 									});
