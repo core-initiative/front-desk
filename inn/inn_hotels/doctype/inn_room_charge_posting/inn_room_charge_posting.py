@@ -22,6 +22,14 @@ def is_there_open_room_charge_posting():
 		return 2
 
 @frappe.whitelist()
+def is_there_closed_room_charge_posting_at():
+	date = datetime.date.today()
+	if frappe.db.exists('Inn Room Charge Posting', {'audit_date': date, 'status': 'Closed'}):
+		return 1
+	else:
+		return 2
+
+@frappe.whitelist()
 def get_posted_lists():
 	tobe_posted_list = []
 	already_posted_list = []
