@@ -50,8 +50,8 @@ function populate_child(frm) {
 			date: frm.doc.audit_date
 		},
 		callback: (r) => {
+			frm.set_value('arrived_today', []);
 			if (r.message[0].length > 0) {
-				frm.set_value('arrived_today', []);
 				$.each(r.message[0], function (i, d) {
 					var item = frm.add_child('arrived_today');
 					item.reservation_id = d.reservation_id;
@@ -59,10 +59,10 @@ function populate_child(frm) {
 					item.customer_id = d.customer_id;
 					item.description = d.description;
 				});
-				frm.refresh_field('arrived_today');
 			}
+			frm.refresh_field('arrived_today');
+			frm.set_value('departed_today', []);
 			if (r.message[1].length > 0) {
-				frm.set_value('departed_today', []);
 				$.each(r.message[1], function (i, d) {
 					var item = frm.add_child('departed_today');
 					item.reservation_id = d.reservation_id;
@@ -70,11 +70,10 @@ function populate_child(frm) {
 					item.customer_id = d.customer_id;
 					item.description = d.description;
 				});
-				frm.refresh_field('departed_today');
-
 			}
+			frm.refresh_field('departed_today');
+			frm.set_value('closed_today', []);
 			if (r.message[2].length > 0) {
-				frm.set_value('closed_today', []);
 				$.each(r.message[0], function (i, d) {
 					var item = frm.add_child('closed_today');
 					item.type = d.type;
@@ -82,8 +81,8 @@ function populate_child(frm) {
 					item.customer_id = d.customer_id;
 					item.description = d.description;
 				});
-				frm.refresh_field('closed_today');
 			}
+			frm.refresh_field('closed_today');
 
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.is_there_open_room_charge_posting',
