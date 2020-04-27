@@ -532,9 +532,17 @@ function void_transaction(child) {
 // Function to manually close folio
 function close_folio(frm) {
 	frappe.confirm(__("You are about to Close this Folio. Are you sure?"), function () {
-		frm.set_value('status', 'Closed');
-		frm.save()
-		frappe.show_alert("Folio Closed successfully");
+		frappe.call({
+			method:'inn.inn_hotels.doctype.inn_folio.inn_folio.close_folio',
+			args: {
+				folio_id: frm.doc.name
+			},
+			callback: (r) => {
+				if (r.message === 'Closed') {
+					frappe.show_alert("Folio Closed successfully");
+				}
+			}
+		});
 	});
 }
 
