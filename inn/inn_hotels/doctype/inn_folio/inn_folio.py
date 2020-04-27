@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
+import datetime
 from frappe.model.document import Document
 
 class InnFolio(Document):
@@ -107,6 +108,7 @@ def is_using_city_ledger(folio_id):
 def close_folio(folio_id):
 	folio = frappe.get_doc('Inn Folio', folio_id)
 	folio.status = 'Closed'
+	folio.close = datetime.date.today()
 	folio.save()
 
 	# Create AR City Ledger if There are payment using City Ledger as mode_of_payment
@@ -126,6 +128,8 @@ def close_folio(folio_id):
 		ar_city_ledger.folio_id = folio_id
 		ar_city_ledger.folio_type = folio.type
 		ar_city_ledger.folio_status = folio.status
+		ar_city_ledger.folio_open = folio.open
+		ar_city_ledger.folio_close = folio.close
 		ar_city_ledger.insert()
 
 	return frappe.db.get_value('Inn Folio', folio_id, 'status')
