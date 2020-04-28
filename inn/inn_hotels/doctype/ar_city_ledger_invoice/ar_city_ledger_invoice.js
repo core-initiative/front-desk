@@ -10,7 +10,7 @@ frappe.ui.form.on('AR City Ledger Invoice', {
 frappe.ui.form.on('AR City Ledger Invoice Folio', {
 	folio_id: function (frm, cdt, cdn) {
 		let child = locals[cdt][cdn];
-		get_id_by_folio(child);
+		autofill_by_folio(child);
 	}
 });
 
@@ -37,7 +37,7 @@ function filter_folio(frm, channel = null, group = null) {
 	});
 }
 
-function get_id_by_folio(child) {
+function autofill_by_folio(child) {
 	frappe.call({
 		method: 'inn.inn_hotels.doctype.ar_city_ledger.ar_city_ledger.get_ar_city_ledger_by_folio',
 		args: {
