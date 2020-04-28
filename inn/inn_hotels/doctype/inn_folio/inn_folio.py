@@ -123,7 +123,10 @@ def close_folio(folio_id):
 		ar_city_ledger.naming_series = 'AR-CL-.YYYY.-'
 		ar_city_ledger.is_paid = 0
 		ar_city_ledger.customer_id = folio.customer_id
-		ar_city_ledger.inn_channel_id = frappe.db.get_value('Inn Reservation', folio.reservation_id, 'channel')
+		if folio.type == 'Guest':
+			ar_city_ledger.inn_channel_id = frappe.db.get_value('Inn Reservation', folio.reservation_id, 'channel')
+		else:
+			ar_city_ledger.inn_group_id = folio.group_id
 		ar_city_ledger.total_amount = total_amount
 		ar_city_ledger.folio_id = folio_id
 		ar_city_ledger.folio_type = folio.type
