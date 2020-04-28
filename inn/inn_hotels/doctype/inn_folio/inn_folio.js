@@ -5,6 +5,9 @@ var void_shown = false;
 var folio_transaction = null;
 
 frappe.ui.form.on('Inn Folio', {
+	before_save: function(frm) {
+		make_mandatory(frm);
+	},
 	onload: function(frm) {
 		frm.get_field("folio_transaction").grid.only_sortable();
 		make_read_only(frm);
@@ -36,13 +39,13 @@ frappe.ui.form.on('Inn Folio', {
 	toggle_void_transaction: function(frm, cdt, cdn) {
 		folio_transaction = frm.get_doc(cdt, cdn).folio_transaction;
 		if (void_shown == false) {
-			folio_transaction.forEach(showVoid);
+			folio_transaction.forEach(show_void);
 			void_shown = true;
 			frm.fields_dict['toggle_void_transaction'].label = 'Hide Void Transaction';
 			frm.refresh_field('toggle_void_transaction');
 		}
 		else {
-			folio_transaction.forEach(hideVoid);
+			folio_transaction.forEach(hide_void);
 			void_shown = false;
 			frm.fields_dict['toggle_void_transaction'].label = 'Show Void Transaction';
 			frm.refresh_field('toggle_void_transaction');
@@ -53,7 +56,7 @@ frappe.ui.form.on('Inn Folio', {
 		if (frm.doc.__islocal !== 1) {
 			var x = frappe.get_doc(cdt, cdn).folio_transaction;
 			if (x) {
-				x.forEach(hideVoid);
+				x.forEach(hide_void);
 			}
 			if (frm.doc.status === 'Open') {
 				toggle_visibility_buttons(frm, 0);
@@ -547,15 +550,26 @@ function close_folio(frm) {
 }
 
 // Function to showing voided transaction
-function showVoid(item, index) {
+function show_void(item, index) {
 	if(item.is_void === 1) {
 		$('[data-name='+item.name+']').show();
 	}
 }
 
 // Function to hiding voided transaction
-function hideVoid(item, index) {
+function hide_void(item, index) {
 	if(item.is_void === 1) {
 		$('[data-name='+item.name+']').hide();
+	}
+}
+
+// Function to make mandatory certain number of fields
+function make_mandatory(frm) {
+	if (frm.doc.type != 'Guest') {
+		if (frm.doc.group_id == undefined || frm.doc.group_id == null) {
+			console.log("masuk sini");
+			frappe.validated = false;
+			frappe.msgprint("The Group field cannot be empty if folio type is " + frm.doc.type);
+		}
 	}
 }
