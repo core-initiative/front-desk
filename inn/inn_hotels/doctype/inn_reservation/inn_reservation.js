@@ -84,7 +84,6 @@ frappe.ui.form.on('Inn Reservation', {
 			// from Start Check In Process Button
 			if (is_check_in === "true") {
 				frm.set_intro(__("In Progress Checking In Guest"));
-				manage_filters('actual_room_id', 'Check In', formatDate(frm.doc.arrival));
 				// Assign some variables from "Reservation Detail" to "Room Stay"
 				autofill(frm);
 				is_form_not_good_to_go = is_form_good_to_in_house(frm);
@@ -532,6 +531,7 @@ function autofill(frm) {
 					frm.set_value('actual_room_id', frm.doc.room_id);
 				}
 				else {
+					get_available('actual_room_id', 'Check In');
 					frappe.msgprint("Currently, Room " + frm.doc.room_id + " status is not Vacant Ready. " +
 						"Please consult with Room Service or choose another Room to continue Checking In.")
 				}

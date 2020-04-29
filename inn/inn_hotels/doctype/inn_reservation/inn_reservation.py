@@ -9,6 +9,7 @@ import json
 import random
 import string
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio
 
 class InnReservation(Document):
 	pass
@@ -156,10 +157,7 @@ def check_out_reservation(reservation_id):
 			room_doc.save()
 
 			# Change folio status
-			folio_doc.status = 'Closed'
-			folio_doc.save()
-
-			# TODO: Journal Entry for Checking out
+			close_folio(folio_doc.name)
 
 	return doc.status
 
