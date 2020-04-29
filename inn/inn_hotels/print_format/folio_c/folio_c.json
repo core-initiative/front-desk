@@ -1,0 +1,23 @@
+{
+ "align_labels_right": 0,
+ "creation": "2020-04-30 06:44:18.752381",
+ "custom_format": 1,
+ "default_print_language": "en",
+ "disabled": 0,
+ "doc_type": "Inn Folio",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "font": "Default",
+ "html": "{% set company = frappe.get_doc(\"Global Defaults\").default_company %}\n{% set customer = frappe.get_doc(\"Customer\", doc.customer_id) %}\n{% set accumulator = namespace(credit = 0.0) %}\n{% set accumulator2 = namespace(debit = 0.0) %}\n\n<div class= \"row\">\n    <div class= \"col-xs-6 text-left\">\n        <h1>{{company}}</h1>\n    </div>\n    <div class= \"col-xs-6 text-right\">\n        <h4>Folio Reservation: {{ doc.reservation_id }}</h4>\n    </div>\n</div>\n\n<div class= \"row\">\n    <div class= \"col-xs-12 text-right\">\n        <b>Staf/Personnel: </b> {{ frappe.db.get_value(\"User\", frappe.user, \"full_name\") }}\n    </div>\n</div>\n\n<div class= \"row\">\n    <div class= \"col-xs-12\">\n        <br><br>\n    </div>\n</div>\n\n<div class= \"row\">\n    <div class= \"col-xs-6\">\n        {{ doc.customer_id | upper }}\n        <br/>\n        {{ doc.type }}\n        <br/>\n        {{ customer.primary_address }}\n    </div>\n    <div class= \"col-xs-6\">\n        <table class= \"table table-bordered\">\n            <tr>\n                <th>Reservation</th>\n                <th>Folio</th> </tr>\n            <tr>\n                <td>{{doc.reservation_id}}</td>\n                <td>{{doc.name}}</td>\n            </tr>\n        </table>\n    </div>\n</div>\n\n<div class= \"row\">\n    <div class= \"col-xs-12\">\n        <br/>\n    </div>\n</div>\n\n<div class= \"row\">\n    <div class= \"col-xs-12\">\n        <table class= \"table table-bordered\">\n            <tr>\n                <th class= \"col-xs-3\">Transaction Type</th>\n                <th class= \"col-xs-5\">Description/Remark</th>\n                <th class= \"col-xs-2\">Debit</th>\n                <th class= \"col-xs-2\">Credit</th>\n            </tr>\n            {% for row in doc.folio_transaction %}\n            {% if row.sub_folio == \"C\" %}\n            <tr>\n                <td>{{row.transaction_type}}</td>\n                <td>{{row.remark}}</td>\n                {% if row.flag == 'Credit' %}\n                {% set accumulator.credit = accumulator.credit + row.amount %}\n                <td class= \"text-center\">-</td>\n                <td class= \"text-right\">Rp{{row.get_formatted('amount')}}</td>\n                {% elif row.flag == 'Debit' %}\n                {% set accumulator2.debit = accumulator2.debit + row.amount %}\n                <td class= \"text-right\">Rp.{{row.get_formatted('amount')}}</td>\n                <td class= \"text-center\">-</td> \n                {% endif %}\n            </tr>\n            {% endif %}\n            {% endfor %}\n        </table>\n        <table class= \"table table-bordered\" style= \"margin-top:-1px;\">\n            <tr style= \"font-weight: bold\">\n                <td class= \"col-xs-8 text-left\">Total</td>\n                <td class= \"col-xs-2 text-right\"> Rp{{ frappe.format_value(accumulator2.debit, {\"fieldtype\":\"Currency\"}) }} </td>\n                <td class= \"col-xs-2 text-right\"> Rp{{ frappe.format_value(accumulator.credit, {\"fieldtype\":\"Currency\"}) }} </td> </tr> </table> </div></div>\n            </tr>\n         </table>\n    </div>\n</div>\n\n<div style= \"margin-top:155px\"></div>\n\n<div class= \"row\">\n    <div class= \"col-xs-9\">\n    </div>\n    <div class= \"col-xs-3\">\n        <table class= \"table text-center\">\n            <tr>\n                <td class= \"col-xs-2\" style= \"border-top:none;\"><b>{{ frappe.db.get_value(\"User\", frappe.user,                    \"full_name\") }}</b></td>\n            </tr>\n            <tr>\n                <td style= \"border-top:1px solid #d1d8dd;\"><b>Staf/Personnel</b></td>\n            </tr>\n        </table>\n    </div>\n</div>",
+ "idx": 0,
+ "line_breaks": 0,
+ "modified": "2020-04-30 06:44:36.513843",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Folio C",
+ "owner": "Administrator",
+ "print_format_builder": 0,
+ "print_format_type": "Server",
+ "show_section_headings": 0,
+ "standard": "Yes"
+}
