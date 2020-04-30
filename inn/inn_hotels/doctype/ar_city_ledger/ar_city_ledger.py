@@ -22,8 +22,9 @@ def get_folio_from_ar_city_ledger(selector = None, channel = None, group = None,
 		filters.append(['customer_id', '=', customer_id])
 
 	for item in frappe.get_all('AR City Ledger', filters = filters, fields = ['*']):
-		return_list.append(item)
-		folio_list.append(item.folio_id)
+		if not frappe.db.exists('AR City Ledger Invoice Folio', {'ar_city_ledger_id': item.name}):
+			return_list.append(item)
+			folio_list.append(item.folio_id)
 
 	if selector == 'Folio':
 		return folio_list
