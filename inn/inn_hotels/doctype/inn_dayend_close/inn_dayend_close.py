@@ -37,6 +37,7 @@ def process_dayend_close(doc_id):
 				doc_je.title = doc_folio.name
 				doc_je.voucher_type = 'Journal Entry'
 				doc_je.naming_series = 'ACC-JV-.YYYY.-'
+				# TODO: posting date ambil dari latest audit log date
 				doc_je.posting_date = datetime.date.today()
 				doc_je.company = frappe.get_doc('Global Defaults').default_company
 				doc_je.total_amount_currency = frappe.get_doc('Global Defaults').default_currency
@@ -70,7 +71,9 @@ def process_dayend_close(doc_id):
 
 	doc_audit_log = frappe.new_doc('Inn Audit Log')
 	doc_audit_log.naming_series = 'AL.DD.-.MM.-.YYYY.-'
+	# TODO get last audit date + 1
 	doc_audit_log.audit_date = datetime.date.today() + datetime.timedelta(days = 1)
+	# TODO posting date ganti jadi datetime
 	doc_audit_log.posting_date = datetime.date.today()
 	doc_audit_log.posted_by =frappe.session.user
 	doc_audit_log.insert()
