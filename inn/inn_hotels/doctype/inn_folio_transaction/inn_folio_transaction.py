@@ -19,6 +19,27 @@ def get_idx(parent):
 	return len(trx_list)
 
 @frappe.whitelist()
+def add_package_charge(package_name, sub_folio, remark, parent):
+	package_doc = frappe.get_doc('Inn Package', package_name)
+	new_doc = frappe.new_doc('Inn Folio Transaction')
+	new_doc.flag = 'Debit'
+	new_doc.is_void = 0
+	new_doc.idx = get_idx(parent)
+	new_doc.transaction_type = 'Package'
+	new_doc.amount = package_doc.total_amount_after_tax
+	new_doc.reference_id = package_doc.name
+	new_doc.sub_folio = sub_folio
+	new_doc.debit_account = package_doc.debit_account
+	new_doc.credit_account = package_doc.credit_account
+	new_doc.remark = remark
+	new_doc.parent = parent
+	new_doc.parenttype = 'Inn Folio'
+	new_doc.parentfield = 'folio_transaction'
+	new_doc.insert()
+
+	return new_doc.name
+
+@frappe.whitelist()
 def add_charge(transaction_type, amount, sub_folio, remark, parent):
 	debit_account, credit_account = get_accounts_from_id(transaction_type)
 	new_doc = frappe.new_doc('Inn Folio Transaction')

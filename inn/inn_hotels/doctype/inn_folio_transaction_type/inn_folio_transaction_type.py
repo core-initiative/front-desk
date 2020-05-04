@@ -25,7 +25,7 @@ def get_accounts_from_id(id):
 @frappe.whitelist()
 def get_transaction_type(type):
 	return_list = []
-	not_list = ['Refund', 'Room Charge']
+	not_list = ['Refund', 'Room Charge', 'Package', 'Credit Card Administration Fee']
 	type_list = frappe.get_all('Inn Folio Transaction Type',
 							   filters=[['type', '=', type], ['trx_name', 'not in', not_list]],
 							   fields=['name'])

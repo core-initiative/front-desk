@@ -16,3 +16,18 @@ def calculate_amounts(amount_per_pax, tax_id, total_pax):
 	total_amount = float(amount_per_pax) * float(total_pax)
 	total_amount_after_tax = float(amount_per_pax_after_tax[-1]) * float(total_pax)
 	return total_amount, total_amount_after_tax
+
+@frappe.whitelist()
+def get_package_list(active_flag=None):
+	return_list = []
+	filter = []
+	if active_flag:
+		filter.append(['is_active', '=', active_flag])
+
+	packages = frappe.get_all('Inn Package', filters=filter, fields=['name'])
+
+	for item in packages:
+		option_item = {'label': item.name, 'value': item.name}
+		return_list.append(option_item)
+
+	return return_list
