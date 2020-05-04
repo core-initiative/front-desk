@@ -1,8 +1,12 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
 frappe.ui.form.on('AR City Ledger Invoice', {
+	onload: function(frm) {
+		make_payment_visibility(frm);
+	},
 	refresh: function(frm) {
 		filter_folio(frm);
+		make_payment_visibility(frm);
 	},
 	inn_channel: function (frm) {
 		filter_folio(frm);
@@ -12,6 +16,28 @@ frappe.ui.form.on('AR City Ledger Invoice', {
 	},
 	customer_id: function (frm) {
 		filter_folio(frm);
+	},
+	make_payment: function (frm) {
+		frappe.confirm(__("Please make sure that the payment details (<b>Payment Date, Amount and Mode of Payment</b>) are correct, and <b>Outstanding Amount is zero</b>. Are you want to continue?"), function() {
+			if (frm.doc.outstanding != 0.0) {
+				frappe.msgprint('Outstanding amount must be zero in order to Make Payment. Please correct the payment details before Making Payment.');
+			}
+			else {
+				frappe.call({
+					method: "inn.inn_hotels.doctype.ar_city_ledger_invoice.ar_city_ledger_invoice.make_payment",
+					args: {
+						id: frm.doc.name,
+					},
+					callback: (r) => {
+						if (r.message === 1) {
+							frappe.show_alert(__("This AR City Ledger Invoice are successfully paid."));
+							frm.reload_doc();
+						}
+					}
+				});
+			}
+		});
+
 	}
 });
 
@@ -165,4 +191,38 @@ function autofill_payments_account(child) {
 			}
 		}
 	});
+}
+
+function make_payment_visibility(frm) {
+	if (frm.doc.__islocal === 1) {
+		frm.set_df_property('sb5', 'hidden', 1);
+	}
+	else if (frm.doc.payments && frm.doc.payments.length === 0) {
+		frm.set_df_property('sb5', 'hidden', 1);
+	}
+	else if (frm.doc.status == 'Paid') {
+		frm.set_df_property('sb5', 'hidden', 1);
+		disable_form(frm);
+	}
+	else {
+		frm.set_df_property('sb5', 'hidden', 0);
+	}
+}
+
+function disable_form(frm) {
+	frm.disable_save();
+	frm.set_df_property('issued_date', 'read_only', 1);
+	frm.set_df_property('due_date', 'read_only', 1);
+	frm.set_df_property('inn_channel', 'read_only', 1);
+	frm.set_df_property('inn_group', 'read_only', 1);
+	frm.set_df_property('customer_id', 'read_only', 1);
+	frm.get_field("folio").grid.only_sortable();
+	frappe.meta.get_docfield('AR City Ledger Invoice Folio', 'folio_id', frm.doc.name).read_only = 1;
+	frm.get_field("payments").grid.only_sortable();
+	frappe.meta.get_docfield('AR City Ledger Invoice Payments', 'payment_reference_date', frm.doc.name).read_only = 1;
+	frappe.meta.get_docfield('AR City Ledger Invoice Payments', 'mode_of_payment', frm.doc.name).read_only = 1;
+	frappe.meta.get_docfield('AR City Ledger Invoice Payments', 'payment_amount', frm.doc.name).read_only = 1;
+	frappe.meta.get_docfield('AR City Ledger Invoice Payments', 'payment_reference_no', frm.doc.name).read_only = 1;
+	frappe.meta.get_docfield('AR City Ledger Invoice Payments', 'payment_clearance_date', frm.doc.name).read_only = 1;
+	frm.set_intro('This AR City Ledger Invoice has been Paid.');
 }
