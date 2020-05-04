@@ -10,7 +10,7 @@ import datetime
 from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
 from inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction import get_idx
-
+from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
 class InnRoomChargePosting(Document):
 	pass
 
@@ -23,7 +23,8 @@ def is_there_open_room_charge_posting():
 
 @frappe.whitelist()
 def is_there_closed_room_charge_posting_at():
-	date = datetime.date.today()
+	date = get_last_audit_date().strftime('%Y-%m-%d')
+
 	if frappe.db.exists('Inn Room Charge Posting', {'audit_date': date, 'status': 'Closed'}):
 		return 1
 	else:

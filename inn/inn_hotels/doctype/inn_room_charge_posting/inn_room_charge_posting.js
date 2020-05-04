@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Inn Room Charge Posting', {
 	onload: function(frm) {
+		set_audit_date(frm);
 		frm.get_field('tobe_posted').grid.cannot_add_rows = true;
 		frm.get_field('already_posted').grid.cannot_add_rows = true;
 		frm.get_field("tobe_posted").grid.only_sortable();
@@ -136,3 +137,15 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 		}
 	}
 });
+
+
+function set_audit_date(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+		callback: (r) => {
+			if (r.message) {
+				frm.set_value('audit_date', r.message);
+			}
+		}
+	});
+}
