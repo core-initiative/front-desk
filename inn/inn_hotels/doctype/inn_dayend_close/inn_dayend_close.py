@@ -24,6 +24,11 @@ def process_dayend_close(doc_id):
 	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']]})
 	for item in folio_list:
 		doc_folio = frappe.get_doc('Inn Folio', item.name)
+		if doc_folio.reservation_id:
+			actual_room = frappe.get_doc('Inn Room', frappe.get_doc('Inn Reservation', doc_folio.reservation_id).actual_room_id)
+			actual_room.room_status = 'Occupied Dirty'
+			actual_room.save()
+
 		trx_list = doc_folio.get('folio_transaction')
 		for trx in trx_list:
 			if trx.is_void == 0 and trx.journal_entry_id is None:
