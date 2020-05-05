@@ -109,7 +109,7 @@ def get_departed_today(date):
 	return_list = []
 	list = frappe.get_all('Inn Reservation', filters={'status': 'In House'}, fields=['*'])
 	for item in list:
-		if item.departure == date:
+		if item.departure.date() == date:
 			new_departed = frappe.new_doc('Inn Expected Departed Today')
 			new_departed.reservation_id = item.name
 			new_departed.folio_id = frappe.get_doc('Inn Folio', {'reservation_id': item.name}).name
