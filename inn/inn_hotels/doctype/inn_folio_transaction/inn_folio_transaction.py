@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
+from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
 from frappe.model.document import Document
 
 class InnFolioTransaction(Document):
@@ -26,16 +27,34 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 	new_doc.is_void = 0
 	new_doc.idx = get_idx(parent)
 	new_doc.transaction_type = 'Package'
-	new_doc.amount = package_doc.total_amount_after_tax
+	new_doc.amount = package_doc.total_amount
 	new_doc.reference_id = package_doc.name
 	new_doc.sub_folio = sub_folio
 	new_doc.debit_account = package_doc.debit_account
 	new_doc.credit_account = package_doc.credit_account
-	new_doc.remark = remark
+	new_doc.remark = 'Package Total Amount(Nett) ' + remark
 	new_doc.parent = parent
 	new_doc.parenttype = 'Inn Folio'
 	new_doc.parentfield = 'folio_transaction'
 	new_doc.insert()
+
+	tb_id, tb_amount, _ = calculate_inn_tax_and_charges(package_doc.total_amount, package_doc.inn_tax_id)
+	for index, package_tax_item_name in enumerate(tb_id):
+		new_tax_doc = frappe.new_doc('Inn Folio Transaction')
+		new_tax_doc.flag = 'Debit'
+		new_tax_doc.is_void = 0
+		new_tax_doc.idx = get_idx(parent)
+		new_tax_doc.transaction_type = 'Package Tax'
+		new_tax_doc.amount = tb_amount[index]
+		new_tax_doc.reference_id = package_doc.name
+		new_tax_doc.sub_folio = sub_folio
+		new_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', package_tax_item_name).breakdown_account
+		new_tax_doc.credit_account = package_doc.credit_account
+		new_tax_doc.remark = 'Package Tax ' + remark
+		new_tax_doc.parent = parent
+		new_tax_doc.parenttype = 'Inn Folio'
+		new_tax_doc.parentfield = 'folio_transaction'
+		new_tax_doc.insert()
 
 	return new_doc.name
 
