@@ -10,18 +10,21 @@ class ARCityLedger(Document):
 	pass
 
 @frappe.whitelist()
-def get_folio_from_ar_city_ledger(selector = None, channel = None, group = None):
-	filters=[]
+def get_folio_from_ar_city_ledger(selector = None, channel = None, group = None, customer_id = None):
+	filters=[['is_paid', '=', 0]]
 	return_list = []
 	folio_list = []
 	if channel:
 		filters.append(['inn_channel_id', '=', channel])
 	if group:
-		filters.append('inn_group_id', '=', group)
+		filters.append(['inn_group_id', '=', group])
+	# if customer_id:
+	# 	filters.append(['customer_id', '=', customer_id])
 
 	for item in frappe.get_all('AR City Ledger', filters = filters, fields = ['*']):
-		return_list.append(item)
-		folio_list.append(item.folio_id)
+		if not frappe.db.exists('AR City Ledger Invoice Folio', {'ar_city_ledger_id': item.name}):
+			return_list.append(item)
+			folio_list.append(item.folio_id)
 
 	if selector == 'Folio':
 		return folio_list

@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import frappe
 import datetime
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
 
 class InnDayendClose(Document):
 	pass
@@ -23,6 +24,11 @@ def process_dayend_close(doc_id):
 	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']]})
 	for item in folio_list:
 		doc_folio = frappe.get_doc('Inn Folio', item.name)
+		if doc_folio.reservation_id:
+			actual_room = frappe.get_doc('Inn Room', frappe.get_doc('Inn Reservation', doc_folio.reservation_id).actual_room_id)
+			actual_room.room_status = 'Occupied Dirty'
+			actual_room.save()
+
 		trx_list = doc_folio.get('folio_transaction')
 		for trx in trx_list:
 			if trx.is_void == 0 and trx.journal_entry_id is None:
@@ -37,7 +43,7 @@ def process_dayend_close(doc_id):
 				doc_je.title = doc_folio.name
 				doc_je.voucher_type = 'Journal Entry'
 				doc_je.naming_series = 'ACC-JV-.YYYY.-'
-				doc_je.posting_date = datetime.date.today()
+				doc_je.posting_date = get_last_audit_date()
 				doc_je.company = frappe.get_doc('Global Defaults').default_company
 				doc_je.total_amount_currency = frappe.get_doc('Global Defaults').default_currency
 				doc_je.remark = remark
@@ -70,8 +76,8 @@ def process_dayend_close(doc_id):
 
 	doc_audit_log = frappe.new_doc('Inn Audit Log')
 	doc_audit_log.naming_series = 'AL.DD.-.MM.-.YYYY.-'
-	doc_audit_log.audit_date = datetime.date.today() + datetime.timedelta(days = 1)
-	doc_audit_log.posting_date = datetime.date.today()
+	doc_audit_log.audit_date = get_last_audit_date() + datetime.timedelta(days = 1)
+	doc_audit_log.posting_date = datetime.datetime.now()
 	doc_audit_log.posted_by =frappe.session.user
 	doc_audit_log.insert()
 
@@ -103,7 +109,7 @@ def get_departed_today(date):
 	return_list = []
 	list = frappe.get_all('Inn Reservation', filters={'status': 'In House'}, fields=['*'])
 	for item in list:
-		if item.departure == date:
+		if item.departure.date() == date:
 			new_departed = frappe.new_doc('Inn Expected Departed Today')
 			new_departed.reservation_id = item.name
 			new_departed.folio_id = frappe.get_doc('Inn Folio', {'reservation_id': item.name}).name

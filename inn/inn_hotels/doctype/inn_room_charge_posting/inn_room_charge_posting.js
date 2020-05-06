@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Inn Room Charge Posting', {
 	onload: function(frm) {
+		set_audit_date(frm);
 		frm.get_field('tobe_posted').grid.cannot_add_rows = true;
 		frm.get_field('already_posted').grid.cannot_add_rows = true;
 		frm.get_field("tobe_posted").grid.only_sortable();
@@ -15,40 +16,33 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 						frappe.set_route('List', 'Inn Room Charge Posting');
 						frappe.msgprint('There are Room Charge Posting in progress. Please finish and close it first before opening new one.');
 					}
+					else {
+						frm.enable_save();
+						frm.set_df_property('sb2', 'hidden', 1);
+					}
 				}
 			});
 		}
 	},
 	refresh: function (frm) {
+		if (frm.doc.__islocal === 1) {
+			frm.enable_save();
+			frm.set_df_property('sb2', 'hidden', 1);
+		}
+		else {
+			if (frm.doc.status === 'Open') {
+				frm.set_df_property('sb2', 'hidden', 0);
+			}
+		}
 		if (frm.doc.status === 'Open') {
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.get_posted_lists',
 				callback: (r) => {
 					if (r.message) {
-						if (r.message[0].length > 0) {
-							frm.set_value('tobe_posted', []);
-							$.each(r.message[0], function (i, d) {
-								var item = frm.add_child('tobe_posted');
-								item.reservation_id = d.reservation_id;
-								item.folio_id = d.folio_id;
-								item.room_id = d.room_id;
-								item.customer_id = d.customer_id;
-								item.room_rate_id = d.room_rate_id;
-								item.actual_room_rate = d.actual_room_rate;
-							});
-							frm.refresh_field('tobe_posted');
-						}
-						else{
-							frm.set_intro(__("There are no more Room Charge to be Posted. This Room Charge Posting can be Closed"));
-							frm.add_custom_button(__('Close'), function () {
-								frm.set_value('status', 'Closed');
-								frm.save();
-							});
-						}
 						if (r.message[1].length > 0) {
 							frm.set_value('already_posted',[]);
 							$.each(r.message[1], function (i, d) {
-								var item = frm.add_child('already_posted');
+								let item = frm.add_child('already_posted');
 								item.reservation_id = d.reservation_id;
 								item.folio_id = d.folio_id;
 								item.room_id = d.room_id;
@@ -59,13 +53,55 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 							});
 							frm.refresh_field('already_posted');
 						}
+						if (r.message[0].length > 0) {
+							frm.set_value('tobe_posted', []);
+							$.each(r.message[0], function (i, d) {
+								let latest_already_posted = frm.doc.already_posted;
+								console.log(latest_already_posted);
+								if (latest_already_posted && latest_already_posted.length > 0) {
+									for (let i = 0; i < latest_already_posted.length; i++) {
+										if (d.reservation_id !== latest_already_posted[i].reservation_id) {
+											let item = frm.add_child('tobe_posted');
+											item.reservation_id = d.reservation_id;
+											item.folio_id = d.folio_id;
+											item.room_id = d.room_id;
+											item.customer_id = d.customer_id;
+											item.room_rate_id = d.room_rate_id;
+											item.actual_room_rate = d.actual_room_rate;
+										}
+									}
+								}
+								else {
+									let item = frm.add_child('tobe_posted');
+									item.reservation_id = d.reservation_id;
+									item.folio_id = d.folio_id;
+									item.room_id = d.room_id;
+									item.customer_id = d.customer_id;
+									item.room_rate_id = d.room_rate_id;
+									item.actual_room_rate = d.actual_room_rate;
+								}
+
+							});
+							frm.refresh_field('tobe_posted');
+						}
+						else{
+							frm.set_intro(__("There are no more Room Charge to be Posted. This Room Charge Posting can be Closed"));
+							frm.set_value('tobe_posted', []);
+							frm.set_df_property('sb2', 'hidden', 1);
+							frm.add_custom_button(__('Close'), function () {
+								frm.set_value('status', 'Closed');
+								frm.save();
+							});
+						}
 					}
 				}
 			});
 		}
 		else {
-			frm.disable_save();
-			frm.set_df_property('sb2', 'hidden', 1);
+			if (frm.doc.__islocal !== 1) {
+				frm.disable_save();
+				frm.set_df_property('sb2', 'hidden', 1);
+			}
 		}
 	},
 	post_individual_button: function(frm, cdt, cdn) {
@@ -136,3 +172,15 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 		}
 	}
 });
+
+
+function set_audit_date(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+		callback: (r) => {
+			if (r.message) {
+				frm.set_value('audit_date', r.message);
+			}
+		}
+	});
+}

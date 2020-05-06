@@ -8,6 +8,7 @@ from datetime import datetime
 
 import frappe
 import requests
+import json
 from frappe.model.document import Document
 
 class InnKeyCard(Document):
@@ -20,9 +21,14 @@ def room_max_active_card():
 @frappe.whitelist()
 def issue_card(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
+	room = doc.actual_room_id
+	activationDate = datetime.today().strftime("%d/%m/%Y")
+	activationTime = datetime.now().strftime("%H:%M")
+	expiryDate = datetime.strftime(doc.departure, "%d/%m/%Y")
+	expiryTime = datetime.strftime(doc.departure, "%H:%M")
+
 	new_card = frappe.new_doc('Inn Key Card')
-	# TODO: get card_number from tesa_check_in
-	new_card.card_number = 'dari fungsi tesa_check_in'
+	new_card.card_number = tesa_check_in("CI",  room, activationDate, activationTime, expiryDate, expiryTime)
 	new_card.room_id = doc.actual_room_id
 	new_card.issue_date = datetime.today()
 	new_card.expired_date = doc.departure
@@ -45,9 +51,9 @@ def erase_card(flag, card_name, expiration_date):
 
 	return doc.is_active
 
-def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activationDate,
-						activationTime, expiryDate, expiryTime, grant, keypad, operator,
-						track1=None, track2=None, room2=None, room3=None,room4=None, returnCardId=None, cardId=None):
+def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryTime,
+				  pcId="", technology="P", encoder="1",  cardOperation="EF", grant=None, keypad=None, operator=None,
+				  track1=None, track2=None, room2=None, room3=None, room4=None, returnCardId=None, cardId=None):
 
 	# Example Post
 	# {"pcId": "1", "cmd": "PI", "room": "102", "activationDate": "16/05/2017",
@@ -69,11 +75,14 @@ def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activatio
 		'activationTime': activationTime,
 		'expiryDate': expiryDate,
 		'expiryTime': expiryTime,
-		'grant': grant,
-		'keypad': keypad,
-		'operator': operator,
 	}
 	# Optional params assignment if provided
+	if grant is not None:
+		params.update({'grant': grant})
+	if keypad is not None:
+		params.update({'keypad': keypad})
+	if operator is not None:
+		params.update({'operator': operator})
 	if track1 is not None:
 		params.update({'track1': track1})
 	if track2 is not None:
@@ -91,8 +100,11 @@ def tesa_check_in(pcId, cmd, technology, cardOperation, encoder, room, activatio
 
 	if url is not None:
 		r = requests.post(url, data=params)
-		return r.text
-		# TODO: return only cardId. Must process the return value first
+		if r:
+			returned = json.loads(r.text)
+			return returned['returnCardId']
+		else:
+			return "CARD NUMBER FROM TESA CHECK IN"
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 

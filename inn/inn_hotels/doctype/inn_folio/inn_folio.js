@@ -24,8 +24,7 @@ frappe.ui.form.on('Inn Folio', {
 		}
 	},
 	add_package: function(frm) {
-		frappe.msgprint("Coming Soon");
-		// TODO: add package in folio
+		add_package(frm);
 	},
 	add_charge: function (frm) {
 		add_charge(frm);
@@ -227,6 +226,70 @@ function toggle_guest_in_type(frm, is_new) {
 		}
 	}
 	frm.refresh_field('type');
+}
+
+// Function to show pop up Dialof for adding new package to the folio
+function add_package(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_package.inn_package.get_package_list',
+		args: {
+			active_flag: 1
+		},
+		callback: (r) => {
+			let fields = [
+				{
+					'label': __('Package Name'),
+					'fieldname': 'package_name',
+					'fieldtype': 'Select',
+					'options': r.message,
+					'reqd': 1
+				},
+				{
+					'label': __('Sub Folio'),
+					'fieldname': 'sub_folio',
+					'fieldtype': 'Select',
+					'options': [
+						{'label': __('A'), 'value': 'A'}, {'label': __('B'), 'value': 'B'},
+						{'label': __('C'), 'value': 'C'}, {'label': __('D'), 'value': 'D'}
+						],
+					'default': 'A',
+					'reqd':1
+				},
+				{
+					'label': 'Remark',
+					'fieldname': 'remark',
+					'fieldtype': 'Small Text',
+				},
+			];
+			var d = new frappe.ui.Dialog({
+				title: __('Add New Package for Folio ' + frm.doc.name),
+				fields: fields,
+			});
+			d.set_primary_action(__('Save'), () => {
+				let remark_to_save = d.get_values().package_name + '.\n';
+				if (d.get_values().remark !== undefined || d.get_values().remark != null) {
+					remark_to_save += d.get_values().remark;
+				}
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_package_charge',
+					args: {
+						package_name: d.get_values().package_name,
+						sub_folio: d.get_values().sub_folio,
+						remark: remark_to_save,
+						parent: frm.doc.name
+					},
+					callback: (r) => {
+						if (r.message) {
+							frappe.msgprint('Charge with ID ' + r.message + " successfully added");
+							frm.reload_doc();
+						}
+					}
+				});
+				d.hide();
+			});
+			d.show();
+		}
+	});
 }
 
 // Function to show pop up Dialog for adding new charge to the folio
