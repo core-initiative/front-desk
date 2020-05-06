@@ -16,11 +16,24 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 						frappe.set_route('List', 'Inn Room Charge Posting');
 						frappe.msgprint('There are Room Charge Posting in progress. Please finish and close it first before opening new one.');
 					}
+					else {
+						frm.enable_save();
+						frm.set_df_property('sb2', 'hidden', 1);
+					}
 				}
 			});
 		}
 	},
 	refresh: function (frm) {
+		if (frm.doc.__islocal === 1) {
+			frm.enable_save();
+			frm.set_df_property('sb2', 'hidden', 1);
+		}
+		else {
+			if (frm.doc.status === 'Open') {
+				frm.set_df_property('sb2', 'hidden', 0);
+			}
+		}
 		if (frm.doc.status === 'Open') {
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.get_posted_lists',
@@ -74,6 +87,7 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 						else{
 							frm.set_intro(__("There are no more Room Charge to be Posted. This Room Charge Posting can be Closed"));
 							frm.set_value('tobe_posted', []);
+							frm.set_df_property('sb2', 'hidden', 1);
 							frm.add_custom_button(__('Close'), function () {
 								frm.set_value('status', 'Closed');
 								frm.save();
@@ -84,8 +98,10 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 			});
 		}
 		else {
-			frm.disable_save();
-			frm.set_df_property('sb2', 'hidden', 1);
+			if (frm.doc.__islocal !== 1) {
+				frm.disable_save();
+				frm.set_df_property('sb2', 'hidden', 1);
+			}
 		}
 	},
 	post_individual_button: function(frm, cdt, cdn) {
