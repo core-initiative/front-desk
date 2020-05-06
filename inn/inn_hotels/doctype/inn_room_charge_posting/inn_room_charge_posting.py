@@ -125,7 +125,7 @@ def post_room_charges(tobe_posted_list):
 			breakfast_tax_doc.is_void = 0
 			breakfast_tax_doc.idx - get_idx(item['folio_id'])
 			breakfast_tax_doc.transaction_type = 'Room Charge Tax'
-			breakfast_tax_doc.amount = room_tb_amount[index]
+			breakfast_tax_doc.amount = breakfast_tb_amount[index]
 			breakfast_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', breakfast_tax_item_name).breakdown_account
 			breakfast_tax_doc.credit_account = credit_account
 			breakfast_tax_doc.remark = 'Breakfast Charge Tax Room Rate ' + breakfast_tax_item_name + ' : ' + item['room_id'] + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
