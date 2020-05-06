@@ -71,7 +71,6 @@ def post_room_charges(tobe_posted_list):
 	for item in list_json:
 		debit_account, credit_account = get_accounts_from_id('Room Charge')
 		reservation = frappe.get_doc('Inn Reservation', item['reservation_id'])
-
 		room_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
 		room_charge_folio_trx.flag = 'Debit'
 		room_charge_folio_trx.is_void = 0
@@ -107,7 +106,7 @@ def post_room_charges(tobe_posted_list):
 			room_tax_doc = frappe.new_doc('Inn Folio Transaction')
 			room_tax_doc.flag = 'Debit'
 			room_tax_doc.is_void = 0
-			room_tax_doc.idx - get_idx(item['folio_id'])
+			room_tax_doc.idx = get_idx(item['folio_id'])
 			room_tax_doc.transaction_type = 'Room Charge Tax'
 			room_tax_doc.amount = room_tb_amount[index]
 			room_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
@@ -123,7 +122,7 @@ def post_room_charges(tobe_posted_list):
 			breakfast_tax_doc = frappe.new_doc('Inn Folio Transaction')
 			breakfast_tax_doc.flag = 'Debit'
 			breakfast_tax_doc.is_void = 0
-			breakfast_tax_doc.idx - get_idx(item['folio_id'])
+			breakfast_tax_doc.idx = get_idx(item['folio_id'])
 			breakfast_tax_doc.transaction_type = 'Room Charge Tax'
 			breakfast_tax_doc.amount = breakfast_tb_amount[index]
 			breakfast_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', breakfast_tax_item_name).breakdown_account
