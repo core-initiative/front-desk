@@ -39,7 +39,7 @@ def get_posted_lists():
 	for item in folio_list:
 		reservation = frappe.get_doc('Inn Reservation', item.reservation_id)
 		if reservation.status == 'In House' or reservation.status == 'Finish':
-			room_charge_remark = 'Room Charge: ' + reservation.actual_room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			room_charge_remark = 'Room Charge: Room Rate (Nett): ' + reservation.actual_room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
 			if frappe.db.exists('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
 				folio_trx = frappe.get_doc('Inn Folio Transaction', {'parent': item.name, 'transaction_type': 'Room Charge',
 																	 'remark': room_charge_remark})
