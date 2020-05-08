@@ -69,4 +69,15 @@ def create_move_room_by_reservation(reservation_id, mv_room_type, mv_bed_type, m
 		new_room_booking.status = 'Booked'
 		new_room_booking.insert()
 
+	# Update Rooms Status
+	old_room = frappe.get_doc('Inn Room', move_room_doc.old_room_id)
+	new_room = frappe.get_doc('Inn Room', mv_room_id)
+
+	old_room.room_status = 'Vacant Dirty'
+	old_room.door_status = 'No Status'
+	old_room.save()
+
+	new_room.room_status = 'Occupied Clean'
+	new_room.save()
+
 	return 1
