@@ -55,7 +55,7 @@ app_license = "MIT"
 # ------------
 
 # before_install = "inn.install.before_install"
-after_install = "inn.config.setup.after_install"
+# after_install = "inn.config.setup.after_install"
 
 # Desk Notifications
 # ------------------

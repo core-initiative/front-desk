@@ -19,4 +19,4 @@ def after_install():
 		{'doctype': 'Inn Folio Transaction Type', 'name': _('Late Checkout'), 'type': _('Debit'), 'is_included': 1},
 		{'doctype': 'Inn Folio Transaction Type', 'name': _('Early Checkin'), 'type': _('Debit'), 'is_included': 1},
 	]
-	make_records(folio_transaction_type_records, True)
+	# make_records(folio_transaction_type_records, True)
