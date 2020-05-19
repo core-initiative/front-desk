@@ -18,8 +18,10 @@ frappe.ui.form.on('Inn Hotels Setting', {
 		});
 	},
 	inn_hotels_account_generator: function (frm) {
-		frappe.call({
-			method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_hotel_account',
+		frappe.confirm(__("This may take a while. Please <b>don't refresh</b> or <b>change the page</b> before the Success or Error Message popped up. Click <b>Yes</b> to continue"), function() {
+			frappe.call({
+				method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_hotel_account',
+			});
 		});
 	}
 });
