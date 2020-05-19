@@ -31,113 +31,72 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 		}
 		else {
 			if (frm.doc.status === 'Open') {
-				frm.set_df_property('sb2', 'hidden', 0);
-			}
-		}
-		if (frm.doc.status === 'Open') {
-			frappe.call({
-				method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.get_posted_lists',
-				callback: (r) => {
-					if (r.message) {
-						if (r.message[1].length > 0) {
-							frm.set_value('already_posted',[]);
-							$.each(r.message[1], function (i, d) {
-								let item = frm.add_child('already_posted');
-								item.reservation_id = d.reservation_id;
-								item.folio_id = d.folio_id;
-								item.room_id = d.room_id;
-								item.customer_id = d.customer_id;
-								item.room_rate_id = d.room_rate_id;
-								item.actual_room_rate = d.actual_room_rate;
-								item.folio_transaction_id = d.folio_transaction_id;
-							});
-							frm.refresh_field('already_posted');
-						}
-						if (r.message[0].length > 0) {
-							frm.set_value('tobe_posted', []);
-							$.each(r.message[0], function (i, d) {
-								let latest_already_posted = frm.doc.already_posted;
-								console.log(latest_already_posted);
-								if (latest_already_posted && latest_already_posted.length > 0) {
-									for (let i = 0; i < latest_already_posted.length; i++) {
-										if (d.reservation_id !== latest_already_posted[i].reservation_id) {
-											let item = frm.add_child('tobe_posted');
-											item.reservation_id = d.reservation_id;
-											item.folio_id = d.folio_id;
-											item.room_id = d.room_id;
-											item.customer_id = d.customer_id;
-											item.room_rate_id = d.room_rate_id;
-											item.actual_room_rate = d.actual_room_rate;
-										}
-									}
-								}
-								else {
-									let item = frm.add_child('tobe_posted');
-									item.reservation_id = d.reservation_id;
-									item.folio_id = d.folio_id;
-									item.room_id = d.room_id;
-									item.customer_id = d.customer_id;
-									item.room_rate_id = d.room_rate_id;
-									item.actual_room_rate = d.actual_room_rate;
-								}
-
-							});
-							frm.refresh_field('tobe_posted');
-						}
-						else{
-							frm.set_intro(__("There are no more Room Charge to be Posted. This Room Charge Posting can be Closed"));
-							frm.set_value('tobe_posted', []);
-							frm.set_df_property('sb2', 'hidden', 1);
-							frm.add_custom_button(__('Close'), function () {
-								frm.set_value('status', 'Closed');
-								frm.save();
-							});
-						}
-					}
+				if (frm.doc.tobe_posted.length === 0) {
+					frm.set_intro(__("There are no more Room Charge to be Posted."));
+					frm.set_intro(__("Click Populate/Refresh To Be Posted button to check if there are new Room Charge to be posted."));
+					frm.set_intro(__("If there are no more Room Charge to be posted,  this Room Charge Posting can be Closed"));
+					frm.set_df_property('sb2', 'hidden', 1);
+					frm.add_custom_button(__('Close'), function () {
+						frm.set_value('status', 'Closed');
+						frm.save();
+					});
 				}
-			});
-		}
-		else {
-			if (frm.doc.__islocal !== 1) {
+				else {
+					frm.set_df_property('sb2', 'hidden', 0);
+				}
+			}
+			else {
 				frm.disable_save();
+				frm.set_df_property('populate', 'hidden', 1);
 				frm.set_df_property('sb2', 'hidden', 1);
 			}
 		}
 	},
+	populate: function(frm, cdt, cdn) {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.populate_tobe_posted',
+			callback: (r) => {
+				if (r.message) {
+					frm.set_value('tobe_posted', []);
+					$.each(r.message, function (i, d) {
+						let item = frm.add_child('tobe_posted');
+						item.reservation_id = d.reservation_id;
+						item.folio_id = d.folio_id;
+						item.room_id = d.room_id;
+						item.customer_id = d.customer_id;
+						item.room_rate_id = d.room_rate_id;
+						item.actual_room_rate = d.actual_room_rate;
+					})
+					frm.save();
+				}
+			}
+		});
+	},
 	post_individual_button: function(frm, cdt, cdn) {
-		if (frm.doc.tobe_posted.length > 0) {
+		if (frm.doc.__unsaved) {
+			frappe.msgprint("Please save the Room Charge Posting List first before posting.");
+		}
+		else {
 			let trx_selected = frm.get_field("tobe_posted").grid.get_selected();
 			if (trx_selected.length === 0) {
 				frappe.msgprint('There are no Room Charge selected to be posted.');
 			}
 			else {
-				let tobe_posted_list_individual = frm.doc.tobe_posted;
-				console.log(trx_selected);
-				for (let i = 0; i < tobe_posted_list_individual.length; i++) {
-					for(let j = 0; j < trx_selected.length; j++) {
-						if (tobe_posted_list_individual[i]['name'] !== trx_selected[j]) {
-							tobe_posted_list_individual.splice(i,1);
-						}
-					}
-				}
-				console.log(tobe_posted_list_individual);
-				frappe.confirm(__("You are about post the Room Charge. Are you sure?"), function () {
+				console.log(trx_selected)
+				frappe.confirm(__("You are about post some the Room Charges. Are you sure?"), function () {
 					frappe.call({
-						method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.post_room_charges',
+						method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.post_individual_room_charges',
 						args: {
-							tobe_posted_list: tobe_posted_list_individual,
+							parent_id: frm.doc.name,
+							tobe_posted_list: trx_selected,
 						},
 						callback: (r) => {
 							if (r.message) {
-								if ((tobe_posted_list_individual.length - trx_selected.length) === 0) { // post all but by selecting all then click post individual, doc status closed
-									console.log('masuk post individu like post all');
-									frm.reload_doc();
+								frm.reload_doc();
+								if (frm.doc.tobe_posted.length == 0) {
 									frappe.msgprint('All Room Charge successfully posted: <br> <ul>' + r.message + '</ul><br> This Room Charge Posting now can be Closed');
-
 								}
-								else { // post not all room charge, there are room charges left in tobe_posted, doc status not closed
-									console.log('masuk post individu but not like post all');
-									frm.reload_doc();
+								else {
 									frappe.msgprint('Room Charge successfully posted: <br> <ul>' + r.message + '</ul>');
 								}
 							}
@@ -146,29 +105,32 @@ frappe.ui.form.on('Inn Room Charge Posting', {
 				});
 			}
 		}
-		else {
-			frappe.msgprint('There are no Room Charge to be posted.');
-		}
 	},
 	post_all_button: function (frm, cdt, cdn) {
-		if (frm.doc.tobe_posted.length > 0) {
-			frappe.confirm(__("You are about post all of the Room Charges. Are you sure?"), function () {
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.post_room_charges',
-					args: {
-						tobe_posted_list: frm.doc.tobe_posted,
-					},
-					callback: (r) => {
-						if (r.message) {
-							frm.reload_doc();
-							frappe.msgprint('All Room Charge successfully posted: <br> <ul>' + r.message + '</ul><br> This Room Charge Posting now can be Closed');
-						}
-					}
-				});
-			});
+		if (frm.doc.__unsaved) {
+			frappe.msgprint("Please save the Room Charge Posting List first before posting.");
 		}
 		else {
-			frappe.msgprint('There are no Room Charge to be posted.');
+			if (frm.doc.tobe_posted.length > 0) {
+				frappe.confirm(__("You are about post all of the Room Charges. Are you sure?"), function () {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.post_room_charges',
+						args: {
+							parent_id: frm.doc.name,
+							tobe_posted_list: frm.doc.tobe_posted,
+						},
+						callback: (r) => {
+							if (r.message) {
+								frm.reload_doc();
+								frappe.msgprint('All Room Charge successfully posted: <br> <ul>' + r.message + '</ul><br> This Room Charge Posting now can be Closed');
+							}
+						}
+					});
+				});
+			}
+			else {
+				frappe.msgprint('There are no Room Charge to be posted.');
+			}
 		}
 	}
 });
