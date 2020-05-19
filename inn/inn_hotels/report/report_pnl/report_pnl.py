@@ -49,7 +49,7 @@ def get_accounts(root_type):
     return frappe.db.sql("""
 		select name, parent_account
 		from `tabAccount`
-		where root_type=%s""", (root_type))
+		where root_type=%s""", (root_type), as_dict=True)
 
 def get_gl_entries(date, fiscal_year):
     return frappe.db.sql("""
@@ -72,14 +72,21 @@ def get_data(filters):
 
             accounts = get_accounts('Income')
             for account in accounts:
-                if account[1]:
-                    income_parent[account[0]] = account[1]
+                if account['parent_account']:
+                    income_parent[account['name']] = account['parent_account']
                 else:
-                    income_parent[account[0]] = None
+                    income_parent[account['name']] = None
 
-                income_current_month[account[0]] = 0
-                income_last_month[account[0]] = 0
-                income_year_to_date[account[0]] = 0
+                income_current_month[account['name']] = 0
+                income_last_month[account['name']] = 0
+                income_year_to_date[account['name']] = 0
+
+            income_hierarki_ketiga = {}
+            for account, parent in income_parent.items():
+                if parent and income_parent[parent] and income_parent[income_parent[parent]] is None:
+                    income_hierarki_ketiga[account] = 'True'
+                else:
+                    income_hierarki_ketiga[account] = 'False'
 
             expense_parent = {}
             expense_current_month = {}
@@ -88,15 +95,21 @@ def get_data(filters):
 
             accounts = get_accounts('Expense')
             for account in accounts:
-                if account[1]:
-                    expense_parent[account[0]] = account[1]
+                if account['parent_account']:
+                    expense_parent[account['name']] = account['parent_account']
                 else:
-                    expense_parent[account[0]] = None
+                    expense_parent[account['name']] = None
 
-                expense_current_month[account[0]] = 0
-                expense_last_month[account[0]] = 0
-                expense_year_to_date[account[0]] = 0
-
+                expense_current_month[account['name']] = 0
+                expense_last_month[account['name']] = 0
+                expense_year_to_date[account['name']] = 0
+            
+            expense_hierarki_ketiga = {}
+            for account, parent in expense_parent.items():
+                if parent and expense_parent[parent] and expense_parent[expense_parent[parent]] is None:
+                    expense_hierarki_ketiga[account] = 'True'
+                else:
+                    expense_hierarki_ketiga[account] = 'False'
 
             gl_entries = get_gl_entries(date, fiscal_year)
             for gl_entry in gl_entries:
@@ -120,7 +133,7 @@ def get_data(filters):
                         elif gl_entry[0].month+1 == date.month:
                             income_last_month[account] = income_last_month[account] + gl_entry[2] - gl_entry[3]
 
-                elif account[:1] == '5':
+                elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
                     expense_year_to_date[account] = expense_year_to_date[account] - gl_entry[2] + gl_entry[3]
 
                     if gl_entry[0].month == date.month:
@@ -137,24 +150,38 @@ def get_data(filters):
                             expense_current_month[account] = expense_current_month[account] - gl_entry[2] + gl_entry[3]
                         elif gl_entry[0].month+1 == date.month:
                             expense_last_month[account] = expense_last_month[account] - gl_entry[2] + gl_entry[3]
-                    
+            
             for item in income_parent:
+                parent = ''
+                if income_parent[item]:
+                    parent = income_parent[item]
+
                 data.append({
                         'account': item,
                         'current_month': income_current_month[item],
                         'last_month': income_last_month[item],
-                        'year_to_date': income_year_to_date[item]
+                        'year_to_date': income_year_to_date[item],
+                        'parent': parent,
+                        'hierarki_ketiga': income_hierarki_ketiga[item]
                     })
 
             for item in expense_parent:
+                parent = ''
+                if expense_parent[item]:
+                    parent = expense_parent[item]
+
                 data.append({
                         'account': item,
                         'current_month': expense_current_month[item],
                         'last_month': expense_last_month[item],
-                        'year_to_date': expense_year_to_date[item]
+                        'year_to_date': expense_year_to_date[item],
+                        'parent': parent,
+                        'hierarki_ketiga': expense_hierarki_ketiga[item]
                     })
                 
             data = json.dumps(data)
             data = ast.literal_eval(data)
+
+            print(data)
 
     return data
