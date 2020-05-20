@@ -1,0 +1,190 @@
+<h3 class="text-left">{%= __("HOTEL DAILY INN") %}</h3>
+
+<p class="text-left">{%= __("Jl. Jenderal Ahmad Yani Kavling 67 Cempaka Putih Timur, Jakarta Pusat") %}</p>
+<p class="text-left">{%= __("Jakarta Indonesia. 10510") %}</p>
+<p class="text-left">{%= __("Phone: 021-21473999 Fax: 021-21473998") %}</p>
+
+<hr>
+
+<h3 class="text-center">{%= __("Profit and Loss") %}</h3>
+
+<h5 class="text-center">
+	{%= frappe.datetime.str_to_user(filters.date) %}
+</h5>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width: 40%;">{%= __("Account") %}</th>
+			<th style="width: 20%;">{%= __("Current Month") %}</th>
+			<th style="width: 20%;">{%= __("Last Month") %}</th>
+			<th style="width: 20%;">{%= __("Year to Date") %}</th>
+		</tr>
+    </thead>
+    <tbody>
+        {% var index = 0 %}
+
+        {% var r_current_month = 0 %}
+        {% var r_last_month = 0 %}
+        {% var r_year_to_date = 0 %}
+
+        {% var cos_current_month = 0 %}
+        {% var cos_last_month = 0 %}
+        {% var cos_year_to_date = 0 %}
+
+        {% var ep_current_month = 0 %}
+        {% var ep_last_month = 0 %}
+        {% var ep_year_to_date = 0 %}
+
+        {% var e_current_month = 0 %}
+        {% var e_last_month = 0 %}
+        {% var e_year_to_date = 0 %}
+
+        {% for(var i=0, l=data.length-1; i<l; i++) { %}
+            {% if (data[i].hierarki_ketiga == 'True') { %}
+                {% if (index != data[i].account.substr(0, 1)) { %} 
+                    {% var index = data[i].account.substr(0, 1) %}
+                    {% if (index == 4) { %}
+                        <tr>
+                            <td><b>{%= __("Reveneu") %}</b></td>    
+                            <td></td><td></td><td></td>
+                        </tr>
+                    {% } else if (index == 5) { %}
+                        <tr>
+                            <td><b>{%= __("Total Reveneu") %}</b></td>
+                            <td><b>{%= r_current_month %}</b></td>
+                            <td><b>{%= r_last_month %}</b></td>
+                            <td><b>{%= r_year_to_date %}</b></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+
+                        <tr>
+                            <td><b>{%= __("Cost of Sales") %}</b></td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    {% } else if (index == 6) { %}
+                        <tr>
+                            <td><b>{%= __("Total Cost of Sales") %}</b></td>
+                            <td><b>{%= cos_current_month %}</b></td>
+                            <td><b>{%= cos_last_month %}</b></td>
+                            <td><b>{%= cos_year_to_date %}</b></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+
+                        <tr>
+                            <td><b>{%= __("Employee and Payroll") %}</b></td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    {% } else if (index == 7) { %}
+                        <tr>
+                            <td><b>{%= __("Total Employee and Payroll") %}</b></td>
+                            <td><b>{%= ep_current_month %}</b></td>
+                            <td><b>{%= ep_last_month %}</b></td>
+                            <td><b>{%= ep_year_to_date %}</b></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td>
+                        </tr>
+
+                        <tr>
+                            <td><b>{%= __("Expense") %}</b></td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    {% } %}
+                {% } %}
+
+                {% if (index == 4) { %}
+                    {% var r_current_month = r_current_month + data[i].current_month %}
+                    {% var r_last_month = r_last_month + data[i].last_month %}
+                    {% var r_year_to_date = r_year_to_date + data[i].year_to_date %}
+                {% } else if (index == 5) { %}
+                    {% var cos_current_month = cos_current_month + data[i].current_month %}
+                    {% var cos_last_month = cos_last_month + data[i].last_month %}
+                    {% var cos_year_to_date = cos_year_to_date + data[i].year_to_date %}
+                {% } else if (index == 6) { %}
+                    {% var ep_current_month = ep_current_month + data[i].current_month %}
+                    {% var ep_last_month = ep_last_month + data[i].last_month %}
+                    {% var ep_year_to_date = ep_year_to_date + data[i].year_to_date %}
+                {% } else if (index == 7) { %}
+                    {% var e_current_month = e_current_month + data[i].current_month %}
+                    {% var e_last_month = e_last_month + data[i].last_month %}
+                    {% var e_year_to_date = e_year_to_date + data[i].year_to_date %}
+                {% } %}
+
+                <tr>
+                    <td>{%= data[i].account %}</td>
+                    <td>{%= data[i].current_month %}</td>
+                    <td>{%= data[i].last_month %}</td>
+                    <td>{%= data[i].year_to_date %}</td>
+                </tr>
+            {% } %}
+        {% } %}
+        
+        <tr>
+            <td><b>{%= __("Total Expense") %}</b></td>
+            <td><b>{%= e_current_month %}</b></td>
+            <td><b>{%= e_last_month %}</b></td>
+            <td><b>{%= e_year_to_date %}</b></td>
+        </tr>
+
+        <tr>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        <tr>
+            <td><b>{%= __("Summary") %}</b></td>
+            <td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>{%= __("Total Reveneu") %}</td>
+            <td>{%= r_current_month %}</td>
+            <td>{%= r_last_month %}</td>
+            <td>{%= r_year_to_date %}</td>
+        </tr>
+        <tr>
+            <td>{%= __("Total Cost of Sales") %}</td>
+            <td>{%= cos_current_month %}</td>
+            <td>{%= cos_last_month %}</td>
+            <td>{%= cos_year_to_date %}</td>
+        </tr>
+        <tr>
+            <td>{%= __("Total Employee and Payroll") %}</td>
+            <td>{%= ep_current_month %}</td>
+            <td>{%= ep_last_month %}</td>
+            <td>{%= ep_year_to_date %}</td>
+        </tr>
+
+        {% var gop_current_month = r_current_month - cos_current_month - ep_current_month %}
+        {% var gop_last_month = r_last_month - cos_last_month - ep_last_month %}
+        {% var gop_year_to_date = r_year_to_date - cos_year_to_date - ep_year_to_date %}
+
+        <tr>
+            <td><b>{%= __("Gross Operating Profit (GOP)") %}</b></td>
+            <td><b>{%= gop_current_month %}</b></td>
+            <td><b>{%= gop_last_month %}</b></td>
+            <td><b>{%= gop_year_to_date %}</b></td>
+        </tr>
+        
+        <tr>
+            <td>{%= __("Total Expense") %}</td>
+            <td>{%= e_current_month %}</td>
+            <td>{%= e_last_month %}</td>
+            <td>{%= e_year_to_date %}</td>
+        </tr>
+
+        {% var nop_current_month = gop_current_month - e_current_month %}
+        {% var nop_last_month = gop_last_month - e_last_month %}
+        {% var nop_year_to_date = gop_year_to_date - e_year_to_date %}
+
+        <tr>
+            <td><b>{%= __("Net Operating Profit (NOP)") %}</b></td>
+            <td><b>{%= nop_current_month %}</b></td>
+            <td><b>{%= nop_last_month %}</b></td>
+            <td><b>{%= nop_year_to_date %}</b></td>
+        </tr>
+    </tbody>
+</table>
