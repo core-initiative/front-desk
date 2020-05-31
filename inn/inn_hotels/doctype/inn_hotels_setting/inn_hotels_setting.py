@@ -38,10 +38,17 @@ def generate_folio_transaction_type():
 			'type': _('Debit'),
 			 'is_included': 0
 		}]
-	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Room Charge Tax'}):
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Room Charge Tax/Service'}):
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
-			'trx_name': _('Room Charge Tax'),
+			'trx_name': _('Room Charge Tax/Service'),
+			'type': _('Debit'),
+			'is_included': 0
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Breakfast Charge Tax/Service'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Breakfast Charge Tax/Service'),
 			'type': _('Debit'),
 			'is_included': 0
 		}]
@@ -65,6 +72,15 @@ def generate_folio_transaction_type():
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
 			'trx_name': _('Room Charge'),
+			'type': _('Debit'),
+			'is_included': 0,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Breakfast Charge'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Breakfast Charge'),
 			'type': _('Debit'),
 			'is_included': 0,
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
