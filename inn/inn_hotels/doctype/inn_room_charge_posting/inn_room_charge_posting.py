@@ -123,7 +123,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.flag = 'Debit'
 			room_tax_doc.is_void = 0
 			room_tax_doc.idx = get_idx(item_doc.folio_id)
-			room_tax_doc.transaction_type = 'Room Charge Tax'
+			room_tax_doc.transaction_type = 'Room Charge Tax/Service'
 			room_tax_doc.amount = room_tb_amount[index]
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
@@ -138,7 +138,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.flag = 'Debit'
 		breakfast_charge_folio_trx.is_void = 0
 		breakfast_charge_folio_trx.idx = get_idx(item_doc.folio_id)
-		breakfast_charge_folio_trx.transaction_type = 'Room Charge'
+		breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
 		breakfast_charge_folio_trx.amount = reservation.nett_actual_breakfast_rate
 		accumulated_amount += reservation.nett_actual_breakfast_rate
 		breakfast_charge_folio_trx.debit_account = debit_account
@@ -156,7 +156,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.flag = 'Debit'
 			breakfast_tax_doc.is_void = 0
 			breakfast_tax_doc.idx = get_idx(item_doc.folio_id)
-			breakfast_tax_doc.transaction_type = 'Room Charge Tax'
+			breakfast_tax_doc.transaction_type = 'Breakfast Charge Tax/Service'
 			breakfast_tax_doc.amount = breakfast_tb_amount[index]
 			accumulated_amount += breakfast_tb_amount[index]
 			breakfast_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown',
@@ -225,7 +225,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.flag = 'Debit'
 			room_tax_doc.is_void = 0
 			room_tax_doc.idx = get_idx(item['folio_id'])
-			room_tax_doc.transaction_type = 'Room Charge Tax'
+			room_tax_doc.transaction_type = 'Room Charge Tax/Service'
 			room_tax_doc.amount = room_tb_amount[index]
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
@@ -241,7 +241,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.flag = 'Debit'
 		breakfast_charge_folio_trx.is_void = 0
 		breakfast_charge_folio_trx.idx = get_idx(item['folio_id'])
-		breakfast_charge_folio_trx.transaction_type = 'Room Charge'
+		breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
 		breakfast_charge_folio_trx.amount = reservation.nett_actual_breakfast_rate
 		accumulated_amount += reservation.nett_actual_breakfast_rate
 		breakfast_charge_folio_trx.debit_account = debit_account
@@ -260,7 +260,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.flag = 'Debit'
 			breakfast_tax_doc.is_void = 0
 			breakfast_tax_doc.idx = get_idx(item['folio_id'])
-			breakfast_tax_doc.transaction_type = 'Room Charge Tax'
+			breakfast_tax_doc.transaction_type = 'Breakfast Charge Tax/Service'
 			breakfast_tax_doc.amount = breakfast_tb_amount[index]
 			accumulated_amount += breakfast_tb_amount[index]
 			breakfast_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown',
