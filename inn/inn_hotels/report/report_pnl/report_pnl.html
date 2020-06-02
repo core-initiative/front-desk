@@ -22,115 +22,206 @@
 		</tr>
     </thead>
     <tbody>
-        {% var index = 0 %}
+        {% var r_cm = 0 %}
+        {% var r_lm = 0 %}
+        {% var r_yd = 0 %}
 
-        {% var r_current_month = 0 %}
-        {% var r_last_month = 0 %}
-        {% var r_year_to_date = 0 %}
-
-        {% var cos_current_month = 0 %}
-        {% var cos_last_month = 0 %}
-        {% var cos_year_to_date = 0 %}
-
-        {% var ep_current_month = 0 %}
-        {% var ep_last_month = 0 %}
-        {% var ep_year_to_date = 0 %}
-
-        {% var e_current_month = 0 %}
-        {% var e_last_month = 0 %}
-        {% var e_year_to_date = 0 %}
-
-        {% for(var i=0, l=data.length-1; i<l; i++) { %}
-            {% if (data[i].hierarki_ketiga == 'True') { %}
-                {% if (index != data[i].account.substr(0, 1)) { %} 
-                    {% var index = data[i].account.substr(0, 1) %}
-                    {% if (index == 4) { %}
-                        <tr>
-                            <td><b>{%= __("Reveneu") %}</b></td>    
-                            <td></td><td></td><td></td>
-                        </tr>
-                    {% } else if (index == 5) { %}
-                        <tr>
-                            <td><b>{%= __("Total Reveneu") %}</b></td>
-                            <td><b>{%= r_current_month %}</b></td>
-                            <td><b>{%= r_last_month %}</b></td>
-                            <td><b>{%= r_year_to_date %}</b></td>
-                        </tr>
-                        <tr>
-                            <td></td><td></td><td></td><td></td>
-                        </tr>
-
-                        <tr>
-                            <td><b>{%= __("Cost of Sales") %}</b></td>
-                            <td></td><td></td><td></td>
-                        </tr>
-                    {% } else if (index == 6) { %}
-                        <tr>
-                            <td><b>{%= __("Total Cost of Sales") %}</b></td>
-                            <td><b>{%= cos_current_month %}</b></td>
-                            <td><b>{%= cos_last_month %}</b></td>
-                            <td><b>{%= cos_year_to_date %}</b></td>
-                        </tr>
-                        <tr>
-                            <td></td><td></td><td></td><td></td>
-                        </tr>
-
-                        <tr>
-                            <td><b>{%= __("Employee and Payroll") %}</b></td>
-                            <td></td><td></td><td></td>
-                        </tr>
-                    {% } else if (index == 7) { %}
-                        <tr>
-                            <td><b>{%= __("Total Employee and Payroll") %}</b></td>
-                            <td><b>{%= ep_current_month %}</b></td>
-                            <td><b>{%= ep_last_month %}</b></td>
-                            <td><b>{%= ep_year_to_date %}</b></td>
-                        </tr>
-                        <tr>
-                            <td></td><td></td><td></td><td></td>
-                        </tr>
-
-                        <tr>
-                            <td><b>{%= __("Expense") %}</b></td>
-                            <td></td><td></td><td></td>
-                        </tr>
-                    {% } %}
-                {% } %}
-
-                {% if (index == 4) { %}
-                    {% var r_current_month = r_current_month + data[i].current_month %}
-                    {% var r_last_month = r_last_month + data[i].last_month %}
-                    {% var r_year_to_date = r_year_to_date + data[i].year_to_date %}
-                {% } else if (index == 5) { %}
-                    {% var cos_current_month = cos_current_month + data[i].current_month %}
-                    {% var cos_last_month = cos_last_month + data[i].last_month %}
-                    {% var cos_year_to_date = cos_year_to_date + data[i].year_to_date %}
-                {% } else if (index == 6) { %}
-                    {% var ep_current_month = ep_current_month + data[i].current_month %}
-                    {% var ep_last_month = ep_last_month + data[i].last_month %}
-                    {% var ep_year_to_date = ep_year_to_date + data[i].year_to_date %}
-                {% } else if (index == 7) { %}
-                    {% var e_current_month = e_current_month + data[i].current_month %}
-                    {% var e_last_month = e_last_month + data[i].last_month %}
-                    {% var e_year_to_date = e_year_to_date + data[i].year_to_date %}
-                {% } %}
-
-                <tr>
-                    <td>{%= data[i].account %}</td>
-                    <td>{%= data[i].current_month %}</td>
-                    <td>{%= data[i].last_month %}</td>
-                    <td>{%= data[i].year_to_date %}</td>
-                </tr>
-            {% } %}
-        {% } %}
-        
         <tr>
-            <td><b>{%= __("Total Expense") %}</b></td>
-            <td><b>{%= e_current_month %}</b></td>
-            <td><b>{%= e_last_month %}</b></td>
-            <td><b>{%= e_year_to_date %}</b></td>
+            <td><b>{%= __("Revenue") %}</b></td>    
+            <td></td><td></td><td></td>
         </tr>
 
+        {% for(var i=0, l=data.length-1; i<l; i++) { %}
+            {% if (data[i].hierarki_ketiga == 'True' && (data[i].current_month != 0 || data[i].last_month != 0 || data[i].year_to_date != 0)) { %}
+                {% if (data[i].account.substr(0, 1) == 4) { %}
+                    <tr>
+                        <td>{%= data[i].account %}</td>
+                        <td>{%= format_currency(data[i].current_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].last_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].year_to_date, "IDR") %}</td>
+                    </tr>
+
+                    {% var r_cm = r_cm + data[i].cm %}
+                    {% var r_lm = r_lm + data[i].lm %}
+                    {% var r_yd = r_yd + data[i].yd %}
+                {% } %}
+            {% } %}
+        {% } %}
+
+        <tr>
+            <td><b>{%= __("Total Revenue") %}</b></td>
+            
+            {% if (r_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * r_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (r_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * r_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (r_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * r_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_yd, "IDR") %}</b></td>
+            {% } %}
+        </tr>
+        <tr>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        {% var cos_cm = 0 %}
+        {% var cos_lm = 0 %}
+        {% var cos_yd = 0 %}
+
+        <tr>
+            <td><b>{%= __("Cost of Sales") %}</b></td>    
+            <td></td><td></td><td></td>
+        </tr>
+
+        {% for(var i=0, l=data.length-1; i<l; i++) { %}
+            {% if (data[i].hierarki_ketiga == 'True' && (data[i].current_month != 0 || data[i].last_month != 0 || data[i].year_to_date != 0)) { %}
+                {% if (data[i].account.substr(0, 1) == 5) { %}
+                    <tr>
+                        <td>{%= data[i].account %}</td>
+                        <td>{%= format_currency(data[i].current_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].last_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].year_to_date, "IDR") %}</td>
+                    </tr>
+
+                    {% var cos_cm = cos_cm + data[i].cm %}
+                    {% var cos_lm = cos_lm + data[i].lm %}
+                    {% var cos_yd = cos_yd + data[i].yd %}
+                {% } %}
+            {% } %}
+        {% } %}
+
+        <tr>
+            <td><b>{%= __("Total Cost of Sales") %}</b></td>
+
+            {% if (cos_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (cos_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (cos_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_yd, "IDR") %}</b></td>
+            {% } %}
+        </tr>
+        <tr>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        {% var ep_cm = 0 %}
+        {% var ep_lm = 0 %}
+        {% var ep_yd = 0 %}
+
+        <tr>
+            <td><b>{%= __("Employee and Payroll") %}</b></td>    
+            <td></td><td></td><td></td>
+        </tr>
+
+        {% for(var i=0, l=data.length-1; i<l; i++) { %}
+            {% if (data[i].hierarki_ketiga == 'True' && (data[i].current_month != 0 || data[i].last_month != 0 || data[i].year_to_date != 0)) { %}
+                {% if (data[i].account.substr(0, 1) == 6) { %}
+                    <tr>
+                        <td>{%= data[i].account %}</td>
+                        <td>{%= format_currency(data[i].current_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].last_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].year_to_date, "IDR") %}</td>
+                    </tr>
+
+                    {% var ep_cm = ep_cm + data[i].cm %}
+                    {% var ep_lm = ep_lm + data[i].lm %}
+                    {% var ep_yd = ep_yd + data[i].yd %}
+                {% } %}
+            {% } %}
+        {% } %}
+
+        <tr>
+            <td><b>{%= __("Total Employee and Payroll") %}</b></td>
+
+            {% if (ep_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (ep_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (ep_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_yd, "IDR") %}</b></td>
+            {% } %}
+        </tr>
+        <tr>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        {% var e_cm = 0 %}
+        {% var e_lm = 0 %}
+        {% var e_yd = 0 %}
+
+        <tr>
+            <td><b>{%= __("Expense") %}</b></td>    
+            <td></td><td></td><td></td>
+        </tr>
+
+        {% for(var i=0, l=data.length-1; i<l; i++) { %}
+            {% if (data[i].hierarki_ketiga == 'True' && (data[i].current_month != 0 || data[i].last_month != 0 || data[i].year_to_date != 0)) { %}
+                {% if (data[i].account.substr(0, 1) == 7) { %}
+                    <tr>
+                        <td>{%= data[i].account %}</td>
+                        <td>{%= format_currency(data[i].current_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].last_month, "IDR") %}</td>
+                        <td>{%= format_currency(data[i].year_to_date, "IDR") %}</td>
+                    </tr>
+
+                    {% var e_cm = e_cm + data[i].cm %}
+                    {% var e_lm = e_lm + data[i].lm %}
+                    {% var e_yd = e_yd + data[i].yd %}
+                {% } %}
+            {% } %}
+        {% } %}
+
+        <tr>
+            <td><b>{%= __("Total Expense") %}</b></td>
+
+            {% if (e_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * e_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (e_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * e_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (e_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * e_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_yd, "IDR") %}</b></td>
+            {% } %}
+        </tr>
         <tr>
             <td></td><td></td><td></td><td></td>
         </tr>
@@ -140,51 +231,141 @@
             <td></td><td></td><td></td>
         </tr>
         <tr>
-            <td>{%= __("Total Reveneu") %}</td>
-            <td>{%= r_current_month %}</td>
-            <td>{%= r_last_month %}</td>
-            <td>{%= r_year_to_date %}</td>
+            <td><b>{%= __("Total Revenue") %}</b></td>
+            
+            {% if (r_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * r_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (r_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * r_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (r_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * r_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(r_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
         <tr>
-            <td>{%= __("Total Cost of Sales") %}</td>
-            <td>{%= cos_current_month %}</td>
-            <td>{%= cos_last_month %}</td>
-            <td>{%= cos_year_to_date %}</td>
+            <td><b>{%= __("Total Cost of Sales") %}</b></td>
+
+            {% if (cos_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (cos_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (cos_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * cos_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(cos_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
         <tr>
-            <td>{%= __("Total Employee and Payroll") %}</td>
-            <td>{%= ep_current_month %}</td>
-            <td>{%= ep_last_month %}</td>
-            <td>{%= ep_year_to_date %}</td>
+            <td><b>{%= __("Total Employee and Payroll") %}</b></td>
+
+            {% if (ep_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (ep_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (ep_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * ep_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(ep_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
 
-        {% var gop_current_month = r_current_month - cos_current_month - ep_current_month %}
-        {% var gop_last_month = r_last_month - cos_last_month - ep_last_month %}
-        {% var gop_year_to_date = r_year_to_date - cos_year_to_date - ep_year_to_date %}
+        {% var gop_cm = r_cm - cos_cm - ep_cm %}
+        {% var gop_lm = r_lm - cos_lm - ep_lm %}
+        {% var gop_yd = r_yd - cos_yd - ep_yd %}
 
         <tr>
             <td><b>{%= __("Gross Operating Profit (GOP)") %}</b></td>
-            <td><b>{%= gop_current_month %}</b></td>
-            <td><b>{%= gop_last_month %}</b></td>
-            <td><b>{%= gop_year_to_date %}</b></td>
+
+            {% if (gop_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * gop_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(gop_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (gop_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * gop_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(gop_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (gop_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * gop_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(gop_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
         
         <tr>
-            <td>{%= __("Total Expense") %}</td>
-            <td>{%= e_current_month %}</td>
-            <td>{%= e_last_month %}</td>
-            <td>{%= e_year_to_date %}</td>
+            <td><b>{%= __("Total Expense") %}</b></td>
+
+            {% if (e_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * e_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (e_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * e_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (e_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * e_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(e_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
 
-        {% var nop_current_month = gop_current_month - e_current_month %}
-        {% var nop_last_month = gop_last_month - e_last_month %}
-        {% var nop_year_to_date = gop_year_to_date - e_year_to_date %}
+        {% var nop_cm = gop_cm - e_cm %}
+        {% var nop_lm = gop_lm - e_lm %}
+        {% var nop_yd = gop_yd - e_yd %}
 
         <tr>
             <td><b>{%= __("Net Operating Profit (NOP)") %}</b></td>
-            <td><b>{%= nop_current_month %}</b></td>
-            <td><b>{%= nop_last_month %}</b></td>
-            <td><b>{%= nop_year_to_date %}</b></td>
+
+            {% if (nop_cm < 0) { %}
+                <td><b>{%= format_currency(-1 * nop_cm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(nop_cm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (nop_lm < 0) { %}
+                <td><b>{%= format_currency(-1 * nop_lm, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(nop_lm, "IDR") %}</b></td>
+            {% } %}
+
+            {% if (nop_yd < 0) { %}
+                <td><b>{%= format_currency(-1 * nop_yd, "IDR") %}</b></td>
+            {% } else { %}
+                <td><b>{%= format_currency(nop_yd, "IDR") %}</b></td>
+            {% } %}
         </tr>
     </tbody>
 </table>
