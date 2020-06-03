@@ -6,6 +6,7 @@ import frappe
 import json
 import ast
 import datetime
+import math
 
 def execute(filters=None):
     columns = [
@@ -49,7 +50,7 @@ def get_accounts(root_type):
     return frappe.db.sql("""
 		select name, parent_account
 		from `tabAccount`
-		where root_type=%s""", (root_type), as_dict=True)
+		where root_type=%s order by name""", (root_type), as_dict=True)
 
 def get_gl_entries(date, fiscal_year):
     return frappe.db.sql("""
@@ -158,9 +159,13 @@ def get_data(filters):
 
                 data.append({
                         'account': item,
-                        'current_month': income_current_month[item],
-                        'last_month': income_last_month[item],
-                        'year_to_date': income_year_to_date[item],
+                        'currency': 'IDR',
+                        'current_month': abs(math.ceil(income_current_month[item])),
+                        'last_month': abs(math.ceil(income_last_month[item])),
+                        'year_to_date': abs(math.ceil(income_year_to_date[item])),
+                        'cm': math.ceil(income_current_month[item]),
+                        'lm': math.ceil(income_last_month[item]),
+                        'yd': math.ceil(income_year_to_date[item]),
                         'parent': parent,
                         'hierarki_ketiga': income_hierarki_ketiga[item]
                     })
@@ -172,9 +177,13 @@ def get_data(filters):
 
                 data.append({
                         'account': item,
-                        'current_month': expense_current_month[item],
-                        'last_month': expense_last_month[item],
-                        'year_to_date': expense_year_to_date[item],
+                        'currency': 'IDR',
+                        'current_month': abs(math.ceil(expense_current_month[item])),
+                        'last_month': abs(math.ceil(expense_last_month[item])),
+                        'year_to_date': abs(math.ceil(expense_year_to_date[item])),
+                        'cm': math.ceil(expense_current_month[item]),
+                        'lm': math.ceil(expense_last_month[item]),
+                        'yd': math.ceil(expense_year_to_date[item]),
                         'parent': parent,
                         'hierarki_ketiga': expense_hierarki_ketiga[item]
                     })
