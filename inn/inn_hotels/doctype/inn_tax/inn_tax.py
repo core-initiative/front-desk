@@ -55,12 +55,12 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 			elif item.breakdown_type == 'On Net Total':
 				if index == 0:
 					# this row amount is it's rate multiplied with base_total
-					tb_amount[index] = item.breakdown_rate/100.0 * base_total
+					tb_amount[index] = float(int(item.breakdown_rate/100.0 * base_total))
 					# this row total is base_total plus this row amount
 					tb_total[index] = tb_total[index] + tb_amount[index]
 				else:
 					# this row amount is it's rate multiplied with previous total
-					tb_amount[index] = item.breakdown_rate/100.0 * tb_total[index-1]
+					tb_amount[index] = float(int(item.breakdown_rate/100.0 * tb_total[index-1]))
 					# this row total is previous row total plus this row amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
 
@@ -68,7 +68,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 				#  this type of tax breakdown must not be the first row
 				if index > 0:
 					# this row amount is it's rate multiplied with another row's amount, referenced by row_id
-					tb_amount[index] = item.breakdown_rate/100.0 * tb_amount[int(item.breakdown_row_id)-1]
+					tb_amount[index] = float(int(item.breakdown_rate/100.0 * tb_amount[int(item.breakdown_row_id)-1]))
 					# this row total is previous row total plus this row amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
 
@@ -76,7 +76,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 				#  this type of tax breakdown must not be the first row
 				if index > 0:
 					# this row amount is it's rate multiplied with another row's total, referenced by row_id
-					tb_amount[index] = item.breakdown_rate/100.0 * tb_total[int(item.breakdown_row_id)-1]
+					tb_amount[index] = float(int(item.breakdown_rate/100.0 * tb_total[int(item.breakdown_row_id)-1]))
 					# this row total is previous row total plus this row amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
 	# This condition means that no tax or charges added
