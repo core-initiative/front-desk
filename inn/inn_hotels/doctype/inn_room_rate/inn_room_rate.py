@@ -55,7 +55,7 @@ def get_actual_room_rate_before_from_actual_rate(room_rate_id, actual_rate):
 					tb_rate_before[index] = math.ceil(float(actual_room_rate)/denominator)
 					tb_rate_after[index] = actual_room_rate
 				else:
-					tb_rate_before[index] = math.ceil(float(tb_rate_after[index-1])/denominator)
+					tb_rate_before[index] = math.ceil(float(tb_rate_before[index-1])/denominator)
 					tb_rate_after[index] = tb_rate_after[index-1]
 			elif item.breakdown_type == 'On Previous Row Total':
 				denominator = (100 + float(item.breakdown_rate)) / 100
