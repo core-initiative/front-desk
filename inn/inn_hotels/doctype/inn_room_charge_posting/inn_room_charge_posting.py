@@ -41,7 +41,7 @@ def populate_tobe_posted():
 		reservation = frappe.get_doc('Inn Reservation', item.reservation_id)
 		if reservation.status == 'In House' or reservation.status == 'Finish':
 			room_charge_remark = 'Room Charge: Room Rate (Nett): ' + reservation.actual_room_id + " - " + \
-								 datetime.datetime.today().strftime("%d-%m-%Y")
+								 get_last_audit_date().strftime("%d-%m-%Y")
 			if not frappe.db.exists('Inn Folio Transaction',
 								{'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
 				tobe_posted = frappe.new_doc('Inn Room Charge To Be Posted')
@@ -63,7 +63,7 @@ def get_posted_lists():
 		reservation = frappe.get_doc('Inn Reservation', item.reservation_id)
 		if reservation.status == 'In House' or reservation.status == 'Finish':
 			room_charge_remark = 'Room Charge: Room Rate (Nett): ' + reservation.actual_room_id + " - " + \
-								 datetime.datetime.today().strftime("%d-%m-%Y")
+								 get_last_audit_date().strftime("%d-%m-%Y")
 			if frappe.db.exists('Inn Folio Transaction',
 								{'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
 				folio_trx = frappe.get_doc('Inn Folio Transaction',
@@ -109,7 +109,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		accumulated_amount += reservation.nett_actual_room_rate
 		room_charge_folio_trx.debit_account = debit_account
 		room_charge_folio_trx.credit_account = credit_account
-		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item_doc.room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		room_charge_folio_trx.parent = item_doc.folio_id
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
@@ -129,7 +129,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
 			room_tax_doc.debit_account = debit_account
-			room_tax_doc.remark = 'Room Charge Tax Room Rate ' + room_tax_item_name + ' : ' + item_doc.room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			room_tax_doc.remark = 'Room Charge Tax Room Rate ' + room_tax_item_name + ' : ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			room_tax_doc.parent = item_doc.folio_id
 			room_tax_doc.parenttype = 'Inn Folio'
 			room_tax_doc.parentfield = 'folio_transaction'
@@ -144,7 +144,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		accumulated_amount += reservation.nett_actual_breakfast_rate
 		breakfast_charge_folio_trx.debit_account = debit_account
 		breakfast_charge_folio_trx.credit_account = credit_account
-		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item_doc.room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		breakfast_charge_folio_trx.parent = item_doc.folio_id
 		breakfast_charge_folio_trx.parenttype = 'Inn Folio'
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
@@ -163,7 +163,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown',
 															 breakfast_tax_item_name).breakdown_account
 			breakfast_tax_doc.debit_account = debit_account
-			breakfast_tax_doc.remark = 'Breakfast Charge Tax Room Rate ' + breakfast_tax_item_name + ' : ' + item_doc.room_id + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			breakfast_tax_doc.remark = 'Breakfast Charge Tax Room Rate ' + breakfast_tax_item_name + ' : ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			breakfast_tax_doc.parent = item_doc.folio_id
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
@@ -212,7 +212,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.debit_account = debit_account
 		room_charge_folio_trx.credit_account = credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item[
-			'room_id'] + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		room_charge_folio_trx.parent = item['folio_id']
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
@@ -233,7 +233,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
 			room_tax_doc.debit_account = debit_account
 			room_tax_doc.remark = 'Room Charge Tax Room Rate ' + room_tax_item_name + ' : ' + item[
-				'room_id'] + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+				'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			room_tax_doc.parent = item['folio_id']
 			room_tax_doc.parenttype = 'Inn Folio'
 			room_tax_doc.parentfield = 'folio_transaction'
@@ -249,7 +249,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.debit_account = debit_account
 		breakfast_charge_folio_trx.credit_account = credit_account
 		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item[
-			'room_id'] + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+			'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		breakfast_charge_folio_trx.parent = item['folio_id']
 		breakfast_charge_folio_trx.parenttype = 'Inn Folio'
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
@@ -269,7 +269,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 															 breakfast_tax_item_name).breakdown_account
 			breakfast_tax_doc.debit_account = debit_account
 			breakfast_tax_doc.remark = 'Breakfast Charge Tax Room Rate ' + breakfast_tax_item_name + ' : ' + item[
-				'room_id'] + " - " + datetime.datetime.today().strftime("%d-%m-%Y")
+				'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			breakfast_tax_doc.parent = item['folio_id']
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
