@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
 from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
+from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
 from frappe.model.document import Document
 
 class InnFolioTransaction(Document):
@@ -99,3 +100,7 @@ def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, pa
 	new_doc.insert()
 
 	return new_doc.name
+
+def add_audit_date(doc, method):
+	audit_date = get_last_audit_date()
+	doc.audit_date = audit_date

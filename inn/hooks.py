@@ -94,6 +94,9 @@ doc_events = {
 	"Inn Room": {
 		"validate": "inn.inn_hotels.doctype.inn_room.inn_room.calculate_total_amenities_cost"
 	},
+	"Inn Folio Transaction": {
+		"validate": "inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_audit_date"
+	},
 }
 
 # Scheduled Tasks
