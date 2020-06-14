@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import frappe
+import math
 import datetime
 from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
@@ -167,9 +168,10 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.insert()
-		if abs(int(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
+
+		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
 			adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
-				abs(int(accumulated_amount) - int(reservation.actual_room_rate)))
+				abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
 
@@ -272,8 +274,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.insert()
-		if abs(int(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
-			adjusted_room_charge_amount = room_charge_folio_trx.amount - float(abs(int(accumulated_amount) - int(reservation.actual_room_rate)))
+		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
+			adjusted_room_charge_amount = room_charge_folio_trx.amount - float(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
 
