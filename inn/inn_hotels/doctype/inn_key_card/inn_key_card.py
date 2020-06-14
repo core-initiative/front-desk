@@ -74,9 +74,10 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
 	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
 	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
-
+	is_wifi_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'wifi_use_auth'))
 	# defining auth to be sent to the API
-	auth = (username, password)
+	if is_wifi_use_auth == 1:
+		auth = (username, password)
 
 	# defining a params dict for the parameters to be sent to the API
 	params = {
@@ -114,7 +115,11 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 		params.update({'cardId': cardId})
 
 	if url is not None:
-		r = requests.post(url, data=params, auth=auth)
+		if is_wifi_use_auth == 1:
+			r = requests.post(url, data=params, auth=auth)
+		else:
+			r = requests.post(url, data=params)
+
 		if r:
 			returned = json.loads(r.text)
 			return returned['returnCardId']
@@ -133,9 +138,11 @@ def tesa_read_card(pcId, cmd, technology, cardOperation, encoder, format, track,
 	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
 	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
 	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_wifi_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'wifi_use_auth'))
 
 	# defining auth to be sent to the API
-	auth = (username, password)
+	if is_wifi_use_auth == 1:
+		auth = (username, password)
 
 	# defining a params dict for the parameters to be sent to the API
 	params = {
@@ -150,7 +157,10 @@ def tesa_read_card(pcId, cmd, technology, cardOperation, encoder, format, track,
 	}
 
 	if url is not None:
-		r = requests.post(url, data=params, auth=auth)
+		if is_wifi_use_auth == 1:
+			r = requests.post(url, data=params, auth=auth)
+		else:
+			r = requests.post(url, data=params)
 		return r.text
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
