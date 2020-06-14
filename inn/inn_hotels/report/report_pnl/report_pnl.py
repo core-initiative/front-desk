@@ -66,126 +66,71 @@ def get_data(filters):
         fiscal_year = int(filters.fiscal_year)
 
         if date.year == fiscal_year:
-            income_parent = {}
-            income_current_month = {}
-            income_last_month = {}
-            income_year_to_date = {}
+            accounts_map = {}
 
             accounts = get_accounts('Income')
             for account in accounts:
+                parent = None
                 if account['parent_account']:
-                    income_parent[account['name']] = account['parent_account']
-                else:
-                    income_parent[account['name']] = None
+                    parent = account['parent_account']
 
-                income_current_month[account['name']] = 0
-                income_last_month[account['name']] = 0
-                income_year_to_date[account['name']] = 0
+                accounts_map[account['name']] = {'account_parent': parent, 'current_month': 0, 'last_month': 0, 'year_to_date': 0}
 
-            income_hierarki_ketiga = {}
-            for account, parent in income_parent.items():
-                if parent and income_parent[parent] and income_parent[income_parent[parent]] is None:
-                    income_hierarki_ketiga[account] = 'True'
-                else:
-                    income_hierarki_ketiga[account] = 'False'
-
-            expense_parent = {}
-            expense_current_month = {}
-            expense_last_month = {}
-            expense_year_to_date = {}
-
+            
             accounts = get_accounts('Expense')
             for account in accounts:
+                parent = None
                 if account['parent_account']:
-                    expense_parent[account['name']] = account['parent_account']
-                else:
-                    expense_parent[account['name']] = None
+                    parent = account['parent_account']
 
-                expense_current_month[account['name']] = 0
-                expense_last_month[account['name']] = 0
-                expense_year_to_date[account['name']] = 0
+                accounts_map[account['name']] = {'account_parent': parent, 'current_month': 0, 'last_month': 0, 'year_to_date': 0}
             
-            expense_hierarki_ketiga = {}
-            for account, parent in expense_parent.items():
-                if parent and expense_parent[parent] and expense_parent[expense_parent[parent]] is None:
-                    expense_hierarki_ketiga[account] = 'True'
-                else:
-                    expense_hierarki_ketiga[account] = 'False'
+            for account in accounts_map:
+                indent = 0.0
+
+                parent = accounts_map[account]['account_parent']
+                while parent is not None:
+                    indent = indent + 1.0
+                    parent = accounts_map[parent]['account_parent']
+                
+                accounts_map[account]['indent'] = indent
 
             gl_entries = get_gl_entries(date, fiscal_year)
             for gl_entry in gl_entries:
                 account = gl_entry[1]
-
-                if account[:1] == '4':
-                    income_year_to_date[account] = income_year_to_date[account] + gl_entry[2] - gl_entry[3]
-
-                    if gl_entry[0].month == date.month:
-                        income_current_month[account] = income_current_month[account] + gl_entry[2] - gl_entry[3]
-                    elif gl_entry[0].month+1 == date.month:
-                        income_last_month[account] = income_last_month[account] + gl_entry[2] - gl_entry[3]
-
-                    while income_parent[account] is not None:
-                        account = income_parent[account]
-
-                        income_year_to_date[account] = income_year_to_date[account] + gl_entry[2] - gl_entry[3]
+                
+                while account is not None:
+                    if account[:1] == '4':
+                        accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] + gl_entry[2] - gl_entry[3]
 
                         if gl_entry[0].month == date.month:
-                            income_current_month[account] = income_current_month[account] + gl_entry[2] - gl_entry[3]
+                            accounts_map[account]['current_month'] = accounts_map[account]['current_month'] + gl_entry[2] - gl_entry[3]
                         elif gl_entry[0].month+1 == date.month:
-                            income_last_month[account] = income_last_month[account] + gl_entry[2] - gl_entry[3]
+                            accounts_map[account]['last_month'] = accounts_map[account]['last_month'] + gl_entry[2] - gl_entry[3]
 
-                elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
-                    expense_year_to_date[account] = expense_year_to_date[account] - gl_entry[2] + gl_entry[3]
-
-                    if gl_entry[0].month == date.month:
-                        expense_current_month[account] = expense_current_month[account] - gl_entry[2] + gl_entry[3]
-                    elif gl_entry[0].month+1 == date.month:
-                        expense_last_month[account] = expense_last_month[account] - gl_entry[2] + gl_entry[3]
-
-                    while expense_parent[account] is not None:
-                        account = expense_parent[account]
-
-                        expense_year_to_date[account] = expense_year_to_date[account] - gl_entry[2] + gl_entry[3]
+                    elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
+                        accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] - gl_entry[2] + gl_entry[3]
 
                         if gl_entry[0].month == date.month:
-                            expense_current_month[account] = expense_current_month[account] - gl_entry[2] + gl_entry[3]
+                            accounts_map[account]['current_month'] = accounts_map[account]['current_month'] - gl_entry[2] + gl_entry[3]
                         elif gl_entry[0].month+1 == date.month:
-                            expense_last_month[account] = expense_last_month[account] - gl_entry[2] + gl_entry[3]
-            
-            for item in income_parent:
+                            accounts_map[account]['last_month'] = accounts_map[account]['last_month'] - gl_entry[2] + gl_entry[3]
+
+                    account = accounts_map[account]['account_parent']
+
+            for account in accounts_map:
                 parent = ''
-                if income_parent[item]:
-                    parent = income_parent[item]
-
+                if accounts_map[account]['account_parent']:
+                    parent = accounts_map[account]['account_parent']
+                
                 data.append({
-                        'account': item,
+                        'account': account,
                         'currency': 'IDR',
-                        'current_month': abs(math.ceil(income_current_month[item])),
-                        'last_month': abs(math.ceil(income_last_month[item])),
-                        'year_to_date': abs(math.ceil(income_year_to_date[item])),
-                        'cm': math.ceil(income_current_month[item]),
-                        'lm': math.ceil(income_last_month[item]),
-                        'yd': math.ceil(income_year_to_date[item]),
-                        'parent': parent,
-                        'hierarki_ketiga': income_hierarki_ketiga[item]
-                    })
-
-            for item in expense_parent:
-                parent = ''
-                if expense_parent[item]:
-                    parent = expense_parent[item]
-
-                data.append({
-                        'account': item,
-                        'currency': 'IDR',
-                        'current_month': abs(math.ceil(expense_current_month[item])),
-                        'last_month': abs(math.ceil(expense_last_month[item])),
-                        'year_to_date': abs(math.ceil(expense_year_to_date[item])),
-                        'cm': math.ceil(expense_current_month[item]),
-                        'lm': math.ceil(expense_last_month[item]),
-                        'yd': math.ceil(expense_year_to_date[item]),
-                        'parent': parent,
-                        'hierarki_ketiga': expense_hierarki_ketiga[item]
+                        'current_month': math.ceil(accounts_map[account]['current_month']),
+                        'last_month': math.ceil(accounts_map[account]['last_month']),
+                        'year_to_date': math.ceil(accounts_map[account]['year_to_date']),
+                        'parent_account': parent,
+                        'indent': accounts_map[account]['indent']
                     })
                 
             data = json.dumps(data)
