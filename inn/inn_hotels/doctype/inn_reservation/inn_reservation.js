@@ -441,7 +441,7 @@ frappe.ui.form.on('Inn Reservation', {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
 			args: {
-				track: "1"
+				option: "1"
 			}
 		});
 	},
@@ -449,7 +449,7 @@ frappe.ui.form.on('Inn Reservation', {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
 			args: {
-				track: "2"
+				option: "2"
 			}
 		});
 	},
@@ -457,7 +457,7 @@ frappe.ui.form.on('Inn Reservation', {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
 			args: {
-				track: "3"
+				option: "3"
 			}
 		});
 	},
@@ -465,7 +465,7 @@ frappe.ui.form.on('Inn Reservation', {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
 			args: {
-				track: "4"
+				option: "4"
 			}
 		});
 	},
