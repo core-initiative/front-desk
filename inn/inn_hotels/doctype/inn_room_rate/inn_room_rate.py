@@ -18,7 +18,7 @@ def calculate_total_amount(doc, method):
 	_, _, breakfast_rate_after_tax = calculate_inn_tax_and_charges(float(doc.breakfast_rate), doc.breakfast_tax)
 
 	doc.total_rate = doc.room_rate + doc.breakfast_rate
-	doc.rate_after_tax = float(room_rate_after_tax[-1]) + float(breakfast_rate_after_tax[-1])
+	doc.rate_after_tax = math.ceil(float(room_rate_after_tax[-1]) + float(breakfast_rate_after_tax[-1]))
 
 
 def get_room_rate_after_tax(room_rate_id):

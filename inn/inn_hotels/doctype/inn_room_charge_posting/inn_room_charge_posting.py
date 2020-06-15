@@ -105,8 +105,8 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.is_void = 0
 		room_charge_folio_trx.idx = get_idx(item_doc.folio_id)
 		room_charge_folio_trx.transaction_type = 'Room Charge'
-		room_charge_folio_trx.amount = reservation.nett_actual_room_rate
-		accumulated_amount += reservation.nett_actual_room_rate
+		room_charge_folio_trx.amount = float(int(reservation.nett_actual_room_rate))
+		accumulated_amount += float(int(reservation.nett_actual_room_rate))
 		room_charge_folio_trx.debit_account = debit_account
 		room_charge_folio_trx.credit_account = credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
@@ -140,8 +140,8 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.is_void = 0
 		breakfast_charge_folio_trx.idx = get_idx(item_doc.folio_id)
 		breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
-		breakfast_charge_folio_trx.amount = reservation.nett_actual_breakfast_rate
-		accumulated_amount += reservation.nett_actual_breakfast_rate
+		breakfast_charge_folio_trx.amount = float(int(reservation.nett_actual_breakfast_rate))
+		accumulated_amount += float(int(reservation.nett_actual_breakfast_rate))
 		breakfast_charge_folio_trx.debit_account = debit_account
 		breakfast_charge_folio_trx.credit_account = credit_account
 		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
@@ -169,9 +169,17 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.insert()
 
+		print("accumulated amount = " + str(accumulated_amount))
+		print("math_ceil(accumulated amount) = " + str(math.ceil(accumulated_amount)))
+		print("actual room rate = " + str(reservation.actual_room_rate))
+		print ("abs = " + str(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate))))
 		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
-			adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
-				abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			if math.ceil(accumulated_amount) - int(reservation.actual_room_rate) > 0:
+				adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
+					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			elif math.ceil(accumulated_amount) - int(reservation.actual_room_rate) < 0:
+				adjusted_room_charge_amount = room_charge_folio_trx.amount + float(
+					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
 
@@ -207,8 +215,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.is_void = 0
 		room_charge_folio_trx.idx = get_idx(item['folio_id'])
 		room_charge_folio_trx.transaction_type = 'Room Charge'
-		room_charge_folio_trx.amount = reservation.nett_actual_room_rate
-		accumulated_amount += reservation.nett_actual_room_rate
+		room_charge_folio_trx.amount = float(int(reservation.nett_actual_room_rate))
+		accumulated_amount += float(int(reservation.nett_actual_room_rate))
 		room_charge_folio_trx.debit_account = debit_account
 		room_charge_folio_trx.credit_account = credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item[
@@ -244,8 +252,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.is_void = 0
 		breakfast_charge_folio_trx.idx = get_idx(item['folio_id'])
 		breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
-		breakfast_charge_folio_trx.amount = reservation.nett_actual_breakfast_rate
-		accumulated_amount += reservation.nett_actual_breakfast_rate
+		breakfast_charge_folio_trx.amount = float(int(reservation.nett_actual_breakfast_rate))
+		accumulated_amount += float(int(reservation.nett_actual_breakfast_rate))
 		breakfast_charge_folio_trx.debit_account = debit_account
 		breakfast_charge_folio_trx.credit_account = credit_account
 		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item[
@@ -274,8 +282,18 @@ def post_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.insert()
+
+		print("accumulated amount = " + str(accumulated_amount))
+		print("math_ceil(accumulated amount) = " + str(math.ceil(accumulated_amount)))
+		print("actual room rate = " + str(reservation.actual_room_rate))
+		print("abs = " + str(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate))))
 		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
-			adjusted_room_charge_amount = room_charge_folio_trx.amount - float(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			if math.ceil(accumulated_amount) - int(reservation.actual_room_rate) > 0:
+				adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
+					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			elif math.ceil(accumulated_amount) - int(reservation.actual_room_rate) < 0:
+				adjusted_room_charge_amount = room_charge_folio_trx.amount + float(
+					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
 
