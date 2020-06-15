@@ -429,10 +429,46 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 		}
 	},
-	verify_card: function frm() {
-		frappe.msgprint("coming soon");
-		// TODO: verify card in reservation
-	}
+	verify_card: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.verify_card',
+			args: {
+				track: "3"
+			}
+		});
+	},
+	test_1: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
+			args: {
+				option: "1"
+			}
+		});
+	},
+	test_2: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
+			args: {
+				option: "2"
+			}
+		});
+	},
+	test_3: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
+			args: {
+				option: "3"
+			}
+		});
+	},
+	test_4: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.test_api',
+			args: {
+				option: "4"
+			}
+		});
+	},
 });
 frappe.ui.form.on('Inn Key Card',{
 	erase_card: function (frm, cdt, cdn) {

@@ -61,6 +61,40 @@ def erase_card(flag, card_name):
 		doc.save()
 	return doc.is_active
 
+@frappe.whitelist()
+def test_api(option):
+	if option == "1":
+		frappe.msgprint("tesa_read_card1")
+		returned = tesa_read_card1("3")
+		frappe.msgprint("User = " + returned['user'])
+		frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+		frappe.msgprint("Info = " + returned['info'])
+	elif option == "2":
+		frappe.msgprint("tesa_read_card2")
+		returned = tesa_read_card2("3")
+		frappe.msgprint("User = " + returned['user'])
+		frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+		frappe.msgprint("Info = " + returned['info'])
+	elif option == "3":
+		frappe.msgprint("tesa_read_card3")
+		returned = tesa_read_card3("3")
+		frappe.msgprint("User = " + returned['user'])
+		frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+		frappe.msgprint("Info = " + returned['info'])
+	elif option == "4":
+		frappe.msgprint("tesa_read_card4")
+		returned = tesa_read_card4("3")
+		frappe.msgprint("User = " + returned['user'])
+		frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+		frappe.msgprint("Info = " + returned['info'])
+
+@frappe.whitelist()
+def verify_card(track):
+	returned = tesa_read_card(track)
+	frappe.msgprint("User = " + returned['user'])
+	frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+	frappe.msgprint("Info = " + returned['info'])
+
 def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryTime,
 				  pcId="", technology="P", encoder="1",  cardOperation="EF", grant=None, keypad=None, operator=None,
 				  track1=None, track2=None, room2=None, room3=None, room4=None, returnCardId=None, cardId=None):
@@ -74,9 +108,13 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
 	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
 	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
-	is_wifi_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'wifi_use_auth'))
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+
 	# defining auth to be sent to the API
-	if is_wifi_use_auth == 1:
+	if is_card_use_auth == 1:
 		auth = (username, password)
 
 	# defining a params dict for the parameters to be sent to the API
@@ -115,10 +153,10 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 		params.update({'cardId': cardId})
 
 	if url is not None:
-		if is_wifi_use_auth == 1:
-			r = requests.post(url, data=params, auth=auth)
+		if is_card_use_auth == 1:
+			r = requests.post(url, data=params, headers=headers, auth=auth)
 		else:
-			r = requests.post(url, data=params)
+			r = requests.post(url, data=params, headers=headers)
 
 		if r:
 			returned = json.loads(r.text)
@@ -128,7 +166,7 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 
-def tesa_read_card(pcId, cmd, technology, cardOperation, encoder, format, track, message):
+def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
 
 	# Example Post
 	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
@@ -138,10 +176,13 @@ def tesa_read_card(pcId, cmd, technology, cardOperation, encoder, format, track,
 	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
 	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
 	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
-	is_wifi_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'wifi_use_auth'))
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
 
 	# defining auth to be sent to the API
-	if is_wifi_use_auth == 1:
+	if is_card_use_auth == 1:
 		auth = (username, password)
 
 	# defining a params dict for the parameters to be sent to the API
@@ -157,10 +198,193 @@ def tesa_read_card(pcId, cmd, technology, cardOperation, encoder, format, track,
 	}
 
 	if url is not None:
-		if is_wifi_use_auth == 1:
-			r = requests.post(url, data=params, auth=auth)
+		if is_card_use_auth == 1:
+			r = requests.post(url, data=params, headers=headers, auth=auth)
 		else:
-			r = requests.post(url, data=params)
-		return r.text
+			r = requests.post(url, data=params, headers=headers)
+
+		if r:
+			returned = json.loads(r.text)
+			return returned
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def tesa_read_card1(track, pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
+
+	# Example Post
+	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
+	# 	"1", "format": "T", "track": "3", "message": ""}
+
+	# api-endpoint
+	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
+	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
+	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+
+	# defining auth to be sent to the API
+	if is_card_use_auth == 1:
+		auth = (username, password)
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		'pcId': pcId,
+		'cmd': cmd,
+		'technology': technology,
+		'cardOperation': cardOperation,
+		'encoder': encoder,
+		'format': format,
+		'track': track,
+		'message': message,
+	}
+
+	if url is not None:
+		if is_card_use_auth == 1:
+			r = requests.post(url, json=params, auth=auth)
+		else:
+			r = requests.post(url, json=params)
+
+		if r:
+			print("headers: ")
+			print(r.headers)
+			returned = json.loads(r.text)
+			return returned
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def tesa_read_card2(track, pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
+
+	# Example Post
+	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
+	# 	"1", "format": "T", "track": "3", "message": ""}
+
+	# api-endpoint
+	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
+	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
+	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+
+	# defining auth to be sent to the API
+	if is_card_use_auth == 1:
+		auth = (username, password)
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		'pcId': pcId,
+		'cmd': cmd,
+		'technology': technology,
+		'cardOperation': cardOperation,
+		'encoder': encoder,
+		'format': format,
+		'track': track,
+		'message': message,
+	}
+
+	if url is not None:
+		if is_card_use_auth == 1:
+			r = requests.post(url, data=json.dumps(params), auth=auth)
+		else:
+			r = requests.post(url, data=json.dumps(params))
+
+		if r:
+			print("headers: ")
+			print(r.headers)
+			returned = json.loads(r.text)
+			return returned
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def tesa_read_card3(track, pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
+
+	# Example Post
+	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
+	# 	"1", "format": "T", "track": "3", "message": ""}
+
+	# api-endpoint
+	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
+	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
+	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+
+	# defining auth to be sent to the API
+	if is_card_use_auth == 1:
+		auth = (username, password)
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		'pcId': pcId,
+		'cmd': cmd,
+		'technology': technology,
+		'cardOperation': cardOperation,
+		'encoder': encoder,
+		'format': format,
+		'track': track,
+		'message': message,
+	}
+
+	if url is not None:
+		if is_card_use_auth == 1:
+			r = requests.post(url, data=params, headers=headers, auth=auth)
+		else:
+			r = requests.post(url, data=params, headers=headers)
+
+		if r:
+			print("headers: ")
+			print(r.headers)
+			returned = json.loads(r.text)
+			return returned
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def tesa_read_card4(track, pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
+
+	# Example Post
+	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
+	# 	"1", "format": "T", "track": "3", "message": ""}
+
+	# api-endpoint
+	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
+	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
+	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json'}
+
+	# defining auth to be sent to the API
+	if is_card_use_auth == 1:
+		auth = (username, password)
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		'pcId': pcId,
+		'cmd': cmd,
+		'technology': technology,
+		'cardOperation': cardOperation,
+		'encoder': encoder,
+		'format': format,
+		'track': track,
+		'message': message,
+	}
+
+	if url is not None:
+		if is_card_use_auth == 1:
+			r = requests.post(url, data=params, headers=headers, auth=auth)
+		else:
+			r = requests.post(url, data=params, headers=headers)
+
+		if r:
+			print("headers: ")
+			print(r.headers)
+			returned = json.loads(r.text)
+			return returned
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
