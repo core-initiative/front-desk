@@ -84,7 +84,7 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
 
 	# defining header JSON
-	headers = {'Content-type': 'application/json'}
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 	# defining auth to be sent to the API
 	if is_card_use_auth == 1:
@@ -127,9 +127,9 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 
 	if url is not None:
 		if is_card_use_auth == 1:
-			r = requests.post(url, json=params, headers=headers, auth=auth)
+			r = requests.post(url, data=params, headers=headers, auth=auth)
 		else:
-			r = requests.post(url, json=params, headers=headers)
+			r = requests.post(url, data=params, headers=headers)
 
 		if r:
 			returned = json.loads(r.text)
@@ -152,7 +152,7 @@ def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF",
 	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
 
 	# defining header JSON
-	headers = {'Content-type': 'application/json'}
+	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 	# defining auth to be sent to the API
 	if is_card_use_auth == 1:
@@ -172,9 +172,9 @@ def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF",
 
 	if url is not None:
 		if is_card_use_auth == 1:
-			r = requests.post(url, json=params, headers=headers, auth=auth)
+			r = requests.post(url, data=params, headers=headers, auth=auth)
 		else:
-			r = requests.post(url, json=params, headers=headers)
+			r = requests.post(url, data=params, headers=headers)
 
 		if r:
 			returned = json.loads(r.text)
