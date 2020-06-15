@@ -62,6 +62,13 @@ def erase_card(flag, card_name):
 	return doc.is_active
 
 @frappe.whitelist()
+def test_api(option):
+	returned = test_card(option)
+	frappe.msgprint("User = " + returned['user'])
+	frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+	frappe.msgprint("Info = " + returned['info'])
+
+@frappe.whitelist()
 def verify_card(track):
 	returned = tesa_read_card(track)
 	frappe.msgprint("User = " + returned['user'])
@@ -84,7 +91,7 @@ def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryT
 	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
 
 	# defining header JSON
-	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
 
 	# defining auth to be sent to the API
 	if is_card_use_auth == 1:
@@ -152,7 +159,7 @@ def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF",
 	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
 
 	# defining header JSON
-	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
 
 	# defining auth to be sent to the API
 	if is_card_use_auth == 1:
@@ -181,3 +188,83 @@ def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF",
 		return returned
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperation="EF", encoder="1", format="T", message="" ):
+
+	# Example Post
+	# {"pcId": "", "cmd": "RC", "technology": "P", "cardOperation": "EF", "encoder":
+	# 	"1", "format": "T", "track": "3", "message": ""}
+
+	# api-endpoint
+	url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url')
+	username = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user')
+	password = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password')
+	is_card_use_auth = int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth'))
+
+	# defining header JSON
+	headers = {'Content-Type': 'application/json', 'Accept': 'text/plain'}
+	headers2 = {'Content-Type': 'application/json'}
+	# defining auth to be sent to the API
+	if is_card_use_auth == 1:
+		auth = (username, password)
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		'pcId': pcId,
+		'cmd': cmd,
+		'technology': technology,
+		'cardOperation': cardOperation,
+		'encoder': encoder,
+		'format': format,
+		'track': track,
+		'message': message,
+	}
+
+	if option == 1:
+		if url is not None:
+			if is_card_use_auth == 1:
+				r = requests.post(url, json=params, auth=auth)
+			else:
+				r = requests.post(url, json=params)
+
+			if r:
+				returned = json.loads(r.text)
+			return returned
+		else:
+			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+	elif option == 2:
+		if url is not None:
+			if is_card_use_auth == 1:
+				r = requests.post(url, data=json.dumps(params), auth=auth)
+			else:
+				r = requests.post(url, data=json.dumps(params))
+
+			if r:
+				returned = json.loads(r.text)
+			return returned
+		else:
+			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+	if option == 3:
+		if url is not None:
+			if is_card_use_auth == 1:
+				r = requests.post(url, data=params, headers=headers, auth=auth)
+			else:
+				r = requests.post(url, data=params, headers=headers)
+
+			if r:
+				returned = json.loads(r.text)
+			return returned
+		else:
+			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+	if option == 4:
+		if url is not None:
+			if is_card_use_auth == 1:
+				r = requests.post(url, data=params, headers=headers2, auth=auth)
+			else:
+				r = requests.post(url, data=params, headers=headers2)
+
+			if r:
+				returned = json.loads(r.text)
+			return returned
+		else:
+			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
