@@ -174,14 +174,34 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		print("actual room rate = " + str(reservation.actual_room_rate))
 		print ("abs = " + str(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate))))
 		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
-			if math.ceil(accumulated_amount) - int(reservation.actual_room_rate) > 0:
-				adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
-					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
-			elif math.ceil(accumulated_amount) - int(reservation.actual_room_rate) < 0:
-				adjusted_room_charge_amount = room_charge_folio_trx.amount + float(
-					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			difference = math.ceil(accumulated_amount) - int(reservation.actual_room_rate)
+			if difference > 0:
+				last_adjusted = 'breakfast'
+				adjusted_room_charge_amount = room_charge_folio_trx.amount
+				adjusted_breakfast_charge_amount = breakfast_charge_folio_trx.amount
+				for i in range(0, abs(difference)):
+					if last_adjusted == 'room':
+						adjusted_room_charge_amount = adjusted_room_charge_amount - 1.0
+						last_adjusted = 'breakfast'
+					else:
+						adjusted_breakfast_charge_amount = adjusted_breakfast_charge_amount - 1.0
+						last_adjusted = 'room'
+			elif difference < 0:
+				last_adjusted = 'room'
+				adjusted_room_charge_amount = room_charge_folio_trx.amount
+				adjusted_breakfast_charge_amount = breakfast_charge_folio_trx.amount
+				for i in range(0, abs(difference)):
+					if last_adjusted == 'room':
+						adjusted_room_charge_amount = adjusted_room_charge_amount + 1.0
+						last_adjusted = 'breakfast'
+					else:
+						adjusted_breakfast_charge_amount = adjusted_breakfast_charge_amount + 1.0
+						last_adjusted = 'room'
+
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
+			breakfast_charge_folio_trx.amount = adjusted_breakfast_charge_amount
+			breakfast_charge_folio_trx.save()
 
 		posted = frappe.new_doc('Inn Room Charge Posted')
 		posted.reservation_id = item_doc.reservation_id
@@ -288,14 +308,34 @@ def post_room_charges(parent_id, tobe_posted_list):
 		print("actual room rate = " + str(reservation.actual_room_rate))
 		print("abs = " + str(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate))))
 		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
-			if math.ceil(accumulated_amount) - int(reservation.actual_room_rate) > 0:
-				adjusted_room_charge_amount = room_charge_folio_trx.amount - float(
-					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
-			elif math.ceil(accumulated_amount) - int(reservation.actual_room_rate) < 0:
-				adjusted_room_charge_amount = room_charge_folio_trx.amount + float(
-					abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)))
+			difference = math.ceil(accumulated_amount) - int(reservation.actual_room_rate)
+			if difference > 0:
+				last_adjusted = 'breakfast'
+				adjusted_room_charge_amount = room_charge_folio_trx.amount
+				adjusted_breakfast_charge_amount = breakfast_charge_folio_trx.amount
+				for i in range(0, abs(difference)):
+					if last_adjusted == 'room':
+						adjusted_room_charge_amount = adjusted_room_charge_amount - 1.0
+						last_adjusted = 'breakfast'
+					else:
+						adjusted_breakfast_charge_amount = adjusted_breakfast_charge_amount - 1.0
+						last_adjusted = 'room'
+			elif difference < 0:
+				last_adjusted = 'room'
+				adjusted_room_charge_amount = room_charge_folio_trx.amount
+				adjusted_breakfast_charge_amount = breakfast_charge_folio_trx.amount
+				for i in range(0, abs(difference)):
+					if last_adjusted == 'room':
+						adjusted_room_charge_amount = adjusted_room_charge_amount + 1.0
+						last_adjusted = 'breakfast'
+					else:
+						adjusted_breakfast_charge_amount = adjusted_breakfast_charge_amount + 1.0
+						last_adjusted = 'room'
+
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
+			breakfast_charge_folio_trx.amount = adjusted_breakfast_charge_amount
+			breakfast_charge_folio_trx.save()
 
 		posted = frappe.new_doc('Inn Room Charge Posted')
 		posted.reservation_id = item['reservation_id']
