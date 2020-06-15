@@ -185,7 +185,7 @@ def tesa_read_card(track, pcId="", cmd="RC", technology="P", cardOperation="EF",
 
 		if r:
 			returned = json.loads(r.text)
-		return returned
+			return returned
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 
@@ -230,7 +230,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 			if r:
 				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
-			return returned
+				return returned
 		else:
 			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 	elif option == 2:
@@ -243,7 +243,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 			if r:
 				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
-			return returned
+				return returned
 		else:
 			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 	if option == 3:
@@ -256,7 +256,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 			if r:
 				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
-			return returned
+				return returned
 		else:
 			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 	if option == 4:
@@ -269,6 +269,6 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 			if r:
 				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
-			return returned
+				return returned
 		else:
 			frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
