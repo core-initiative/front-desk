@@ -430,8 +430,12 @@ frappe.ui.form.on('Inn Reservation', {
 		}
 	},
 	verify_card: function frm() {
-		frappe.msgprint("coming soon");
-		// TODO: verify card in reservation
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_key_card.inn_key_card.verify_card',
+			args: {
+				track: "3"
+			}
+		});
 	}
 });
 frappe.ui.form.on('Inn Key Card',{
