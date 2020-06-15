@@ -228,6 +228,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 				r = requests.post(url, json=params)
 
 			if r:
+				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
 			return returned
 		else:
@@ -240,6 +241,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 				r = requests.post(url, data=json.dumps(params))
 
 			if r:
+				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
 			return returned
 		else:
@@ -252,6 +254,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 				r = requests.post(url, data=params, headers=headers)
 
 			if r:
+				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
 			return returned
 		else:
@@ -264,6 +267,7 @@ def test_card(option, track="3", pcId="", cmd="RC", technology="P", cardOperatio
 				r = requests.post(url, data=params, headers=headers2)
 
 			if r:
+				frappe.msgprint(r.text)
 				returned = json.loads(r.text)
 			return returned
 		else:
