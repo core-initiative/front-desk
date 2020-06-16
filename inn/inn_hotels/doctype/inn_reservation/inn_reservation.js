@@ -19,6 +19,7 @@ frappe.ui.form.on('Inn Reservation', {
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal === 1) {
 			console.log("notsaved");
+			frm.set_df_property('init_actual_room_rate', 'hidden', 0);
 			frm.set_df_property('arrival', 'hidden', 1);
 			frm.set_df_property('departure', 'hidden', 1);
 			frm.set_df_property('actual_room_rate', 'hidden', 1);
@@ -795,7 +796,6 @@ function make_read_only(frm) {
 	}
 
 	frm.set_df_property('init_actual_room_rate', 'hidden', 1);
-	
 	frm.set_df_property('type', 'read_only', active_flag);
 	frm.set_df_property('channel', 'read_only', active_flag);
 	frm.set_df_property('group_id', 'read_only', active_flag);
