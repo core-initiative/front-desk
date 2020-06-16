@@ -61,6 +61,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('wifi_password', 'hidden', 0);
 			// Still hide actual room rate
 			frm.set_df_property('actual_room_rate', 'hidden', 1);
+			frm.set_df_property('init_actual_room_rate', 'hidden', 0);
 			console.log("is_check_in = " + is_check_in);
 			// Show Start Check In Process button if is_check_in flag undefined
 			if (is_check_in === undefined) {
