@@ -146,7 +146,7 @@ def no_show_single_reservation(reservation_id):
 @frappe.whitelist()
 def check_out_reservation(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
-	room_doc = frappe.get_doc('Inn Room', doc.room_id)
+	room_doc = frappe.get_doc('Inn Room', doc.actual_room_id)
 	folio_doc = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
 	if (doc.status == 'In House'):
 		doc.status = 'Finish'
