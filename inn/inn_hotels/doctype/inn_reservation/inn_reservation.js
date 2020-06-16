@@ -794,6 +794,8 @@ function make_read_only(frm) {
 		active_flag = 0;
 	}
 
+	frm.set_df_property('init_actual_room_rate', 'hidden', 1);
+	
 	frm.set_df_property('type', 'read_only', active_flag);
 	frm.set_df_property('channel', 'read_only', active_flag);
 	frm.set_df_property('group_id', 'read_only', active_flag);
