@@ -28,6 +28,7 @@ def update_by_reservation(reservation_id):
 		room_booking_doc = frappe.get_doc('Inn Room Booking',
 										  {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
 		room_booking_doc.status = 'Finished'
+		room_booking_doc.end = reservation_doc.departure
 		room_booking_doc.save()
 		return_message = room_booking_doc.name + ' Status is Finished by Checking Out Reservation: ' + reservation_id
 	elif reservation_doc.status == 'In House':

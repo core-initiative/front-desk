@@ -149,6 +149,7 @@ def check_out_reservation(reservation_id):
 	room_doc = frappe.get_doc('Inn Room', doc.actual_room_id)
 	folio_doc = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
 	if (doc.status == 'In House'):
+		doc.departure = datetime.datetime.now()
 		doc.status = 'Finish'
 		doc.save()
 		if doc.status == 'Finish':
