@@ -227,6 +227,13 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.page.add_menu_item(__('Move Room'), function () {
 				move_room(frm);
 			});
+
+			frm.fields_dict.arrival.$input.on("click", function(evt){
+				frappe.show_alert(__("<b>Warning!</b> <br /> Changing Actual Arrival when Reservation status is In House may cause data inconsistencies."));
+			})
+			frm.fields_dict.departure.$input.on("click", function(evt){
+				frappe.show_alert(__("<b>Warning!</b> <br /> Changing Actual Departure when Reservation status is In House may cause data inconsistencies."));
+			})
 		}
 	},
 	after_save: function(frm) {
