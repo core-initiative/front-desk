@@ -45,7 +45,7 @@ def update_balance(folio_id):
 	if balance != doc.balance:
 		frappe.db.set_value('Inn Folio', doc.name, 'total_debit', total_debit)
 		frappe.db.set_value('Inn Folio', doc.name, 'total_credit', total_credit)
-		frappe.db.set_value('Inn Folio', doc.name, 'balance', balance)
+		frappe.db.set_value('Inn Folio', doc.name, 'balance', int(balance))
 
 	return total_debit, total_credit, balance
 
