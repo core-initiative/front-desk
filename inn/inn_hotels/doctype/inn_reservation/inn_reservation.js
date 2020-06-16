@@ -96,10 +96,9 @@ frappe.ui.form.on('Inn Reservation', {
 					frm.set_intro(error_message);
 				}
 				else {
-
 					frm.add_custom_button(__("Finish Check In Process"), function () {
-						if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
-							frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
+						if (frm.doc.__unsaved !== undefined || frm.doc.unsaved == 1) {
+							frappe.msgprint("The Reservation has been modified and not saved yet. Please click Save before Finishing Check In Process.");
 						}
 						else {
 							is_check_in = "false";
@@ -139,7 +138,7 @@ frappe.ui.form.on('Inn Reservation', {
 					// 		}
 					// 		else if (r.message === true) {
 					// 			frm.add_custom_button(__("Finish Check In Process"), function () {
-					// 				if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
+					// 				if (frm.doc.__unsaved !== undefined || frm.doc.unsaved === 1) {
 					// 					frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
 					// 				}
 					// 				else {
@@ -570,6 +569,9 @@ function autofill(frm) {
 	if (frm.doc.departure === undefined || frm.doc.departure == null || frm.doc.departure === '') {
 		frm.set_value('departure', expected_departure);
 	}
+	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
+		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
+	}
 	if (frm.doc.actual_room_id === undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id === '') {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room.inn_room.get_room_status',
@@ -587,9 +589,6 @@ function autofill(frm) {
 				}
 			}
 		});
-	}
-	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
-		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
 	}
 }
 
