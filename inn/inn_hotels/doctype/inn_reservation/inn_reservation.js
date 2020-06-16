@@ -265,19 +265,44 @@ frappe.ui.form.on('Inn Reservation', {
 		}
 	},
 	arrival: function(frm) {
+		let date_arrival = new Date(frm.doc.arrival);
+		let date_departure = new Date(frm.doc.departure);
 		if (frm.doc.arrival < frappe.datetime.get_today()) {
 			frm.set_value('arrival', frappe.datetime.now_datetime());
 			frappe.msgprint("Actual Arrival must be greater than today.");
 		}
+		else if (date_departure.setHours(0,0,0,0) <= date_arrival.setHours(0,0,0,0)) {
+			frm.set_value('arrival', frappe.datetime.now_datetime());
+			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
+		}
+		else if (frm.doc.arrival == null || frm.doc.arrival == undefined || frm.doc.arrival == '') {
+			frm.set_value('arrival', frappe.datetime.now_datetime());
+			frappe.msgprint("Actual Arrival cannot be empty. Defaulted to Current Date and Time.");
+		}
+		else {
+			calculate_rate_and_bill(frm);
+		}
 	},
 	departure: function(frm) {
+		let date_arrival = new Date(frm.doc.arrival);
+		let date_departure = new Date(frm.doc.departure);
+		let default_departure = new Date(frm.doc.expected_departure);
+		default_departure.setHours(date_arrival.getHours(), date_arrival.getMinutes(), date_arrival.getSeconds());
+
 		if (frm.doc.departure < frappe.datetime.get_today()) {
-			frm.set_value('departure', null);
+			frm.set_value('departure', default_departure);
 			frappe.msgprint("Actual Departure must be greater than today.");
 		}
-		else if (frm.doc.departure < frm.doc.arrival) {
-			frm.set_value('departure', null);
+		else if (date_departure.setHours(0,0,0,0) <= date_arrival.setHours(0,0,0,0)) {
+			frm.set_value('departure', default_departure);
 			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
+		}
+		else if (frm.doc.departure == null || frm.doc.departure == undefined || frm.doc.departure == '') {
+			frm.set_value('departure', default_departure);
+			frappe.msgprint("Actual Departure cannot be empty. Defaulted to Expected Departure Date");
+		}
+		else {
+			calculate_rate_and_bill(frm);
 		}
 	},
 	room_type: function(frm) {
@@ -371,35 +396,7 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 			else {
 				frm.set_df_property('sb1', 'hidden', 0); // Actual Room Rate Breakdown Section
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
-					args: {
-						arrival: frm.doc.arrival,
-						departure: frm.doc.departure,
-						actual_rate: frm.doc.actual_room_rate
-					},
-					callback: (r) => {
-						if (r.message) {
-							console.log(r.message);
-							frm.set_value('room_bill', r.message);
-						}
-					}
-				});
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
-					args: {
-						room_rate_id: frm.doc.room_rate,
-						actual_rate: frm.doc.actual_room_rate,
-					},
-					callback: (r) => {
-						if (r.message) {
-							frm.set_value('actual_room_rate_tax', r.message[0]);
-							frm.set_value('nett_actual_room_rate', r.message[1]);
-							frm.set_value('actual_breakfast_rate_tax', r.message[2]);
-							frm.set_value('nett_actual_breakfast_rate', r.message[3]);
-						}
-					}
-				});
+				calculate_rate_and_bill(frm);
 			}
 		} else {
 			if (parseFloat(frm.doc.actual_room_rate) > 0) {
@@ -1030,4 +1027,36 @@ function move_room(frm) {
 	d.set_df_property('mv_bed_type', 'hidden', 1);
 	d.set_df_property('mv_room_id', 'hidden', 1);
 	d.show();
+}
+
+function calculate_rate_and_bill(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
+		args: {
+			arrival: frm.doc.arrival,
+			departure: frm.doc.departure,
+			actual_rate: frm.doc.actual_room_rate
+		},
+		callback: (r) => {
+			if (r.message) {
+				console.log(r.message);
+				frm.set_value('room_bill', r.message);
+			}
+		}
+	});
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
+		args: {
+			room_rate_id: frm.doc.room_rate,
+			actual_rate: frm.doc.actual_room_rate,
+		},
+		callback: (r) => {
+			if (r.message) {
+				frm.set_value('actual_room_rate_tax', r.message[0]);
+				frm.set_value('nett_actual_room_rate', r.message[1]);
+				frm.set_value('actual_breakfast_rate_tax', r.message[2]);
+				frm.set_value('nett_actual_breakfast_rate', r.message[3]);
+			}
+		}
+	});
 }
