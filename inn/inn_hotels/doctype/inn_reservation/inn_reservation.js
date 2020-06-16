@@ -56,9 +56,10 @@ frappe.ui.form.on('Inn Reservation', {
 			// Set all variables that hidden to be shown again
 			frm.set_df_property('arrival', 'hidden', 0);
 			frm.set_df_property('departure', 'hidden', 0);
-			frm.set_df_property('actual_room_rate', 'hidden', 0);
 			frm.set_df_property('actual_room_id', 'hidden', 0);
 			frm.set_df_property('wifi_password', 'hidden', 0);
+			// Still hide actual room rate
+			frm.set_df_property('actual_room_rate', 'hidden', 1);
 			console.log("is_check_in = " + is_check_in);
 			// Show Start Check In Process button if is_check_in flag undefined
 			if (is_check_in === undefined) {
@@ -214,6 +215,7 @@ frappe.ui.form.on('Inn Reservation', {
 			})
 		}
 		if (frm.doc.__islocal !== 1 && frm.doc.status === 'In House') {
+			frm.set_df_property('init_actual_room_rate', 'hidden', 1); // Initial Actual Room rate
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section
 			frm.set_df_property('sb4', 'hidden', 0); // Issue Card Buttons Section
 
@@ -347,13 +349,19 @@ frappe.ui.form.on('Inn Reservation', {
 			});
 		}
 	},
+	init_actual_room_rate: function(frm) {
+		if ((parseFloat(frm.doc.init_actual_room_rate) == 0.0) || (parseFloat(frm.doc.init_actual_room_rate) > 0 && parseInt(frm.doc.init_actual_room_rate) < parseInt(frm.doc.base_room_rate))) {
+			frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
+			frm.set_value('init_actual_room_rate', frm.doc.base_room_rate);
+		}
+	},
 	actual_room_rate: function (frm) {
 		if (frm.doc.arrival !== undefined && frm.doc.departure !== undefined) {
 			if (parseFloat(frm.doc.actual_room_rate) > 0 && parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)) {
 				frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
 				frm.set_value('actual_room_rate', frm.doc.base_room_rate);
 			}
-			else if (parseFloat(frm.doc.actual_room_rate) === 0) {
+			else if (parseFloat(frm.doc.actual_room_rate) === 0.0) {
 				frm.set_value('room_bill',0);
 				frm.set_value('actual_room_rate_tax', null);
 				frm.set_value('nett_actual_room_rate', 0);
@@ -361,6 +369,7 @@ frappe.ui.form.on('Inn Reservation', {
 				frm.set_value('nett_actual_breakfast_rate', 0);
 			}
 			else {
+				frm.set_df_property('sb1', 'hidden', 0); // Actual Room Rate Breakdown Section
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
 					args: {
@@ -542,6 +551,9 @@ function is_form_good_to_in_house(frm) {
 
 // Function to autofilled some of the Fields in Checkin In Process
 function autofill(frm) {
+	frm.set_df_property('init_actual_room_rate', 'hidden', 1);
+	frm.set_df_property('actual_room_rate', 'hidden', 0);
+	frm.set_df_property('sb1', 'hidden', 0); // Actual Room Rate Breakdown Section
 	let now = new Date();
 	let expected_arrival = new Date(frm.doc.expected_arrival);
 	let expected_departure = new Date(frm.doc.expected_departure);
@@ -573,6 +585,9 @@ function autofill(frm) {
 				}
 			}
 		});
+	}
+	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
+		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
 	}
 }
 
