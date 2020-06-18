@@ -61,6 +61,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('wifi_password', 'hidden', 0);
 			// Still hide actual room rate
 			frm.set_df_property('actual_room_rate', 'hidden', 1);
+			frm.set_df_property('init_actual_room_rate', 'hidden', 0);
 			console.log("is_check_in = " + is_check_in);
 			// Show Start Check In Process button if is_check_in flag undefined
 			if (is_check_in === undefined) {
@@ -95,10 +96,9 @@ frappe.ui.form.on('Inn Reservation', {
 					frm.set_intro(error_message);
 				}
 				else {
-
 					frm.add_custom_button(__("Finish Check In Process"), function () {
-						if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
-							frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
+						if (frm.doc.__unsaved !== undefined || frm.doc.unsaved == 1) {
+							frappe.msgprint("The Reservation has been modified and not saved yet. Please click Save before Finishing Check In Process.");
 						}
 						else {
 							is_check_in = "false";
@@ -138,7 +138,7 @@ frappe.ui.form.on('Inn Reservation', {
 					// 		}
 					// 		else if (r.message === true) {
 					// 			frm.add_custom_button(__("Finish Check In Process"), function () {
-					// 				if (frm.doc.__unsaved !== undefined && frm.doc.unsaved === 1) {
+					// 				if (frm.doc.__unsaved !== undefined || frm.doc.unsaved === 1) {
 					// 					frappe.msgprint("The Reservation has been modified. Please click Save before Finishing Check In Process.");
 					// 				}
 					// 				else {
@@ -227,6 +227,13 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.page.add_menu_item(__('Move Room'), function () {
 				move_room(frm);
 			});
+
+			frm.fields_dict.arrival.$input.on("click", function(evt){
+				frappe.show_alert(__("<b>Warning!</b> <br /> Changing Actual Arrival when Reservation status is In House may cause data inconsistencies."));
+			})
+			frm.fields_dict.departure.$input.on("click", function(evt){
+				frappe.show_alert(__("<b>Warning!</b> <br /> Changing Actual Departure when Reservation status is In House may cause data inconsistencies."));
+			})
 		}
 	},
 	after_save: function(frm) {
@@ -249,36 +256,105 @@ frappe.ui.form.on('Inn Reservation', {
 		});
 	},
 	expected_arrival: function(frm) {
-		if (frm.doc.expected_arrival < frappe.datetime.get_today()) {
-			frm.set_value('expected_arrival', frappe.datetime.now_datetime());
-			frappe.msgprint("Expected Arrival must be greater than today.");
-		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+			callback: (r) => {
+				if (r.message) {
+					if (frm.doc.expected_arrival < r.message) {
+						frm.set_value('expected_arrival', r.message);
+						frappe.msgprint("Expected Arrival must be greater than last audit date: " + r.message);
+					}
+				}
+				else {
+					frappe.msgprint("Warning: There is no audit log defined. First Audit Log must be manually defined. Contact the administrator for assistance.");
+				}
+			}
+		});
 	},
 	expected_departure: function(frm) {
-		if (frm.doc.expected_departure < frappe.datetime.get_today()) {
-			frm.set_value('expected_departure', null);
-			frappe.msgprint("Expected Departure must be greater than today.");
-		}
-		else if (frm.doc.expected_departure < frm.doc.expected_arrival) {
-			frm.set_value('expected_departure', null);
-			frappe.msgprint("Expected Departure must be greater than Expected Arrival.");
-		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+			callback: (r) => {
+				if (r.message) {
+					if (frm.doc.expected_departure < r.message) {
+						frm.set_value('expected_departure', null);
+						frappe.msgprint("Expected Departure must be greater than last audit date: " + r.message);
+					}
+					else if (frm.doc.expected_departure <= frm.doc.expected_arrival) {
+						frm.set_value('expected_departure', null);
+						frappe.msgprint("Expected Departure must be greater than Expected Arrival.");
+					}
+				}
+				else {
+					frappe.msgprint("Warning: There is no audit log defined. First Audit Log must be manually defined. Contact the administrator for assistance.");
+				}
+			}
+		});
 	},
 	arrival: function(frm) {
-		if (frm.doc.arrival < frappe.datetime.get_today()) {
-			frm.set_value('arrival', frappe.datetime.now_datetime());
-			frappe.msgprint("Actual Arrival must be greater than today.");
-		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+			callback: (r) => {
+				if (r.message) {
+					let now = new Date();
+					let date_arrival = new Date(frm.doc.arrival);
+					let date_departure = new Date(frm.doc.departure);
+					let expected_arrival = new Date(frm.doc.expected_arrival);
+					expected_arrival.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+					if (frm.doc.arrival < r.message) {
+						frm.set_value('arrival', expected_arrival);
+						frappe.msgprint("Actual Arrival must be greater than last audit date: " + r.message + ". Defaulted to Expected Arrival.");
+					}
+					else if (date_departure.setHours(0,0,0,0) <= date_arrival.setHours(0,0,0,0)) {
+						frm.set_value('arrival', expected_arrival);
+						frappe.msgprint("Actual Departure must be greater than Actual Arrival. Defaulted to Expected Arrival.");
+					}
+					else if (frm.doc.arrival == null || frm.doc.arrival == undefined || frm.doc.arrival == '') {
+						frm.set_value('arrival', expected_arrival);
+						frappe.msgprint("Actual Arrival cannot be empty. Defaulted to Expected Arrival.");
+					}
+					else {
+						calculate_rate_and_bill(frm);
+					}
+				}
+				else {
+					frappe.msgprint("Warning: There is no audit log defined. First Audit Log must be manually defined. Contact the administrator for assistance.");
+				}
+			}
+		});
 	},
 	departure: function(frm) {
-		if (frm.doc.departure < frappe.datetime.get_today()) {
-			frm.set_value('departure', null);
-			frappe.msgprint("Actual Departure must be greater than today.");
-		}
-		else if (frm.doc.departure < frm.doc.arrival) {
-			frm.set_value('departure', null);
-			frappe.msgprint("Actual Departure must be greater than Actual Arrival.");
-		}
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
+			callback: (r) => {
+				if (r.message) {
+					let date_arrival = new Date(frm.doc.arrival);
+					let date_departure = new Date(frm.doc.departure);
+					let default_departure = new Date(frm.doc.expected_departure);
+					default_departure.setHours(date_arrival.getHours(), date_arrival.getMinutes(), date_arrival.getSeconds());
+
+					if (frm.doc.departure < r.message) {
+						frm.set_value('departure', default_departure);
+						frappe.msgprint("Actual Departure must be greater than Last Audit Date: " + r.message + ". Defaulted to Expected Departure.");
+					}
+					else if (date_departure.setHours(0,0,0,0) <= date_arrival.setHours(0,0,0,0)) {
+						frm.set_value('departure', default_departure);
+						frappe.msgprint("Actual Departure must be greater than Actual Arrival. Defaulted to Expected Departure.");
+					}
+					else if (frm.doc.departure == null || frm.doc.departure == undefined || frm.doc.departure == '') {
+						frm.set_value('departure', default_departure);
+						frappe.msgprint("Actual Departure cannot be empty. Defaulted to Expected Departure.");
+					}
+					else {
+						calculate_rate_and_bill(frm);
+					}
+				}
+				else {
+					frappe.msgprint("Warning: There is no audit log defined. First Audit Log must be manually defined. Contact the administrator for assistance.");
+				}
+			}
+		});
 	},
 	room_type: function(frm) {
 		let phase = '';
@@ -358,7 +434,10 @@ frappe.ui.form.on('Inn Reservation', {
 	},
 	actual_room_rate: function (frm) {
 		if (frm.doc.arrival !== undefined && frm.doc.departure !== undefined) {
-			if (parseFloat(frm.doc.actual_room_rate) > 0 && parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)) {
+			if (frm.doc.actual_room_rate == null || frm.doc.actual_room_rate == '') {
+				frm.set_value('actual_room_rate', frm.doc.base_room_rate);
+			}
+			else if (parseFloat(frm.doc.actual_room_rate) > 0 && parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)) {
 				frappe.msgprint("Actual Room Rate must be equal or higher than Base Room Rate.");
 				frm.set_value('actual_room_rate', frm.doc.base_room_rate);
 			}
@@ -371,35 +450,7 @@ frappe.ui.form.on('Inn Reservation', {
 			}
 			else {
 				frm.set_df_property('sb1', 'hidden', 0); // Actual Room Rate Breakdown Section
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
-					args: {
-						arrival: frm.doc.arrival,
-						departure: frm.doc.departure,
-						actual_rate: frm.doc.actual_room_rate
-					},
-					callback: (r) => {
-						if (r.message) {
-							console.log(r.message);
-							frm.set_value('room_bill', r.message);
-						}
-					}
-				});
-				frappe.call({
-					method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
-					args: {
-						room_rate_id: frm.doc.room_rate,
-						actual_rate: frm.doc.actual_room_rate,
-					},
-					callback: (r) => {
-						if (r.message) {
-							frm.set_value('actual_room_rate_tax', r.message[0]);
-							frm.set_value('nett_actual_room_rate', r.message[1]);
-							frm.set_value('actual_breakfast_rate_tax', r.message[2]);
-							frm.set_value('nett_actual_breakfast_rate', r.message[3]);
-						}
-					}
-				});
+				calculate_rate_and_bill(frm);
 			}
 		} else {
 			if (parseFloat(frm.doc.actual_room_rate) > 0) {
@@ -569,6 +620,9 @@ function autofill(frm) {
 	if (frm.doc.departure === undefined || frm.doc.departure == null || frm.doc.departure === '') {
 		frm.set_value('departure', expected_departure);
 	}
+	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
+		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
+	}
 	if (frm.doc.actual_room_id === undefined || frm.doc.actual_room_id == null || frm.doc.actual_room_id === '') {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room.inn_room.get_room_status',
@@ -586,9 +640,6 @@ function autofill(frm) {
 				}
 			}
 		});
-	}
-	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
-		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
 	}
 }
 
@@ -1030,4 +1081,36 @@ function move_room(frm) {
 	d.set_df_property('mv_bed_type', 'hidden', 1);
 	d.set_df_property('mv_room_id', 'hidden', 1);
 	d.show();
+}
+
+function calculate_rate_and_bill(frm) {
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.calculate_room_bill',
+		args: {
+			arrival: frm.doc.arrival,
+			departure: frm.doc.departure,
+			actual_rate: frm.doc.actual_room_rate
+		},
+		callback: (r) => {
+			if (r.message) {
+				console.log(r.message);
+				frm.set_value('room_bill', r.message);
+			}
+		}
+	});
+	frappe.call({
+		method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
+		args: {
+			room_rate_id: frm.doc.room_rate,
+			actual_rate: frm.doc.actual_room_rate,
+		},
+		callback: (r) => {
+			if (r.message) {
+				frm.set_value('actual_room_rate_tax', r.message[0]);
+				frm.set_value('nett_actual_room_rate', r.message[1]);
+				frm.set_value('actual_breakfast_rate_tax', r.message[2]);
+				frm.set_value('nett_actual_breakfast_rate', r.message[3]);
+			}
+		}
+	});
 }
