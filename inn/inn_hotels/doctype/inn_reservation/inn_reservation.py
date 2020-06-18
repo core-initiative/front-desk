@@ -9,7 +9,7 @@ import json
 import random
 import string
 from frappe.model.document import Document
-from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio
+from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio, get_balance_by_reservation
 
 class InnReservation(Document):
 	pass
@@ -90,6 +90,40 @@ def cancel_single_reservation(reservation_id):
 		return 0
 	else:
 		return 1
+
+@frappe.whitelist()
+def cancel_single_reservation_in_house(reservation_id):
+	# return 0 if cancel success
+	# return 1 if cancel fail
+	# return 2 if the folio balance of Folio not 0 yet
+
+	if get_balance_by_reservation(reservation_id) == 0:
+		reservation = frappe.get_doc('Inn Reservation', reservation_id)
+		room_doc = frappe.get_doc('Inn Room', reservation.actual_room_id)
+		folio = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
+		room_booking = frappe.get_doc('Inn Room Booking',
+									  {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
+
+		if reservation.status != 'Cancel':
+			reservation.status = 'Cancel'
+			reservation.save()
+		if room_doc.room_status != 'Vacant Dirty':
+			room_doc.room_status = 'Vacant Dirty'
+			room_doc.save()
+		if folio.status != 'Cancel':
+			folio.status = 'Cancel'
+			folio.save()
+		if room_booking.status != 'Canceled':
+			room_booking.status = 'Canceled'
+			room_booking.end = frappe.utils.today()
+			room_booking.save()
+
+		if reservation.status == 'Cancel' and room_doc.room_status == 'Vacant Dirty' and folio.status == 'Cancel' and room_booking.status == 'Canceled':
+			return 0
+		else:
+			return 1
+	else:
+		return 2
 
 @frappe.whitelist()
 def no_show_reservation(source, reservation):
