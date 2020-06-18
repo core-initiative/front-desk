@@ -98,25 +98,25 @@ def get_data(filters):
             gl_entries = get_gl_entries(date, fiscal_year)
             for gl_entry in gl_entries:
                 account = gl_entry[1]
-                
-                while account is not None:
-                    if account[:1] == '4':
-                        accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] + gl_entry[2] - gl_entry[3]
+                if account[:1] == '4' or account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
+                    while account is not None:
+                        if account[:1] == '4':
+                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] + gl_entry[2] - gl_entry[3]
 
-                        if gl_entry[0].month == date.month:
-                            accounts_map[account]['current_month'] = accounts_map[account]['current_month'] + gl_entry[2] - gl_entry[3]
-                        elif gl_entry[0].month+1 == date.month:
-                            accounts_map[account]['last_month'] = accounts_map[account]['last_month'] + gl_entry[2] - gl_entry[3]
+                            if gl_entry[0].month == date.month:
+                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] + gl_entry[2] - gl_entry[3]
+                            elif gl_entry[0].month+1 == date.month:
+                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] + gl_entry[2] - gl_entry[3]
 
-                    elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
-                        accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] - gl_entry[2] + gl_entry[3]
+                        elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
+                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] - gl_entry[2] + gl_entry[3]
 
-                        if gl_entry[0].month == date.month:
-                            accounts_map[account]['current_month'] = accounts_map[account]['current_month'] - gl_entry[2] + gl_entry[3]
-                        elif gl_entry[0].month+1 == date.month:
-                            accounts_map[account]['last_month'] = accounts_map[account]['last_month'] - gl_entry[2] + gl_entry[3]
+                            if gl_entry[0].month == date.month:
+                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] - gl_entry[2] + gl_entry[3]
+                            elif gl_entry[0].month+1 == date.month:
+                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] - gl_entry[2] + gl_entry[3]
 
-                    account = accounts_map[account]['account_parent']
+                        account = accounts_map[account]['account_parent']
 
             for account in accounts_map:
                 parent = ''
