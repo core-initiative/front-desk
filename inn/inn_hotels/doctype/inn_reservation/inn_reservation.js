@@ -216,18 +216,43 @@ frappe.ui.form.on('Inn Reservation', {
 			})
 		}
 		if (frm.doc.__islocal !== 1 && frm.doc.status === 'In House') {
+			/* Control field visibilities */
 			frm.set_df_property('init_actual_room_rate', 'hidden', 1); // Initial Actual Room rate
 			frm.set_df_property('sb3', 'hidden', 0); // Issue Card Table Section
 			frm.set_df_property('sb4', 'hidden', 0); // Issue Card Buttons Section
 
+			/*Add menu item buttons*/
+			frm.page.add_menu_item(__('Cancel'), function () {
+				frappe.confirm(__("You are about to Cancel this Reservation with status already <b>In House</b>. Are you sure?"), function () {
+					frappe.call({
+						method: 'inn.inn_hotels.doctype.inn_reservation.inn_reservation.cancel_single_reservation_in_house',
+						args: {
+							reservation_id: frm.doc.name,
+						},
+						callback: (r) => {
+							if (r.message === 0) {
+								frm.refresh();
+								frappe.msgprint("Reservation " + frm.doc.name + " successfully canceled.");
+							}
+							else if (r.message === 1) {
+								frappe.msgprint("Cancellation Fail. Please try again.");
+							}
+							else if (r.message === 2) {
+								frappe.msgprint('There are several outstanding payments. <br />' +
+												'Please go to the Folio page to complete payment process before Cancelling Reservation');
+							}
+						}
+					});
+				});
+			});
 			frm.page.add_menu_item(__('Check Out'), function () {
 				process_check_out(frm);
 			});
-
 			frm.page.add_menu_item(__('Move Room'), function () {
 				move_room(frm);
 			});
 
+			/*Add Warning when changing Arrival and Departure Data*/
 			frm.fields_dict.arrival.$input.on("click", function(evt){
 				frappe.show_alert(__("<b>Warning!</b> <br /> Changing Actual Arrival when Reservation status is In House may cause data inconsistencies."));
 			})

@@ -141,7 +141,9 @@ function set_audit_date(frm) {
 		method: 'inn.inn_hotels.doctype.inn_audit_log.inn_audit_log.get_last_audit_date',
 		callback: (r) => {
 			if (r.message) {
-				frm.set_value('audit_date', r.message);
+				if (frm.doc.__islocal === 1) {
+					frm.set_value('audit_date', r.message);
+				}
 			}
 		}
 	});
