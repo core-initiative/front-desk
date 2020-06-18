@@ -1,0 +1,163 @@
+
+<h4 class="text-left">{%= __("HOTEL DAILY INN") %}</h4>
+
+<p class="text-left">{%= __("Jl. Jenderal Ahmad Yani Kavling 67 Cempaka Putih Timur, Jakarta Pusat") %}</p>
+<p class="text-left">{%= __("Jakarta Indonesia. 10510") %}</p>
+<p class="text-left">{%= __("Phone: 021-21473999 Fax: 021-21473998") %}</p>
+
+<p class="text-center"><b>{%= __("Room Discrepancy Report") %}</b></p>
+<p class="text-center">{%= data[0].date %}</p>
+
+{% var x = (data.length-1) %}
+{% if ((data.length-1)%4 != 0) { %} 
+    {% var x = (data.length-1) + (4-(data.length-1)%4)  %}
+{% } %}
+
+<div class="col-xs-3">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{%= __("Room") %}</th>
+                <th>{%= __("Type") %}</th>
+                <th>{%= __("Sys") %}</th>
+                <th>{%= __("HK") %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for(var i=0, l=x/4*1; i<l; i++) { %}
+                <tr>
+                    <td>{%= data[i].room %}</td>
+                    {% if (data[i].type == 'Studio') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Deluxe') { %} 
+                        <td>{%= __("DLX") %}</td>    
+                    {% } else if (data[i].type == 'Executive') { %} 
+                        <td>{%= __("EXC") %}</td>    
+                    {% } else if (data[i].type == 'Suite') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Superior') { %} 
+                        <td>{%= __("SPR") %}</td>    
+                    {% } %}
+                    <td>{%= data[i].system_fo %}</td>
+                    <td>{%= __("") %}</td>
+                </tr>
+            {% } %}
+        </tbody>
+    </table>
+</div>
+
+<div class="col-xs-3">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{%= __("Room") %}</th>
+                <th>{%= __("Type") %}</th>
+                <th>{%= __("Sys") %}</th>
+                <th>{%= __("HK") %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for(var i=x/4*1, l=x/4*2; i<l; i++) { %}
+                <tr>
+                    <td>{%= data[i].room %}</td>
+                    {% if (data[i].type == 'Studio') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Deluxe') { %} 
+                        <td>{%= __("DLX") %}</td>    
+                    {% } else if (data[i].type == 'Executive') { %} 
+                        <td>{%= __("EXC") %}</td>    
+                    {% } else if (data[i].type == 'Suite') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Superior') { %} 
+                        <td>{%= __("SPR") %}</td>    
+                    {% } %}
+                    <td>{%= data[i].system_fo %}</td>
+                    <td>{%= __("") %}</td>
+                </tr>
+            {% } %}
+        </tbody>
+    </table>
+</div>
+
+<div class="col-xs-3">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{%= __("Room") %}</th>
+                <th>{%= __("Type") %}</th>
+                <th>{%= __("Sys") %}</th>
+                <th>{%= __("HK") %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for(var i=x/4*2, l=x/4*3; i<l; i++) { %}
+                <tr>
+                    <td>{%= data[i].room %}</td>
+                    {% if (data[i].type == 'Studio') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Deluxe') { %} 
+                        <td>{%= __("DLX") %}</td>    
+                    {% } else if (data[i].type == 'Executive') { %} 
+                        <td>{%= __("EXC") %}</td>    
+                    {% } else if (data[i].type == 'Suite') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Superior') { %} 
+                        <td>{%= __("SPR") %}</td>    
+                    {% } %}
+                    <td>{%= data[i].system_fo %}</td>
+                    <td>{%= __("") %}</td>
+                </tr>
+            {% } %}
+        </tbody>
+    </table>
+</div>
+
+<div class="col-xs-3">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{%= __("Room") %}</th>
+                <th>{%= __("Type") %}</th>
+                <th>{%= __("Sys") %}</th>
+                <th>{%= __("HK") %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for(var i=x/4*3, l=data.length-1; i<l; i++) { %}
+                <tr>
+                    <td>{%= data[i].room %}</td>
+                    {% if (data[i].type == 'Studio') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Deluxe') { %} 
+                        <td>{%= __("DLX") %}</td>    
+                    {% } else if (data[i].type == 'Executive') { %} 
+                        <td>{%= __("EXC") %}</td>    
+                    {% } else if (data[i].type == 'Suite') { %} 
+                        <td>{%= __("STD") %}</td>    
+                    {% } else if (data[i].type == 'Superior') { %} 
+                        <td>{%= __("SPR") %}</td>    
+                    {% } %}
+                    <td>{%= data[i].system_fo %}</td>
+                    <td>{%= __("") %}</td>
+                </tr>
+            {% } %}
+        </tbody>
+    </table>
+</div>
+
+<div class="col-xs-12">
+    <div class="col-xs-3"><p class="text-center">{%= __("Remark:") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("HK Department") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("FO Department") %}</p></div>
+</div>
+    
+
+<div class="col-xs-12" style="height: 20px;"></div>
+
+<div class="col-xs-12">
+    <div class="col-xs-3"><p class="text-center">{%= __("") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("_________________") %}</p></div>
+    <div class="col-xs-3"><p class="text-center">{%= __("_________________") %}</p></div>
+</div>
