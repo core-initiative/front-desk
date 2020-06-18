@@ -43,7 +43,8 @@ frappe.listview_settings['Inn Reservation'] = {
                         },
                         callback: (r) => {
                             if (r.message === 1) {
-                                frappe.msgprint("Only Reservation with status Reserved can be cancelled. Please choose other Reservation");
+                                frappe.msgprint("For Bulk Cancellation in Reservation List Page, only Reservation with status Reserved can be cancelled.<br />" +
+                                    " Please choose Reservation with Reserved Status only. For Cancelling In House Reservation, go to Reservation Page.");
                             }
                             else if (r.message === 0) {
                                 cur_list.refresh();
