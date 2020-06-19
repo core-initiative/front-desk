@@ -110,15 +110,15 @@ def cancel_single_reservation_in_house(reservation_id):
 		if room_doc.room_status != 'Vacant Dirty':
 			room_doc.room_status = 'Vacant Dirty'
 			room_doc.save()
-		if folio.status != 'Cancel':
-			folio.status = 'Cancel'
+		if folio.status != 'Closed':
+			folio.status = 'Closed'
 			folio.save()
-		if room_booking.status != 'Canceled':
-			room_booking.status = 'Canceled'
+		if room_booking.status != 'Finished':
+			room_booking.status = 'Finished'
 			room_booking.end = frappe.utils.today()
 			room_booking.save()
 
-		if reservation.status == 'Cancel' and room_doc.room_status == 'Vacant Dirty' and folio.status == 'Cancel' and room_booking.status == 'Canceled':
+		if reservation.status == 'Cancel' and room_doc.room_status == 'Vacant Dirty' and folio.status == 'Closed' and room_booking.status == 'Finished':
 			return 0
 		else:
 			return 1
