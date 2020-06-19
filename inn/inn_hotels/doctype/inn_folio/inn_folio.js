@@ -152,9 +152,11 @@ frappe.ui.form.on('Inn Folio', {
 		}
 	},
 	close: function (frm) {
-		if (frm.doc.close < frm.doc.open) {
-			frm.set_value('close', null);
-			frappe.msgprint('Close Date must be greater than Open Date');
+		if (frm.doc.type != 'Desk') {
+			if (frm.doc.close < frm.doc.open) {
+				frm.set_value('close', null);
+				frappe.msgprint('Close Date must be greater than Open Date');
+			}
 		}
 	}
 });
