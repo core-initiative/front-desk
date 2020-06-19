@@ -105,7 +105,7 @@ def process_dayend_close(doc_id):
 							doc_jea_debit = frappe.new_doc('Journal Entry Account')
 							doc_jea_debit.account = trx.debit_account
 							doc_jea_debit.debit = trx.amount
-							doc_jea_debit.debit_in_account_currency = trx.amount
+							doc_jea_debit.credit_in_account_currency = trx.amount #amount flipped to credit
 							doc_jea_debit.party_type = 'Customer'
 							doc_jea_debit.party = cust_name
 							doc_jea_debit.user_remark = closed_folio_remark
@@ -114,7 +114,7 @@ def process_dayend_close(doc_id):
 							doc_jea_credit = frappe.new_doc('Journal Entry Account')
 							doc_jea_credit.account = trx.credit_account
 							doc_jea_credit.credit = trx.amount
-							doc_jea_credit.credit_in_account_currency = trx.amount
+							doc_jea_credit.debit_in_account_currency = trx.amount #amount flipped to debit
 							doc_jea_credit.party_type = 'Customer'
 							doc_jea_credit.party = cust_name
 							doc_jea_credit.user_remark = closed_folio_remark
