@@ -21,6 +21,7 @@ def is_there_open_dayend_close():
 
 @frappe.whitelist()
 def process_dayend_close(doc_id):
+	# Create Journal Entry Pairing for Every Eligible Inn Folio Transactions
 	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']]})
 	for item in folio_list:
 		doc_folio = frappe.get_doc('Inn Folio', item.name)
@@ -76,6 +77,53 @@ def process_dayend_close(doc_id):
 
 				trx.journal_entry_id = doc_je.name
 				trx.save()
+
+	# Create Journal Entry Pairing for Every Eligible Inn Folio
+	closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed'})
+	for item in closed_folio_list:
+		doc_folio = frappe.get_doc('Inn Folio', item.name)
+		cust_name = doc_folio.customer_id
+		# Get all Closed folio with close date == last audit date
+		if doc_folio.journal_entry_id_closed is None and doc_folio.close == get_last_audit_date():
+			closed_folio_remark = 'Closed Folio Transaction'
+			closed_trx_list = doc_folio.get('folio_transaction')
+			# Folio must not be empty, Because Journal Entry Table Account not allowed to be empty
+			if len(closed_trx_list) > 0:
+				doc_je = frappe.new_doc('Journal Entry')
+				doc_je.title = doc_folio.name
+				doc_je.voucher_type = 'Journal Entry'
+				doc_je.naming_series = 'ACC-JV-.YYYY.-'
+				doc_je.posting_date = get_last_audit_date()
+				doc_je.company = frappe.get_doc('Global Defaults').default_company
+				doc_je.total_amount_currency = frappe.get_doc('Global Defaults').default_currency
+				doc_je.remark = closed_folio_remark
+				doc_je.user_remark = closed_folio_remark
+
+				for trx in closed_trx_list:
+					if trx.is_void == 0:
+						if trx.flag == 'Debit':
+							doc_jea_debit = frappe.new_doc('Journal Entry Account')
+							doc_jea_debit.account = trx.debit_account
+							doc_jea_debit.debit = trx.amount
+							doc_jea_debit.debit_in_account_currency = trx.amount
+							doc_jea_debit.party_type = 'Customer'
+							doc_jea_debit.party = cust_name
+							doc_jea_debit.user_remark = closed_folio_remark
+							doc_je.append('accounts', doc_jea_debit)
+						elif trx.flag == 'Credit':
+							doc_jea_credit = frappe.new_doc('Journal Entry Account')
+							doc_jea_credit.account = trx.credit_account
+							doc_jea_credit.credit = trx.amount
+							doc_jea_credit.credit_in_account_currency = trx.amount
+							doc_jea_credit.party_type = 'Customer'
+							doc_jea_credit.party = cust_name
+							doc_jea_credit.user_remark = closed_folio_remark
+							doc_je.append('accounts', doc_jea_credit)
+
+				doc_je.save()
+				doc_je.submit()
+				doc_folio.journal_entry_id_closed = doc_je.name
+				doc_folio.save()
 
 	doc_audit_log = frappe.new_doc('Inn Audit Log')
 	doc_audit_log.naming_series = 'AL.DD.-.MM.-.YYYY.-'
