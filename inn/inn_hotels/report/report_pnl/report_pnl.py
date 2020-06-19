@@ -56,7 +56,7 @@ def get_gl_entries(date, fiscal_year):
     return frappe.db.sql("""
         select posting_date, account, debit, credit
         from `tabGL Entry`
-        where fiscal_year=%s and posting_date<=%s""", (fiscal_year, date))
+        where fiscal_year=%s and posting_date<=%s""", (fiscal_year, date), as_dict=True)
 
 def get_data(filters):
     data = []
@@ -97,24 +97,24 @@ def get_data(filters):
 
             gl_entries = get_gl_entries(date, fiscal_year)
             for gl_entry in gl_entries:
-                account = gl_entry[1]
+                account = gl_entry['account']
                 if account[:1] == '4' or account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
                     while account is not None:
                         if account[:1] == '4':
-                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] + gl_entry[2] - gl_entry[3]
+                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] - gl_entry['debit'] + gl_entry['credit']
 
-                            if gl_entry[0].month == date.month:
-                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] + gl_entry[2] - gl_entry[3]
-                            elif gl_entry[0].month+1 == date.month:
-                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] + gl_entry[2] - gl_entry[3]
+                            if gl_entry['posting_date'].month == date.month:
+                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] - gl_entry['debit'] + gl_entry['credit']
+                            elif gl_entry['posting_date'].month+1 == date.month:
+                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] - gl_entry['debit'] + gl_entry['credit']
 
                         elif account[:1] == '5' or account[:1] == '6' or account[:1] == '7':
-                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] - gl_entry[2] + gl_entry[3]
+                            accounts_map[account]['year_to_date'] = accounts_map[account]['year_to_date'] + gl_entry['debit'] - gl_entry['credit']
 
-                            if gl_entry[0].month == date.month:
-                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] - gl_entry[2] + gl_entry[3]
-                            elif gl_entry[0].month+1 == date.month:
-                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] - gl_entry[2] + gl_entry[3]
+                            if gl_entry['posting_date'].month == date.month:
+                                accounts_map[account]['current_month'] = accounts_map[account]['current_month'] + gl_entry['debit'] - gl_entry['credit']
+                            elif gl_entry['posting_date'].month+1 == date.month:
+                                accounts_map[account]['last_month'] = accounts_map[account]['last_month'] + gl_entry['debit'] - gl_entry['credit']
 
                         account = accounts_map[account]['account_parent']
 
