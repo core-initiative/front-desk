@@ -12,10 +12,9 @@ class InnPackage(Document):
 
 @frappe.whitelist()
 def calculate_amounts(amount_per_pax, tax_id, total_pax):
-	_, _, amount_per_pax_after_tax = calculate_inn_tax_and_charges(float(amount_per_pax), tax_id)
 	total_amount = float(amount_per_pax) * float(total_pax)
-	total_amount_after_tax = float(amount_per_pax_after_tax[-1]) * float(total_pax)
-	return total_amount, total_amount_after_tax
+	_, _, total_amount_after_tax = calculate_inn_tax_and_charges(total_amount, tax_id)
+	return total_amount, total_amount_after_tax[-1]
 
 @frappe.whitelist()
 def get_package_list(active_flag=None):
