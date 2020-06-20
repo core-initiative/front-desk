@@ -154,6 +154,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
 		breakfast_charge_folio_trx.insert()
 
+		# Posting Breakfast Tax/Service
 		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
 																				reservation.actual_breakfast_rate_tax)
 		for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
@@ -231,8 +232,9 @@ def post_room_charges(parent_id, tobe_posted_list):
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
 	for item in list_json:
+		# Posting Room Charge
 		accumulated_amount = 0.00
-		debit_account, credit_account = get_accounts_from_id('Room Charge')
+		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
 		reservation = frappe.get_doc('Inn Reservation', item['reservation_id'])
 		room_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
 		room_charge_folio_trx.flag = 'Debit'
@@ -241,8 +243,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.transaction_type = 'Room Charge'
 		room_charge_folio_trx.amount = float(int(reservation.nett_actual_room_rate))
 		accumulated_amount += float(int(reservation.nett_actual_room_rate))
-		room_charge_folio_trx.debit_account = debit_account
-		room_charge_folio_trx.credit_account = credit_account
+		room_charge_folio_trx.debit_account = room_charge_debit_account
+		room_charge_folio_trx.credit_account = room_charge_credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item[
 			'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		room_charge_folio_trx.parent = item['folio_id']
@@ -252,6 +254,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 
 		return_value = return_value + '<li>' + room_charge_folio_trx.remark + '</li>'
 
+		# Posting Room Charge Tax/Service
 		room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
 																	  reservation.actual_room_rate_tax)
 		for index, room_tax_item_name in enumerate(room_tb_id):
@@ -263,7 +266,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.amount = room_tb_amount[index]
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
-			room_tax_doc.debit_account = debit_account
+			room_tax_doc.debit_account = room_charge_debit_account
 			room_tax_doc.remark = 'Room Charge Tax Room Rate ' + room_tax_item_name + ' : ' + item[
 				'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			room_tax_doc.parent = item['folio_id']
@@ -271,6 +274,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.parentfield = 'folio_transaction'
 			room_tax_doc.insert()
 
+		# Posting Breakfast Charge
+		breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
 		breakfast_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
 		breakfast_charge_folio_trx.flag = 'Debit'
 		breakfast_charge_folio_trx.is_void = 0
@@ -278,8 +283,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
 		breakfast_charge_folio_trx.amount = float(int(reservation.nett_actual_breakfast_rate))
 		accumulated_amount += float(int(reservation.nett_actual_breakfast_rate))
-		breakfast_charge_folio_trx.debit_account = debit_account
-		breakfast_charge_folio_trx.credit_account = credit_account
+		breakfast_charge_folio_trx.debit_account = breakfast_charge_debit_account
+		breakfast_charge_folio_trx.credit_account = breakfast_charge_credit_account
 		breakfast_charge_folio_trx.remark = 'Room Charge: Breakfast (Nett): ' + item[
 			'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 		breakfast_charge_folio_trx.parent = item['folio_id']
@@ -287,6 +292,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
 		breakfast_charge_folio_trx.insert()
 
+		# Posting Breakfast Tax/Service
 		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
 																				reservation.actual_breakfast_rate_tax)
 		for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
@@ -299,7 +305,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			accumulated_amount += breakfast_tb_amount[index]
 			breakfast_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown',
 															 breakfast_tax_item_name).breakdown_account
-			breakfast_tax_doc.debit_account = debit_account
+			breakfast_tax_doc.debit_account = breakfast_charge_debit_account
 			breakfast_tax_doc.remark = 'Breakfast Charge Tax Room Rate ' + breakfast_tax_item_name + ' : ' + item[
 				'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 			breakfast_tax_doc.parent = item['folio_id']
