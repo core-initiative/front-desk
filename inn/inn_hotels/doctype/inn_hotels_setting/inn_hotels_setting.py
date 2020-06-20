@@ -111,10 +111,18 @@ def generate_folio_transaction_type():
 			'is_included': 1,
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2110.005'})[0].name,
 		}]
-	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'DP Kamar'}):
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Down Payment'}):
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
-			'trx_name': _('DP Kamar'),
+			'trx_name': _('Down Payment'),
+			'type': _('Credit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2110.005'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Payment'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Payment'),
 			'type': _('Credit'),
 			'is_included': 1,
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2110.005'})[0].name,
