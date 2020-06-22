@@ -372,7 +372,44 @@ frappe.ui.form.on('Inn Reservation', {
 						frappe.msgprint("Actual Departure cannot be empty. Defaulted to Expected Departure.");
 					}
 					else {
-						calculate_rate_and_bill(frm);
+						frappe.call({
+							method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_booking_name_by_reservation',
+							args: {
+								reservation_id: frm.doc.name
+							},
+							callback: (r) => {
+								if (r.message) {
+									let room_booking_name = r.message;
+									console.log("r = " + r.message);
+									frappe.call({
+										method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_name_within_date_range',
+										args: {
+											room_id: frm.doc.actual_room_id,
+											start: frm.doc.arrival,
+											end: frm.doc.departure,
+										},
+										callback: (resp) => {
+											console.log("resp = " + resp.message);
+											if (resp.message == room_booking_name) {
+												calculate_rate_and_bill(frm);
+											}
+											else {
+												frappe.msgprint("Cannot change Actual Departure Date to " + frm.doc.departure +
+													". There are already room booking for Room " + frm.doc.actual_room_id + " made for that date." +
+													" <br>Check <b>Room Availability Page</b> for more detail.");
+												frm.set_value('departure', default_departure);
+											}
+											// if (r.message == false) {
+											// 	frappe.msgprint("gak bisa");
+											// }
+											// else {
+											// 	calculate_rate_and_bill(frm);
+											// }
+										}
+									});
+								}
+							}
+						});
 					}
 				}
 				else {
