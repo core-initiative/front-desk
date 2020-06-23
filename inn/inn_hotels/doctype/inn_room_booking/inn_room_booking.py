@@ -251,6 +251,25 @@ def is_available(room_id, start, end, name):
 		return True
 
 @frappe.whitelist()
+def get_name_within_date_range(room_id, start, end):
+	result = frappe.db.sql(
+		'SELECT name FROM `tabInn Room Booking` '
+		'WHERE %s = room_id AND (status = "Booked" OR status = "Stayed") AND (start != end) AND '
+		'((%s >= start AND %s < end) OR (%s > start AND %s <= end) OR (%s < start AND %s > end))',
+		(room_id, start, start, end, end, start, end)
+	)
+	return result
+
+@frappe.whitelist()
+def get_room_booking_name_by_reservation(reservation_id):
+	room_booking = frappe.get_doc('Inn Room Booking',
+								  {'reference_type': 'Inn Reservation', 'reference_name': reservation_id})
+	if room_booking:
+		return  room_booking.name
+	else:
+		return None
+
+@frappe.whitelist()
 def get_room_booking(room_id, date):
 	return frappe.db.sql(
 		'SELECT name, start, end, room_availability, note FROM `tabInn Room Booking` WHERE status = "Booked" AND room_id = %s AND %s >= start AND %s < end',
