@@ -22,13 +22,10 @@ def room_max_active_card():
 def issue_card(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
 	room = doc.actual_room_id
-	activationDate = datetime.today().strftime("%d/%m/%Y")
-	activationTime = datetime.now().strftime("%H:%M")
 	expiryDate = datetime.strftime(doc.departure, "%d/%m/%Y")
-	expiryTime = datetime.strftime(doc.departure, "%H:%M")
 
 	new_card = frappe.new_doc('Inn Key Card')
-	new_card.card_number = tesa_check_in("CI",  room, activationDate, activationTime, expiryDate, expiryTime)
+	new_card.card_number = tesa_checkin(room, expiryDate)
 	new_card.room_id = doc.actual_room_id
 	new_card.issue_date = datetime.today()
 	new_card.expired_date = doc.departure
@@ -44,13 +41,10 @@ def erase_card(flag, card_name):
 
 	doc = frappe.get_doc('Inn Key Card', card_name)
 	room = doc.room_id
-	activationDate = datetime.today().strftime("%d/%m/%Y")
-	activationTime = datetime.now().strftime("%H:%M")
 	expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%d/%m/%Y')
-	expiryTime = datetime.strftime(datetime.now() - timedelta(1), '%H:%M')
 
 	if flag == 'with':
-		card_number_returned = tesa_check_in("CI",  room, activationDate, activationTime, expiryDate, expiryTime)
+		card_number_returned = tesa_checkin(room, expiryDate)
 		if card_number_returned == doc.card_number:
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
@@ -60,6 +54,66 @@ def erase_card(flag, card_name):
 		doc.is_active = 0
 		doc.save()
 	return doc.is_active
+
+def tesa_checkin(room_id, expiry_date):
+	# api-endpoint
+	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/checkin'
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		"cmd": "CI",
+		"room": room_id,
+		"activationDate": datetime.today().strftime("%d/%m/%Y"),
+		"activationTime": "12:00",
+		"expiryDate": expiry_date,
+		"expiryTime": "12:00",
+		"returnCardId": "1"
+	}
+
+	if api_checkin_url is not None:
+		if int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth')) == 1:
+			auth = (frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user'),
+					frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password'))
+			r = requests.post(api_checkin_url, json=params, auth=auth)
+		else:
+			r = requests.post(api_checkin_url, json=params)
+
+		if r:
+			returned = json.loads(r.text)
+			msg_hex = returned['rawMsgHex']
+			data = msg_hex.split("B3")
+			card_number = bytearray.fromhex(data[-2]).decode()
+			return card_number
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def tesa_verify(track):
+	# api-endpoint
+	api_verify_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/verify'
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		"cmd": "RC",
+		"technology": "P",
+		"cardOperation": "RP",
+		"encoder": "1",
+		"format": "T",
+		"track": track
+	}
+
+	if api_verify_url is not None:
+		if int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth')) == 1:
+			auth = (frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user'),
+					frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password'))
+			r = requests.post(api_verify_url, json=params, auth=auth)
+		else:
+			r = requests.post(api_verify_url, json=params)
+
+		if r:
+			returned = json.loads(r.text)
+			return returned
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 
 @frappe.whitelist()
 def test_api(option):
@@ -90,10 +144,10 @@ def test_api(option):
 
 @frappe.whitelist()
 def verify_card(track):
-	returned = tesa_read_card(track)
+	returned = tesa_verify(track)
 	frappe.msgprint("User = " + returned['user'])
 	frappe.msgprint("Expiry Date = " + returned['expiryDate'])
-	frappe.msgprint("Info = " + returned['info'])
+	frappe.msgprint("Expiry Time = " + returned['expiryTime'])
 
 def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryTime,
 				  pcId="", technology="P", encoder="1",  cardOperation="EF", grant=None, keypad=None, operator=None,
