@@ -24,8 +24,18 @@ def issue_card(reservation_id):
 	room = doc.actual_room_id
 	expiryDate = datetime.strftime(doc.departure, "%d/%m/%Y")
 
+	cards = doc.issued_card
+	active_card = 0
+	for card in cards:
+		active_card += int(card.is_active)
+
+	if active_card == 0:
+		cmd = "CI"
+	else:
+		cmd = "CG"
+
 	new_card = frappe.new_doc('Inn Key Card')
-	new_card.card_number = tesa_checkin(room, expiryDate)
+	new_card.card_number = tesa_checkin(cmd, room, expiryDate)
 	new_card.room_id = doc.actual_room_id
 	new_card.issue_date = datetime.today()
 	new_card.expired_date = doc.departure
@@ -44,7 +54,7 @@ def erase_card(flag, card_name):
 	expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%d/%m/%Y')
 
 	if flag == 'with':
-		card_number_returned = tesa_checkin(room, expiryDate)
+		card_number_returned = tesa_checkin("CG", room, expiryDate)
 		if card_number_returned == doc.card_number:
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
@@ -55,14 +65,14 @@ def erase_card(flag, card_name):
 		doc.save()
 	return doc.is_active
 
-def tesa_checkin(room_id, expiry_date):
+def tesa_checkin(cmd, room_id, expiry_date):
 	# api-endpoint
 	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/checkin'
 
 	# defining a params dict for the parameters to be sent to the API
 	params = {
-		"cmd": "CI",
-		"room": room_id,
+		"cmd": cmd,
+		"room": room_id.replace('R-', ''),
 		"activationDate": datetime.today().strftime("%d/%m/%Y"),
 		"activationTime": "12:00",
 		"expiryDate": expiry_date,
