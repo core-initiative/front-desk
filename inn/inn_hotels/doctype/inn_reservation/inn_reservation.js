@@ -289,6 +289,11 @@ frappe.ui.form.on('Inn Reservation', {
 						frm.set_value('expected_arrival', r.message);
 						frappe.msgprint("Expected Arrival must be greater than last audit date: " + r.message);
 					}
+					else {
+						if (frm.doc.expected_departure && (frm.doc.__islocal== 1 || frm.doc.status == 'Reserved')) {
+							frm.set_value('total_night', calculate_nights(frm.doc.expected_arrival, frm.doc.expected_departure));
+						}
+					}
 				}
 				else {
 					frappe.msgprint("Warning: There is no audit log defined. First Audit Log must be manually defined. Contact the administrator for assistance.");
@@ -308,6 +313,11 @@ frappe.ui.form.on('Inn Reservation', {
 					else if (frm.doc.expected_departure <= frm.doc.expected_arrival) {
 						frm.set_value('expected_departure', null);
 						frappe.msgprint("Expected Departure must be greater than Expected Arrival.");
+					}
+					else {
+						if (frm.doc.expected_arrival && (frm.doc.__islocal== 1 || frm.doc.status == 'Reserved')) {
+							frm.set_value('total_night', calculate_nights(frm.doc.expected_arrival, frm.doc.expected_departure));
+						}
 					}
 				}
 				else {
@@ -341,6 +351,9 @@ frappe.ui.form.on('Inn Reservation', {
 					}
 					else {
 						calculate_rate_and_bill(frm);
+						if (frm.doc.departure) {
+							frm.set_value('total_night', calculate_nights(frm.doc.arrival, frm.doc.departure));
+						}
 					}
 				}
 				else {
@@ -392,6 +405,9 @@ frappe.ui.form.on('Inn Reservation', {
 											console.log("resp = " + resp.message);
 											if (resp.message == room_booking_name) {
 												calculate_rate_and_bill(frm);
+												if (frm.doc.arrival) {
+													frm.set_value('total_night', calculate_nights(frm.doc.arrival, frm.doc.departure));
+												}
 											}
 											else {
 												frappe.msgprint("Cannot change Actual Departure Date to " + frm.doc.departure +
@@ -1175,4 +1191,12 @@ function calculate_rate_and_bill(frm) {
 			}
 		}
 	});
+}
+
+function calculate_nights(arrival, departure) {
+	console.log("calculate_nights called");
+	let date_arrival = new Date(arrival);
+	let date_departure = new Date(departure);
+	let diff = date_departure.getTime() - date_arrival.getTime();
+	return  diff / (1000*3600*24);
 }
