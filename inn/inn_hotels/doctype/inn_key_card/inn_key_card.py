@@ -54,7 +54,7 @@ def erase_card(flag, card_name):
 	expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%d/%m/%Y')
 
 	if flag == 'with':
-		card_number_returned = tesa_checkin("CG", room, expiryDate)
+		card_number_returned = tesa_erase()
 		if card_number_returned == doc.card_number:
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
@@ -64,6 +64,38 @@ def erase_card(flag, card_name):
 		doc.is_active = 0
 		doc.save()
 	return doc.is_active
+
+def tesa_erase():
+	# api-endpoint
+	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/checkin'
+
+	# defining a params dict for the parameters to be sent to the API
+	params = {
+		"cmd": "CI",
+		"room": "999",
+		"activationDate": datetime.today().strftime("%d/%m/%Y"),
+		"activationTime": "12:00",
+		"expiryDate": (datetime.today() - timedelta(1)).strftime("%d/%m/%Y"),
+		"expiryTime": "12:00",
+		"returnCardId": "1"
+	}
+
+	if api_checkin_url is not None:
+		if int(frappe.db.get_single_value('Inn Hotels Setting', 'card_use_auth')) == 1:
+			auth = (frappe.db.get_single_value('Inn Hotels Setting', 'card_api_user'),
+					frappe.db.get_single_value('Inn Hotels Setting', 'card_api_password'))
+			r = requests.post(api_checkin_url, json=params, auth=auth)
+		else:
+			r = requests.post(api_checkin_url, json=params)
+
+		if r:
+			returned = json.loads(r.text)
+			msg_hex = returned['rawMsgHex']
+			data = msg_hex.split("B3")
+			card_number = bytearray.fromhex(data[-2]).decode()
+			return card_number
+	else:
+		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
 
 def tesa_checkin(cmd, room_id, expiry_date):
 	# api-endpoint
