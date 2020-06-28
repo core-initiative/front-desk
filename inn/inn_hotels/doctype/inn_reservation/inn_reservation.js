@@ -122,6 +122,9 @@ frappe.ui.form.on('Inn Reservation', {
 										});
 										frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
 									}
+									else {
+										frappe.msgprint(r.message);
+									}
 								}
 							});
 						}

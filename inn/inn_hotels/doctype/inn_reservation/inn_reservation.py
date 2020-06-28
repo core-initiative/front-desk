@@ -18,14 +18,18 @@ class InnReservation(Document):
 def check_in_reservation(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
 	room_doc = frappe.get_doc('Inn Room', doc.actual_room_id)
-	if (doc.status == 'Reserved'):
-		doc.status = 'In House'
-		doc.save()
-		if doc.status == 'In House':
-			room_doc.room_status = 'Occupied Clean'
-			room_doc.save()
+	if room_doc.room_status == 'Vacant Ready':
+		if (doc.status == 'Reserved'):
+			doc.status = 'In House'
+			doc.save()
+			if doc.status == 'In House':
+				room_doc.room_status = 'Occupied Clean'
+				room_doc.save()
 
-	return doc.status
+		return doc.status
+	else:
+		return "Currently, Room " + room_doc.name + "status is not Vacant Ready. " \
+				"Please consult with Room Service or choose another Room to continue Checking In."
 
 @frappe.whitelist()
 def start_check_in(source, reservation):
