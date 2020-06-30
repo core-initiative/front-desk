@@ -260,150 +260,186 @@ def get_data():
 	data = []
 
 	data.append({
+		'date': today,
 		'statistic': 'Total Room Available', 
 		'today_actual': available['today_actual'],
 		'mtd_actual': available['mtd_actual'],
 		'mtd_last_month': available['mtd_last_month'],
 		'year_to_date': available['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Room Out of Order', 
 		'today_actual': out_of_order['today_actual'],
 		'mtd_actual': out_of_order['mtd_actual'],
 		'mtd_last_month': out_of_order['mtd_last_month'],
 		'year_to_date': out_of_order['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total House Use', 
 		'today_actual': house_use['today_actual'],
 		'mtd_actual': house_use['mtd_actual'],
 		'mtd_last_month': house_use['mtd_last_month'],
 		'year_to_date': house_use['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Room Sold', 
 		'today_actual': '',
 		'mtd_actual': '',
 		'mtd_last_month': '',
 		'year_to_date': '',
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Studio', 
 		'today_actual': room_sold_studio['today_actual'],
 		'mtd_actual': room_sold_studio['mtd_actual'],
 		'mtd_last_month': room_sold_studio['mtd_last_month'],
 		'year_to_date': room_sold_studio['year_to_date'],
 		'indent': 1.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Superior', 
 		'today_actual': room_sold_superior['today_actual'],
 		'mtd_actual': room_sold_superior['mtd_actual'],
 		'mtd_last_month': room_sold_superior['mtd_last_month'],
 		'year_to_date': room_sold_superior['year_to_date'],
 		'indent': 1.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Deluxe', 
 		'today_actual': room_sold_deluxe['today_actual'],
 		'mtd_actual': room_sold_deluxe['mtd_actual'],
 		'mtd_last_month': room_sold_deluxe['mtd_last_month'],
 		'year_to_date': room_sold_deluxe['year_to_date'],
 		'indent': 1.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Executive', 
 		'today_actual': room_sold_executive['today_actual'],
 		'mtd_actual': room_sold_executive['mtd_actual'],
 		'mtd_last_month': room_sold_executive['mtd_last_month'],
 		'year_to_date': room_sold_executive['year_to_date'],
 		'indent': 1.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Suite', 
 		'today_actual': room_sold_suite['today_actual'],
 		'mtd_actual': room_sold_suite['mtd_actual'],
 		'mtd_last_month': room_sold_suite['mtd_last_month'],
 		'year_to_date': room_sold_suite['year_to_date'],
 		'indent': 1.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Saleable Room', 
 		'today_actual': saleable_room['today_actual'],
 		'mtd_actual': saleable_room['mtd_actual'],
 		'mtd_last_month': saleable_room['mtd_last_month'],
 		'year_to_date': saleable_room['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Vacant Room', 
 		'today_actual': vacant_room['today_actual'],
 		'mtd_actual': vacant_room['mtd_actual'],
 		'mtd_last_month': vacant_room['mtd_last_month'],
 		'year_to_date': vacant_room['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total In House Guest', 
 		'today_actual': in_house['today_actual'],
 		'mtd_actual': in_house['mtd_actual'],
 		'mtd_last_month': in_house['mtd_last_month'],
 		'year_to_date': in_house['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Walk In', 
 		'today_actual': walk_in['today_actual'],
 		'mtd_actual': walk_in['mtd_actual'],
 		'mtd_last_month': walk_in['mtd_last_month'],
 		'year_to_date': walk_in['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Total Day Use', 
 		'today_actual': day_use['today_actual'],
 		'mtd_actual': day_use['mtd_actual'],
 		'mtd_last_month': day_use['mtd_last_month'],
 		'year_to_date': day_use['year_to_date'],
 		'indent': 0.0,
+		'is_currency': False,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Average Room Rate', 
 		'today_actual': average_room_rate['today_actual'],
 		'mtd_actual': average_room_rate['mtd_actual'],
 		'mtd_last_month': average_room_rate['mtd_last_month'],
 		'year_to_date': average_room_rate['year_to_date'],
 		'indent': 0.0,
+		'is_currency': True,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Room Revenue', 
 		'today_actual': room_revenue['today_actual'],
 		'mtd_actual': room_revenue['mtd_actual'],
 		'mtd_last_month': room_revenue['mtd_last_month'],
 		'year_to_date': room_revenue['year_to_date'],
 		'indent': 0.0,
+		'is_currency': True,
 	})
 	data.append({
+		'date': today,
 		'statistic': 'Payment', 
 		'today_actual': '',
 		'mtd_actual': '',
 		'mtd_last_month': '',
 		'year_to_date': '',
 		'indent': 0.0,
+		'is_currency': True,
 	})
 
 	for key in payment:
 		data.append({
+			'date': today,
 			'statistic': key, 
 			'today_actual': payment[key]['today_actual'],
 			'mtd_actual': payment[key]['mtd_actual'],
 			'mtd_last_month': payment[key]['mtd_last_month'],
 			'year_to_date': payment[key]['year_to_date'],
 			'indent': 1.0,
+			'is_currency': True,
 		})
 
 	return data
