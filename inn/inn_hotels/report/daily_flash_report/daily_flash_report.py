@@ -56,18 +56,29 @@ def get_reservation(date):
 		from `tabInn Reservation`
 		where departure>=%s""", (date), as_dict=True)
 
+def get_gl_entry(date):
+	return frappe.db.sql("""
+        select posting_date, account, credit
+        from `tabGL Entry`
+        where posting_date>=%s""", (date), as_dict=True)
+
+def get_folio_transaction(date):
+	return frappe.db.sql("""
+        select audit_date, amount, mode_of_payment
+        from `tabInn Folio Transaction`
+        where audit_date>=%s""", (date), as_dict=True)
+
+def get_mode_of_payment():
+	return frappe.db.sql("""
+	select name from `tabMode of Payment`""", as_dict=True)
 
 def get_data():
-	total_room = get_total_room()[0]['total']
-
 	today = datetime.datetime.now().date()
 	current_year = datetime.datetime(year=today.year, month=1, day=1).date()
 	current_month = datetime.datetime(year=today.year, month=today.month, day=1).date()
 	last_month = datetime.datetime(year=today.year, month=today.month-1, day=1).date()
-
-	room_booking = get_room_booking(current_year)
-	reservation = get_reservation(current_year)
 	
+	total_room = get_total_room()[0]['total']
 	available = {
 		'today_actual': total_room,
 		'mtd_actual': total_room*today.day,
@@ -83,6 +94,7 @@ def get_data():
 	room_sold_executive = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 	room_sold_suite = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
+	room_booking = get_room_booking(current_year)
 	for rb in room_booking:
 		start = rb['start']
 		end = rb['end']
@@ -147,11 +159,19 @@ def get_data():
 						elif date >= last_month:
 							room_sold_suite['mtd_last_month'] = room_sold_suite['mtd_last_month'] + 1
 	
+	saleable_room = {
+		'today_actual': available['today_actual'] - out_of_order['today_actual'], 
+		'mtd_actual': available['mtd_actual'] - out_of_order['mtd_actual'], 
+		'mtd_last_month': available['mtd_last_month'] - out_of_order['mtd_last_month'], 
+		'year_to_date': available['year_to_date'] - out_of_order['year_to_date'], 
+	}
+	
 	day_use = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 	in_house = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 	walk_in = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 	average_room_rate = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
+	reservation = get_reservation(current_year)
 	for r in reservation:
 		start = r['arrival'].date()
 		end = r['departure'].date()
@@ -198,6 +218,44 @@ def get_data():
 		'mtd_last_month': available['mtd_last_month'] - in_house['mtd_last_month'], 
 		'year_to_date': available['year_to_date'] - in_house['year_to_date']
 	}
+
+	room_revenue = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
+
+	gl_entry = get_gl_entry(current_year)
+	for ge in gl_entry:
+		if ge.account[:8] == '4210.001':
+			room_revenue['year_to_date'] = room_revenue['year_to_date'] + ge.credit
+			if ge.posting_date == today:
+				room_revenue['today_actual'] = room_revenue['today_actual'] + ge.credit
+			if ge.posting_date >= current_month:
+				room_revenue['mtd_actual'] = room_revenue['mtd_actual'] + ge.credit
+			elif ge.posting_date >= last_month:
+				room_revenue['mtd_last_month'] = room_revenue['mtd_last_month'] + ge.credit
+
+	payment = {}
+
+	mode_of_payment = get_mode_of_payment()
+	for mp in mode_of_payment:
+		exist = False
+		for key in payment:
+			if mp.name == key:
+				exist = True
+		if not exist:
+			payment[mp.name] = {}
+			payment[mp.name]['today_actual'] = 0
+			payment[mp.name]['mtd_actual'] = 0
+			payment[mp.name]['mtd_last_month'] = 0
+			payment[mp.name]['year_to_date'] = 0
+
+	folio_transaction = get_folio_transaction(current_year)
+	for ft in folio_transaction:
+		payment[ft.mode_of_payment]['year_to_date'] = payment[ft.mode_of_payment]['year_to_date'] + ft.amount
+		if ft.audit_date == today:
+			payment[ft.mode_of_payment]['today_actual'] = payment[ft.mode_of_payment]['today_actual'] + ft.amount
+		if ft.audit_date >= current_month:
+			payment[ft.mode_of_payment]['mtd_actual'] = payment[ft.mode_of_payment]['mtd_actual'] + ft.amount
+		elif ft.audit_date >= last_month:
+			payment[ft.mode_of_payment]['mtd_last_month'] = payment[ft.mode_of_payment]['mtd_last_month'] + ft.amount
 
 	data = []
 
@@ -274,6 +332,14 @@ def get_data():
 		'indent': 1.0,
 	})
 	data.append({
+		'statistic': 'Total Saleable Room', 
+		'today_actual': saleable_room['today_actual'],
+		'mtd_actual': saleable_room['mtd_actual'],
+		'mtd_last_month': saleable_room['mtd_last_month'],
+		'year_to_date': saleable_room['year_to_date'],
+		'indent': 0.0,
+	})
+	data.append({
 		'statistic': 'Total Vacant Room', 
 		'today_actual': vacant_room['today_actual'],
 		'mtd_actual': vacant_room['mtd_actual'],
@@ -282,7 +348,7 @@ def get_data():
 		'indent': 0.0,
 	})
 	data.append({
-		'statistic': 'Total In House', 
+		'statistic': 'Total In House Guest', 
 		'today_actual': in_house['today_actual'],
 		'mtd_actual': in_house['mtd_actual'],
 		'mtd_last_month': in_house['mtd_last_month'],
@@ -313,5 +379,31 @@ def get_data():
 		'year_to_date': average_room_rate['year_to_date'],
 		'indent': 0.0,
 	})
+	data.append({
+		'statistic': 'Room Revenue', 
+		'today_actual': room_revenue['today_actual'],
+		'mtd_actual': room_revenue['mtd_actual'],
+		'mtd_last_month': room_revenue['mtd_last_month'],
+		'year_to_date': room_revenue['year_to_date'],
+		'indent': 0.0,
+	})
+	data.append({
+		'statistic': 'Payment', 
+		'today_actual': '',
+		'mtd_actual': '',
+		'mtd_last_month': '',
+		'year_to_date': '',
+		'indent': 0.0,
+	})
+
+	for key in payment:
+		data.append({
+			'statistic': key, 
+			'today_actual': payment[key]['today_actual'],
+			'mtd_actual': payment[key]['mtd_actual'],
+			'mtd_last_month': payment[key]['mtd_last_month'],
+			'year_to_date': payment[key]['year_to_date'],
+			'indent': 1.0,
+		})
 
 	return data
