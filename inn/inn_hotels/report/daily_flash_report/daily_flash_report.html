@@ -1,0 +1,97 @@
+<h3 class="text-left">{%= __("HOTEL DAILY INN") %}</h3>
+
+<p class="text-left">{%= __("Jl. Jenderal Ahmad Yani Kavling 67 Cempaka Putih Timur, Jakarta Pusat") %}</p>
+<p class="text-left">{%= __("Jakarta Indonesia. 10510") %}</p>
+<p class="text-left">{%= __("Phone: 021-21473999 Fax: 021-21473998") %}</p>
+
+<hr>
+
+<p class="text-center"><b>{%= __("Daily Flash Report") %}</b></p>
+<p class="text-center">{%= data[0].date %}</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                {%= __("Statistic") %}
+            </th>
+            <th>
+                {%= __("Today Actual") %}
+            </th>
+            <th>
+                {%= __("MTD Actual") %}
+            </th>
+            <th>
+                {%= __("MTD Last Month") %}
+            </th>
+            <th>
+                {%= __("Year to Date") %}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for(var i=0; i<data.length-1; i++) { %}
+            {% if(data[i].statistic == 'Payment' || data[i].statistic == 'Room Revenue') { %}
+                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            {% } %}
+            <tr>
+                <td>
+                    {% if(data[i].statistic == 'Payment' || data[i].statistic == 'Room Revenue') { %}
+                        {% if(data[i].indent == 1.0) { %}
+                            <p style="padding-left: 15px;"><b>{%= data[i].statistic %}</b></p>
+                        {% } else { %}
+                            <p><b>{%= data[i].statistic %}</b></p>
+                        {% } %}
+                    {% } else { %}
+                        {% if(data[i].indent == 1.0) { %}
+                            <p style="padding-left: 15px;">{%= data[i].statistic %}</p>
+                        {% } else { %}
+                            <p>{%= data[i].statistic %}</p>
+                        {% } %}
+                    {% } %}
+                </td>
+                <td>
+                    {% if(data[i].is_currency) { %}
+                        {%= format_currency(data[i].today_actual, "IDR") %}
+                    {% } else { %}
+                        {%= data[i].today_actual %}
+                    {% } %}
+                </td>
+                <td>
+                    {% if(data[i].is_currency) { %}
+                        {%= format_currency(data[i].mtd_actual, "IDR") %}
+                    {% } else { %}
+                        {%= data[i].mtd_actual %}
+                    {% } %}
+                </td>
+                <td>
+                    {% if(data[i].is_currency) { %}
+                        {%= format_currency(data[i].mtd_last_month, "IDR") %}
+                    {% } else { %}
+                        {%= data[i].mtd_last_month %}
+                    {% } %}
+                </td>
+                <td>
+                    {% if(data[i].is_currency) { %}
+                        {%= format_currency(data[i].year_to_date, "IDR") %}
+                    {% } else { %}
+                        {%= data[i].year_to_date %}
+                    {% } %}
+                </td>
+            </tr>
+        {% } %}
+    </tbody>
+</table>
+
+<div class="col-xs-12">
+    <div class="col-xs-6"><p class="text-center">{%= __("Prepared by") %}</p></div>
+    <div class="col-xs-6"><p class="text-center">{%= __("Approved by") %}</p></div>
+</div>
+    
+
+<div class="col-xs-12" style="height: 40px;"></div>
+
+<div class="col-xs-12">
+    <div class="col-xs-6"><p class="text-center">{%= __("Night Audit") %}</p></div>
+    <div class="col-xs-6"><p class="text-center">{%= __("Accounting") %}</p></div>
+</div>
