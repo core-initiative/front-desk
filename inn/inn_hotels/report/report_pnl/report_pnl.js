@@ -40,5 +40,5 @@ frappe.query_reports["Report PNL"] = {
 	"tree": true,
 	"name_field": "account",
 	"parent_field": "parent_account",
-	"initial_depth": 1,
+	"initial_depth": 2,
 }
