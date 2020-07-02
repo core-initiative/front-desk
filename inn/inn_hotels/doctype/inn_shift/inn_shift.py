@@ -33,7 +33,7 @@ def populate_cr_payment(shift_id):
 	transaction_list = []
 	list_of_payment_type = ['Deposit', 'DP Kamar', 'Room Payment', 'Down Payment', 'Payment']
 	mode_of_payment = frappe.get_all('Mode of Payment')
-	reservation_list = frappe.get_all('Inn Reservation', filters={'status': ['in', ['In House', 'Finish']]}, fields=['*'])
+	reservation_list = frappe.get_all('Inn Reservation', filters={'status': ['in', ['Reserved', 'In House', 'Finish']]}, fields=['*'])
 	if shift_id:
 		last_shift = get_last_closed_shift()
 		if last_shift is None:
