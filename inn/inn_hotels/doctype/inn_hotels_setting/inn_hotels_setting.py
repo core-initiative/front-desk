@@ -136,6 +136,15 @@ def generate_folio_transaction_type():
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
 			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.002'})[0].name,
 		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Laundry'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Laundry'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Cancellation Fee'}):
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
