@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-06-18 06:09:43.287001",
+ "modified": "2020-07-02 14:55:42.599701",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Room Discrepancy",
@@ -22,6 +22,9 @@
   },
   {
    "role": "Hotel Reservation User"
+  },
+  {
+   "role": "Housekeeping"
   }
  ]
 }
