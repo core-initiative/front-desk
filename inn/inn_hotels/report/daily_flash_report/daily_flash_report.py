@@ -66,7 +66,7 @@ def get_folio_transaction(date):
 	return frappe.db.sql("""
         select audit_date, amount, mode_of_payment
         from `tabInn Folio Transaction`
-        where audit_date>=%s""", (date), as_dict=True)
+        where flag='Credit' and audit_date>=%s""", (date), as_dict=True)
 
 def get_mode_of_payment():
 	return frappe.db.sql("""
