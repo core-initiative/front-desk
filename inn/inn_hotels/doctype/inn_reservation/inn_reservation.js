@@ -502,6 +502,12 @@ frappe.ui.form.on('Inn Reservation', {
 					if (r.message) {
 						frm.set_value('base_room_rate', r.message);
 						frm.refresh_field('base_room_rate');
+						if (frm.doc.status == 'Reserved') {
+							if (parseInt(r.message) > parseInt(frm.doc.init_actual_room_rate)) {
+								frm.set_value('init_actual_room_rate', parseInt(r.message));
+								frm.refresh_field('init_actual_room_rate');
+							}
+						}
 					}
 				}
 			});
