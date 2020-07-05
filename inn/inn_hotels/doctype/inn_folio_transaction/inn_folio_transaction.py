@@ -102,5 +102,8 @@ def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, pa
 	return new_doc.name
 
 def add_audit_date(doc, method):
-	audit_date = get_last_audit_date()
-	doc.audit_date = audit_date
+	if doc.audit_date:
+		pass
+	else:
+		audit_date = get_last_audit_date()
+		doc.audit_date = audit_date
