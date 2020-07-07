@@ -407,20 +407,20 @@ def get_data():
 	data.append({
 		'date': today,
 		'statistic': 'Average Room Rate', 
-		'today_actual': '{:,}'.format(int(average_room_rate['today_actual'])).replace(',','.'),
-		'mtd_actual': '{:,}'.format(int(average_room_rate['mtd_actual'])).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(int(average_room_rate['mtd_last_month'])).replace(',','.'),
-		'year_to_date': '{:,}'.format(int(average_room_rate['year_to_date'])).replace(',','.'),
+		'today_actual': '{:,}'.format(int(round(average_room_rate['today_actual']))).replace(',','.'),
+		'mtd_actual': '{:,}'.format(int(round(average_room_rate['mtd_actual']))).replace(',','.'),
+		'mtd_last_month': '{:,}'.format(int(round(average_room_rate['mtd_last_month']))).replace(',','.'),
+		'year_to_date': '{:,}'.format(int(round(average_room_rate['year_to_date']))).replace(',','.'),
 		'indent': 0.0,
 		'is_currency': True,
 	})
 	data.append({
 		'date': today,
 		'statistic': 'Room Revenue', 
-		'today_actual': '{:,}'.format(int(room_revenue['today_actual'])).replace(',','.'),
-		'mtd_actual': '{:,}'.format(int(room_revenue['mtd_actual'])).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(int(room_revenue['mtd_last_month'])).replace(',','.'),
-		'year_to_date': '{:,}'.format(int(room_revenue['year_to_date'])).replace(',','.'),
+		'today_actual': '{:,}'.format(int(round(room_revenue['today_actual']))).replace(',','.'),
+		'mtd_actual': '{:,}'.format(int(round(room_revenue['mtd_actual']))).replace(',','.'),
+		'mtd_last_month': '{:,}'.format(int(round(room_revenue['mtd_last_month']))).replace(',','.'),
+		'year_to_date': '{:,}'.format(int(round(room_revenue['year_to_date']))).replace(',','.'),
 		'indent': 0.0,
 		'is_currency': True,
 	})
@@ -439,10 +439,10 @@ def get_data():
 		data.append({
 			'date': today,
 			'statistic': key, 
-			'today_actual': '{:,}'.format(int(payment[key]['today_actual'])).replace(',','.'),
-			'mtd_actual': '{:,}'.format(int(payment[key]['mtd_actual'])).replace(',','.'),
-			'mtd_last_month': '{:,}'.format(int(payment[key]['mtd_last_month'])).replace(',','.'),
-			'year_to_date': '{:,}'.format(int(payment[key]['year_to_date'])).replace(',','.'),
+			'today_actual': '{:,}'.format(int(round(payment[key]['today_actual']))).replace(',','.'),
+			'mtd_actual': '{:,}'.format(int(round(payment[key]['mtd_actual']))).replace(',','.'),
+			'mtd_last_month': '{:,}'.format(int(round(payment[key]['mtd_last_month']))).replace(',','.'),
+			'year_to_date': '{:,}'.format(int(round(payment[key]['year_to_date']))).replace(',','.'),
 			'indent': 1.0,
 			'is_currency': True,
 		})
