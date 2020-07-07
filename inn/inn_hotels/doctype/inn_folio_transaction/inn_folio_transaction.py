@@ -49,8 +49,8 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 		new_tax_doc.amount = tb_amount[index]
 		new_tax_doc.reference_id = package_doc.name
 		new_tax_doc.sub_folio = sub_folio
-		new_tax_doc.debit_account = frappe.get_doc('Inn Tax Breakdown', package_tax_item_name).breakdown_account
-		new_tax_doc.credit_account = package_doc.credit_account
+		new_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', package_tax_item_name).breakdown_account
+		new_tax_doc.debit_account = package_doc.debit_account
 		new_tax_doc.remark = 'Package Tax ' + remark
 		new_tax_doc.parent = parent
 		new_tax_doc.parenttype = 'Inn Folio'
@@ -102,5 +102,8 @@ def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, pa
 	return new_doc.name
 
 def add_audit_date(doc, method):
-	audit_date = get_last_audit_date()
-	doc.audit_date = audit_date
+	if doc.audit_date:
+		pass
+	else:
+		audit_date = get_last_audit_date()
+		doc.audit_date = audit_date

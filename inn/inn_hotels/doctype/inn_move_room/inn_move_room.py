@@ -49,6 +49,12 @@ def create_move_room_by_reservation(reservation_id, mv_room_type, mv_bed_type, m
 		reservation_doc.actual_breakfast_rate_tax = breakfast_tax
 		reservation_doc.nett_actual_breakfast_rate = float(breakfast_rate)
 
+	# Deactivate all Inn Key Card Issued
+	key_list = reservation_doc.issued_card
+	for key in key_list:
+		if key.is_active == 1:
+			key.is_active = 0
+			key.save()
 	reservation_doc.save()
 
 	# Update room booking
