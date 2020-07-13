@@ -36,18 +36,10 @@
             {% } %}
             <tr>
                 <td>
-                    {% if(data[i].statistic == 'Payment' || data[i].statistic == 'Room Revenue') { %}
-                        {% if(data[i].indent == 1.0) { %}
-                            <p style="padding-left: 15px;"><b>{%= data[i].statistic %}</b></p>
-                        {% } else { %}
-                            <p><b>{%= data[i].statistic %}</b></p>
-                        {% } %}
+                    {% if(data[i].indent == 1.0) { %}
+                        <p style="padding-left: 15px;">{%= data[i].statistic %}</p>
                     {% } else { %}
-                        {% if(data[i].indent == 1.0) { %}
-                            <p style="padding-left: 15px;">{%= data[i].statistic %}</p>
-                        {% } else { %}
-                            <p>{%= data[i].statistic %}</p>
-                        {% } %}
+                        <p>{%= data[i].statistic %}</p>
                     {% } %}
                 </td>
                 <td>

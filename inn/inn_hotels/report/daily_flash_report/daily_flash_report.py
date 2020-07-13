@@ -63,7 +63,7 @@ def get_reservation(date):
 
 def get_gl_entry(date):
 	return frappe.db.sql("""
-        select posting_date, account, credit
+        select posting_date, account, credit, debit
         from `tabGL Entry`
         where posting_date>=%s""", (date), as_dict=True)
 
@@ -83,21 +83,23 @@ def get_data():
 	current_month = datetime.datetime(year=today.year, month=today.month, day=1).date()
 	last_month = datetime.datetime(year=today.year, month=today.month-1, day=1).date()
 	
+	room = {}
+
+	keys = ['Available', 'Out of Order', 'House Use', 
+		'Sold', 'Studio', 'Superior', 'Deluxe', 'Executive', 'Suite',
+		'Saleable Room',
+		'Day Use', 'In House', 'Walk In', 'Vacant Room']
+
+	for key in keys:
+		room[key] = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0} 
+
 	total_room = get_total_room()[0]['total']
-	available = {
+	room['Available'] = {
 		'today_actual': total_room,
 		'mtd_actual': total_room*today.day,
 		'mtd_last_month': total_room*calendar.monthrange(today.year, today.month-1)[1],
 		'year_to_date': total_room*((today-current_year).days+1)
 	}
-
-	out_of_order = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	house_use = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	room_sold_studio = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	room_sold_superior = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	room_sold_deluxe = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	room_sold_executive = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	room_sold_suite = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
 	room_booking = get_room_booking(current_year)
 	for rb in room_booking:
@@ -106,74 +108,32 @@ def get_data():
 		for i in range((end-start).days+1):
 			date = start + datetime.timedelta(days=i)
 			if date >= current_year:
-				if rb.room_availability == 'Out of Order':
-					out_of_order['year_to_date'] = out_of_order['year_to_date'] + 1
+				availability = rb.room_availability
+				if availability == 'Out of Order' or availability == 'House Use':
+					room[availability]['year_to_date'] = room[availability]['year_to_date'] + 1
 					if date == today:
-						out_of_order['today_actual'] = out_of_order['today_actual'] + 1
+						room[availability]['today_actual'] = room[availability]['today_actual'] + 1
 					if date >= current_month:
-						out_of_order['mtd_actual'] = out_of_order['mtd_actual'] + 1
+						room[availability]['mtd_actual'] = room[availability]['mtd_actual'] + 1
 					elif date >= last_month:
-						out_of_order['mtd_last_month'] = out_of_order['mtd_last_month'] + 1
-				elif rb.room_availability == 'House Use':
-					house_use['year_to_date'] = house_use['year_to_date'] + 1
+						room[availability]['mtd_last_month'] = room[availability]['mtd_last_month'] + 1
+				elif availability == 'Room Sold':
+					type = rb.room_type
+					room[type]['year_to_date'] = room[type]['year_to_date'] + 1
 					if date == today:
-						house_use['today_actual'] = house_use['today_actual'] + 1
+						room[type]['today_actual'] = room[type]['today_actual'] + 1
 					if date >= current_month:
-						house_use['mtd_actual'] = house_use['mtd_actual'] + 1
+						room[type]['mtd_actual'] = room[type]['mtd_actual'] + 1
 					elif date >= last_month:
-						house_use['mtd_last_month'] = house_use['mtd_last_month'] + 1
-				elif rb.room_availability == 'Room Sold':
-					if rb['room_type'] == 'Studio':
-						room_sold_studio['year_to_date'] = room_sold_studio['year_to_date'] + 1
-						if date == today:
-							room_sold_studio['today_actual'] = room_sold_studio['today_actual'] + 1
-						if date >= current_month:
-							room_sold_studio['mtd_actual'] = room_sold_studio['mtd_actual'] + 1
-						elif date >= last_month:
-							room_sold_studio['mtd_last_month'] = room_sold_studio['mtd_last_month'] + 1
-					elif rb['room_type'] == 'Superior':
-						room_sold_superior['year_to_date'] = room_sold_superior['year_to_date'] + 1
-						if date == today:
-							room_sold_superior['today_actual'] = room_sold_superior['today_actual'] + 1
-						if date >= current_month:
-							room_sold_superior['mtd_actual'] = room_sold_superior['mtd_actual'] + 1
-						elif date >= last_month:
-							room_sold_superior['mtd_last_month'] = room_sold_superior['mtd_last_month'] + 1
-					elif rb['room_type'] == 'Deluxe':
-						room_sold_deluxe['year_to_date'] = room_sold_deluxe['year_to_date'] + 1
-						if date == today:
-							room_sold_deluxe['today_actual'] = room_sold_deluxe['today_actual'] + 1
-						if date >= current_month:
-							room_sold_deluxe['mtd_actual'] = room_sold_deluxe['mtd_actual'] + 1
-						elif date >= last_month:
-							room_sold_deluxe['mtd_last_month'] = room_sold_deluxe['mtd_last_month'] + 1
-					elif rb['room_type'] == 'Executive':
-						room_sold_executive['year_to_date'] = room_sold_executive['year_to_date'] + 1
-						if date == today:
-							room_sold_executive['today_actual'] = room_sold_executive['today_actual'] + 1
-						if date >= current_month:
-							room_sold_executive['mtd_actual'] = room_sold_executive['mtd_actual'] + 1
-						elif date >= last_month:
-							room_sold_executive['mtd_last_month'] = room_sold_executive['mtd_last_month'] + 1
-					elif rb['room_type'] == 'Suite':
-						room_sold_suite['year_to_date'] = room_sold_suite['year_to_date'] + 1
-						if date == today:
-							room_sold_suite['today_actual'] = room_sold_suite['today_actual'] + 1
-						if date >= current_month:
-							room_sold_suite['mtd_actual'] = room_sold_suite['mtd_actual'] + 1
-						elif date >= last_month:
-							room_sold_suite['mtd_last_month'] = room_sold_suite['mtd_last_month'] + 1
+						room[type]['mtd_last_month'] = room[type]['mtd_last_month'] + 1
 	
-	saleable_room = {
-		'today_actual': available['today_actual'] - out_of_order['today_actual'], 
-		'mtd_actual': available['mtd_actual'] - out_of_order['mtd_actual'], 
-		'mtd_last_month': available['mtd_last_month'] - out_of_order['mtd_last_month'], 
-		'year_to_date': available['year_to_date'] - out_of_order['year_to_date'], 
+	room['Saleable Room'] = {
+		'today_actual': room['Available']['today_actual'] - room['Out of Order']['today_actual'], 
+		'mtd_actual': room['Available']['mtd_actual'] - room['Out of Order']['mtd_actual'], 
+		'mtd_last_month': room['Available']['mtd_last_month'] - room['Out of Order']['mtd_last_month'], 
+		'year_to_date': room['Available']['year_to_date'] - room['Out of Order']['year_to_date'], 
 	}
 	
-	day_use = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	in_house = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
-	walk_in = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 	average_room_rate = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
 	reservation = get_reservation(current_year)
@@ -182,60 +142,76 @@ def get_data():
 		end = r['departure'].date()
 
 		if start == end:
-			day_use['year_to_date'] = day_use['year_to_date'] + 1
+			room['Day Use']['year_to_date'] = room['Day Use']['year_to_date'] + 1
 			if start == today:
-				day_use['today_actual'] = day_use['today_actual'] + 1
+				room['Day Use']['today_actual'] = room['Day Use']['today_actual'] + 1
 			if start >= current_month:
-				day_use['mtd_actual'] = day_use['mtd_actual'] + 1
+				room['Day Use']['mtd_actual'] = room['Day Use']['mtd_actual'] + 1
 			elif start >= last_month:
-				day_use['mtd_last_month'] = day_use['mtd_last_month'] + 1
+				room['Day Use']['mtd_last_month'] = room['Day Use']['mtd_last_month'] + 1
 
 		for i in range((end-start).days+1):
 			date = start + datetime.timedelta(days=i)
 			if date >= current_year:
-				if r.status == 'In House':
-					in_house['year_to_date'] = in_house['year_to_date'] + 1
+				status = r.status
+				if status == 'In House':
+					room[status]['year_to_date'] = room[status]['year_to_date'] + 1
 					average_room_rate['year_to_date'] = (average_room_rate['year_to_date'] + r['actual_room_rate']) / 2
 					if date == today:
-						in_house['today_actual'] = in_house['today_actual'] + 1
+						room[status]['today_actual'] = room[status]['today_actual'] + 1
 						average_room_rate['today_actual'] = (average_room_rate['today_actual'] + r['actual_room_rate']) / 2
 					if date >= current_month:
-						in_house['mtd_actual'] = in_house['mtd_actual'] + 1
+						room[status]['mtd_actual'] = room[status]['mtd_actual'] + 1
 						average_room_rate['mtd_actual'] = (average_room_rate['mtd_actual'] + r['actual_room_rate']) / 2
 					elif date >= last_month:
-						in_house['mtd_last_month'] = in_house['mtd_last_month'] + 1
+						room[status]['mtd_last_month'] = room[status]['mtd_last_month'] + 1
 						average_room_rate['mtd_last_month'] = (average_room_rate['mtd_last_month'] + r['actual_room_rate']) / 2
 
 					
-
-					if r.channel == 'Walk In':
-						walk_in['year_to_date'] = walk_in['year_to_date'] + 1
+					channel = r.channel
+					if channel == 'Walk In':
+						room[channel]['year_to_date'] = room[channel]['year_to_date'] + 1
 						if date == today:
-							walk_in['today_actual'] = walk_in['today_actual'] + 1
+							room[channel]['today_actual'] = room[channel]['today_actual'] + 1
 						if date >= current_month:
-							walk_in['mtd_actual'] = walk_in['mtd_actual'] + 1
+							room[channel]['mtd_actual'] = room[channel]['mtd_actual'] + 1
 						elif date >= last_month:
-							walk_in['mtd_last_month'] = walk_in['mtd_last_month'] + 1
+							room[channel]['mtd_last_month'] = room[channel]['mtd_last_month'] + 1
 
-	vacant_room = {
-		'today_actual': available['today_actual'] - in_house['today_actual'], 
-		'mtd_actual': available['mtd_actual'] - in_house['mtd_actual'], 
-		'mtd_last_month': available['mtd_last_month'] - in_house['mtd_last_month'], 
-		'year_to_date': available['year_to_date'] - in_house['year_to_date']
+	room['Vacant Room'] = {
+		'today_actual': room['Available']['today_actual'] - room['In House']['today_actual'], 
+		'mtd_actual': room['Available']['mtd_actual'] - room['In House']['mtd_actual'], 
+		'mtd_last_month': room['Available']['mtd_last_month'] - room['In House']['mtd_last_month'], 
+		'year_to_date': room['Available']['year_to_date'] - room['In House']['year_to_date']
 	}
 
-	room_revenue = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
+	revenue = {}
+
+	keys = ['4210.001', 
+		'4110.001', '4120.001', '4120.002', 
+		'4140.001', '4140.002', 
+		'4150.001', '4150.002', '4150.003', '4150.004',
+		'2141.000', '2110.004']
+
+	for key in keys:
+		revenue[key] = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
 	gl_entry = get_gl_entry(current_year)
 	for ge in gl_entry:
-		if ge.account[:8] == '4210.001':
-			room_revenue['year_to_date'] = room_revenue['year_to_date'] + ge.credit
+		account = ge.account[:8]
+		if account == '4210.001' or \
+			account == '4110.001' or account == '4120.001' or account == '4120.002' or \
+			account == '4140.001' or account == '4140.002' or \
+			account == '4150.001' or account == '4150.002' or account == '4150.003' or account == '4150.004' or \
+			account == '2141.000' or account == '2110.004':
+				
+			revenue[account]['year_to_date'] = revenue[account]['year_to_date'] + ge.credit - ge.debit
 			if ge.posting_date == today:
-				room_revenue['today_actual'] = room_revenue['today_actual'] + ge.credit
+				revenue[account]['today_actual'] = revenue[account]['today_actual'] + ge.credit - ge.debit
 			if ge.posting_date >= current_month:
-				room_revenue['mtd_actual'] = room_revenue['mtd_actual'] + ge.credit
+				revenue[account]['mtd_actual'] = revenue[account]['mtd_actual'] + ge.credit - ge.debit
 			elif ge.posting_date >= last_month:
-				room_revenue['mtd_last_month'] = room_revenue['mtd_last_month'] + ge.credit
+				revenue[account]['mtd_last_month'] = revenue[account]['mtd_last_month'] + ge.credit - ge.debit
 
 	payment = {}
 
@@ -264,146 +240,40 @@ def get_data():
 
 	data = []
 
-	data.append({
-		'date': today,
-		'statistic': 'Total Room Available', 
-		'today_actual': '{:,}'.format(available['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(available['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(available['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(available['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Room Out of Order', 
-		'today_actual': '{:,}'.format(out_of_order['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(out_of_order['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(out_of_order['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(out_of_order['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total House Use', 
-		'today_actual': '{:,}'.format(house_use['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(house_use['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(house_use['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(house_use['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Room Sold', 
-		'today_actual': '',
-		'mtd_actual': '',
-		'mtd_last_month': '',
-		'year_to_date': '',
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Studio', 
-		'today_actual': '{:,}'.format(room_sold_studio['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(room_sold_studio['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(room_sold_studio['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(room_sold_studio['year_to_date']).replace(',','.'),
-		'indent': 1.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Superior', 
-		'today_actual': '{:,}'.format(room_sold_superior['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(room_sold_superior['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(room_sold_superior['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(room_sold_superior['year_to_date']).replace(',','.'),
-		'indent': 1.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Deluxe', 
-		'today_actual': '{:,}'.format(room_sold_deluxe['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(room_sold_deluxe['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(room_sold_deluxe['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(room_sold_deluxe['year_to_date']).replace(',','.'),
-		'indent': 1.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Executive', 
-		'today_actual': '{:,}'.format(room_sold_executive['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(room_sold_executive['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(room_sold_executive['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(room_sold_executive['year_to_date']).replace(',','.'),
-		'indent': 1.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Suite', 
-		'today_actual': '{:,}'.format(room_sold_suite['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(room_sold_suite['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(room_sold_suite['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(room_sold_suite['year_to_date']).replace(',','.'),
-		'indent': 1.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Saleable Room', 
-		'today_actual': '{:,}'.format(saleable_room['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(saleable_room['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(saleable_room['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(saleable_room['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Vacant Room', 
-		'today_actual': '{:,}'.format(vacant_room['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(vacant_room['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(vacant_room['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(vacant_room['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total In House Guest', 
-		'today_actual': '{:,}'.format(in_house['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(in_house['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(in_house['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(in_house['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Walk In', 
-		'today_actual': '{:,}'.format(walk_in['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(walk_in['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(walk_in['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(walk_in['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
-	data.append({
-		'date': today,
-		'statistic': 'Total Day Use', 
-		'today_actual': '{:,}'.format(day_use['today_actual']).replace(',','.'),
-		'mtd_actual': '{:,}'.format(day_use['mtd_actual']).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(day_use['mtd_last_month']).replace(',','.'),
-		'year_to_date': '{:,}'.format(day_use['year_to_date']).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': False,
-	})
+	for key in room:
+		title = ''
+		indent = 0.0
+
+		if key == 'Studio' or key == 'Superior' or key == 'Deluxe' or key == 'Executive' or key == 'Suite':
+			title = key
+			indent = 1.0
+		elif key == 'Available' or key == 'Out of Order' or key == 'House Use' or key == 'Sold':
+			title = 'Total Room ' + key
+		else:
+			title = 'Total ' + key
+
+		today_actual = ''
+		mtd_actual = ''
+		mtd_last_month = ''
+		year_to_date = ''
+
+		if key != 'Sold':	
+			today_actual = '{:,}'.format(room[key]['today_actual']).replace(',','.')
+			mtd_actual = '{:,}'.format(room[key]['mtd_actual']).replace(',','.')
+			mtd_last_month = '{:,}'.format(room[key]['mtd_last_month']).replace(',','.')
+			year_to_date = '{:,}'.format(room[key]['year_to_date']).replace(',','.')
+
+		data.append({
+			'date': today,
+			'statistic': title, 
+			'today_actual': today_actual,
+			'mtd_actual': mtd_actual,
+			'mtd_last_month': mtd_last_month,
+			'year_to_date': year_to_date,
+			'indent': indent,
+			'is_currency': False,
+		})	
+
 	data.append({
 		'date': today,
 		'statistic': 'Average Room Rate', 
@@ -414,16 +284,88 @@ def get_data():
 		'indent': 0.0,
 		'is_currency': True,
 	})
-	data.append({
-		'date': today,
-		'statistic': 'Room Revenue', 
-		'today_actual': '{:,}'.format(int(round(room_revenue['today_actual']))).replace(',','.'),
-		'mtd_actual': '{:,}'.format(int(round(room_revenue['mtd_actual']))).replace(',','.'),
-		'mtd_last_month': '{:,}'.format(int(round(room_revenue['mtd_last_month']))).replace(',','.'),
-		'year_to_date': '{:,}'.format(int(round(room_revenue['year_to_date']))).replace(',','.'),
-		'indent': 0.0,
-		'is_currency': True,
-	})
+	
+	for key in revenue:
+		title = ''
+		indent = 1.0
+
+		if key == '4210.001':
+			title = 'Room Revenue'
+			indent = 0.0
+		elif key == '4110.001':
+			data.append({
+				'date': today,
+				'statistic': 'Restaurant Revenue', 
+				'today_actual': '',
+				'mtd_actual': '',
+				'mtd_last_month': '',
+				'year_to_date': '',
+				'indent': 0.0,
+				'is_currency': False,
+			})
+			title = 'Breakfast Revenue'
+		elif key == '4120.001':
+			title = 'Resto Food'
+		elif key == '4120.002':
+			title = 'Resto Beverage'
+		elif key == '4140.001':
+			data.append({
+				'date': today,
+				'statistic': 'Room Service Revenue', 
+				'today_actual': '',
+				'mtd_actual': '',
+				'mtd_last_month': '',
+				'year_to_date': '',
+				'indent': 0.0,
+				'is_currency': False,
+			})
+			title = 'Service Food'
+		elif key == '4140.002':
+			title = 'Service Beverage'
+		elif key == '4150.001':
+			data.append({
+				'date': today,
+				'statistic': 'Banquet Revenue', 
+				'today_actual': '',
+				'mtd_actual': '',
+				'mtd_last_month': '',
+				'year_to_date': '',
+				'indent': 0.0,
+				'is_currency': False,
+			})
+			title = 'Banquet Lunch'
+		elif key == '4150.002':
+			title = 'Banquet Dinner'
+		elif key == '4150.003':
+			title = 'Banquet Coffe Break'
+		elif key == '4150.004':
+			title = 'Banquet Meeting'
+		elif key == '2141.000':
+			data.append({
+				'date': today,
+				'statistic': 'Tax and Service', 
+				'today_actual': '',
+				'mtd_actual': '',
+				'mtd_last_month': '',
+				'year_to_date': '',
+				'indent': 0.0,
+				'is_currency': False,
+			})
+			title = 'Tax PB 1'
+		elif key == '2110.004':
+			title = 'Service Charge'
+
+		data.append({
+			'date': today,
+			'statistic': title, 
+			'today_actual': '{:,}'.format(int(round(revenue[key]['today_actual']))).replace(',','.'),
+			'mtd_actual': '{:,}'.format(int(round(revenue[key]['mtd_actual']))).replace(',','.'),
+			'mtd_last_month': '{:,}'.format(int(round(revenue[key]['mtd_last_month']))).replace(',','.'),
+			'year_to_date': '{:,}'.format(int(round(revenue[key]['year_to_date']))).replace(',','.'),
+			'indent': indent,
+			'is_currency': True,
+		})
+
 	data.append({
 		'date': today,
 		'statistic': 'Payment', 
@@ -432,9 +374,8 @@ def get_data():
 		'mtd_last_month': '',
 		'year_to_date': '',
 		'indent': 0.0,
-		'is_currency': True,
+		'is_currency': False,
 	})
-
 	for key in payment:
 		data.append({
 			'date': today,
