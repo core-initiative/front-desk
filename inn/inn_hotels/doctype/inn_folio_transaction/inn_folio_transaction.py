@@ -68,6 +68,11 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 
 @frappe.whitelist()
 def add_charge(transaction_type, amount, sub_folio, remark, parent):
+	# Create Inn Folio Transaction Bundle
+	ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+	ftb_doc.transaction_type = transaction_type
+	ftb_doc.insert()
+
 	debit_account, credit_account = get_accounts_from_id(transaction_type)
 	new_doc = frappe.new_doc('Inn Folio Transaction')
 	new_doc.flag = 'Debit'
@@ -82,6 +87,7 @@ def add_charge(transaction_type, amount, sub_folio, remark, parent):
 	new_doc.parent = parent
 	new_doc.parenttype = 'Inn Folio'
 	new_doc.parentfield = 'folio_transaction'
+	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
 
 	return new_doc.name
