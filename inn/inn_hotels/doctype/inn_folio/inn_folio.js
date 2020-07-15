@@ -585,16 +585,73 @@ function transfer_to_another_folio(frm, trx_selected) {
 
 // Function to void single folio transaction
 function void_transaction(child) {
-	frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
-		if (child.is_void === 0) {
-			child.is_void = 1;
-			cur_frm.save();
-			frappe.show_alert('Transaction with ID ' + child.name + ' voided successfully.');
+	// frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
+	// 	if (child.is_void === 0) {
+	// 		child.is_void = 1;
+	// 		cur_frm.save();
+	// 		frappe.show_alert('Transaction with ID ' + child.name + ' voided successfully.');
+	// 	}
+	// 	else {
+	// 		frappe.msgprint("This transaction already voided.");
+	// 	}
+	// });
+	if (child.is_void === 0) {
+		if (child.void_id) {
+			frappe.msgprint("This transaction already requested to be voided. Please wait for supervisor approval.");
 		}
 		else {
-			frappe.msgprint("This transaction already voided.");
+			var d = new frappe.ui.Dialog({
+			title: __('Request Void Transaction ' + child.name),
+				fields: [
+					{
+						'label': 'Use Passcode',
+						'fieldname': 'use_passcode',
+						'fieldtype': 'Check',
+					},
+					{
+						'label': 'Supervisor Passcode',
+						'fieldname': 'supervisor_passcode',
+						'fieldtype': 'Data',
+						'depends_on': 'eval:doc.use_passcode==1'
+					},
+					{
+						'label': 'Void Reason',
+						'fieldname': 'applicant_reason',
+						'fieldtype': 'Small Text',
+						'reqd': 1
+					},
+				]
+			});
+			d.set_primary_action(__('Request Void'), () => {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.void_transaction',
+					args: {
+						trx_id: child.name,
+						use_passcode: d.get_values().use_passcode,
+						applicant_reason: d.get_values().applicant_reason,
+						requester: frappe.session.user,
+						supervisor_passcode: d.get_values().supervisor_passcode
+					},
+					callback: (r) => {
+						if (r.message == 0) {
+							d.hide();
+							frappe.msgprint('Transaction with ID ' + child.name + ' voided successfully. Please Reload the Page');
+						}
+						else if (r.message == 2) {
+							d.hide();
+							frappe.msgprint('Request to Void Transaction with ID ' + child.name + 'successfully submitted. ' +
+								'Wait for Supervisor approval to finish void process. Please Reload the Page');
+						}
+					}
+				});
+			});
+			d.show();
 		}
-	});
+
+	}
+	else {
+		frappe.msgprint("This transaction already voided.");
+	}
 }
 
 // Function to manually close folio
