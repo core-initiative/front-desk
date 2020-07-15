@@ -15,6 +15,7 @@ frappe.ui.form.on('Inn Folio Transaction', {
 	},
 	refresh: function(frm) {
 		make_read_only(frm);
+		frm.set_df_property('void_transaction', 'hidden', 1)
 		parent = getUrlVars()['parent'];
 		is_check_in = getUrlVars()['is_check_in'];
 		trx_flag = getUrlVars()['trx_flag'];
@@ -96,18 +97,6 @@ frappe.ui.form.on('Inn Folio Transaction', {
 			});
 		}
 	},
-	void_transaction: function (frm) {
-		if (frm.doc.is_void == 0) {
-			frappe.confirm(__("You are about to void this transaction. Are you sure?"), function () {
-				frm.doc.is_void = 1;
-				frm.save();
-				frappe.show_alert('Transaction with ID ' + frm.doc.name + ' voided successfully.');
-			});
-		}
-		else {
-			frappe.msgprint("Transaction already voided.");
-		}
-	}
 });
 
 
