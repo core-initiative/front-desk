@@ -96,6 +96,11 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
 	for item in list_json:
+		# Create Inn Folio Transaction Bundle
+		ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+		ftb_doc.transaction_type = 'Room Charge'
+		ftb_doc.insert()
+
 		# Posting Room Charge
 		item_doc = frappe.get_doc('Inn Room Charge To Be Posted', item)
 		accumulated_amount = 0.00
@@ -114,6 +119,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.parent = item_doc.folio_id
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
+		room_charge_folio_trx.ftb_id = ftb_doc.name
 		room_charge_folio_trx.insert()
 
 		return_value = return_value + '<li>' + room_charge_folio_trx.remark + '</li>'
@@ -135,6 +141,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.parent = item_doc.folio_id
 			room_tax_doc.parenttype = 'Inn Folio'
 			room_tax_doc.parentfield = 'folio_transaction'
+			room_tax_doc.ftb_id = ftb_doc.name
 			room_tax_doc.insert()
 
 		# Posting Breakfast Charge
@@ -152,6 +159,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parent = item_doc.folio_id
 		breakfast_charge_folio_trx.parenttype = 'Inn Folio'
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
+		breakfast_charge_folio_trx.ftb_id = ftb_doc.name
 		breakfast_charge_folio_trx.insert()
 
 		# Posting Breakfast Tax/Service
@@ -172,6 +180,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parent = item_doc.folio_id
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
+			breakfast_tax_doc.ftb_id = ftb_doc.name
 			breakfast_tax_doc.insert()
 
 		print("accumulated amount = " + str(accumulated_amount))
@@ -232,6 +241,11 @@ def post_room_charges(parent_id, tobe_posted_list):
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
 	for item in list_json:
+		# Create Inn Folio Transaction Bundle
+		ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+		ftb_doc.transaction_type = 'Room Charge'
+		ftb_doc.insert()
+
 		# Posting Room Charge
 		accumulated_amount = 0.00
 		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
@@ -250,6 +264,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.parent = item['folio_id']
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
+		room_charge_folio_trx.ftb_id = ftb_doc.name
 		room_charge_folio_trx.insert()
 
 		return_value = return_value + '<li>' + room_charge_folio_trx.remark + '</li>'
@@ -272,6 +287,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.parent = item['folio_id']
 			room_tax_doc.parenttype = 'Inn Folio'
 			room_tax_doc.parentfield = 'folio_transaction'
+			room_tax_doc.ftb_id = ftb_doc.name
 			room_tax_doc.insert()
 
 		# Posting Breakfast Charge
@@ -290,6 +306,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parent = item['folio_id']
 		breakfast_charge_folio_trx.parenttype = 'Inn Folio'
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
+		breakfast_charge_folio_trx.ftb_id = ftb_doc.name
 		breakfast_charge_folio_trx.insert()
 
 		# Posting Breakfast Tax/Service
@@ -311,6 +328,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parent = item['folio_id']
 			breakfast_tax_doc.parenttype = 'Inn Folio'
 			breakfast_tax_doc.parentfield = 'folio_transaction'
+			breakfast_tax_doc.ftb_id = ftb_doc.name
 			breakfast_tax_doc.insert()
 
 		print("accumulated amount = " + str(accumulated_amount))

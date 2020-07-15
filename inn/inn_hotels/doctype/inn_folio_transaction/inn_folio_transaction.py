@@ -22,6 +22,11 @@ def get_idx(parent):
 
 @frappe.whitelist()
 def add_package_charge(package_name, sub_folio, remark, parent):
+	# Create Inn Folio Transaction Bundle
+	ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+	ftb_doc.transaction_type = 'Package'
+	ftb_doc.insert()
+
 	package_doc = frappe.get_doc('Inn Package', package_name)
 	new_doc = frappe.new_doc('Inn Folio Transaction')
 	new_doc.flag = 'Debit'
@@ -37,6 +42,7 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 	new_doc.parent = parent
 	new_doc.parenttype = 'Inn Folio'
 	new_doc.parentfield = 'folio_transaction'
+	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
 
 	tb_id, tb_amount, _ = calculate_inn_tax_and_charges(package_doc.total_amount, package_doc.inn_tax_id)
@@ -55,12 +61,18 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 		new_tax_doc.parent = parent
 		new_tax_doc.parenttype = 'Inn Folio'
 		new_tax_doc.parentfield = 'folio_transaction'
+		new_tax_doc.ftb_id = ftb_doc.name
 		new_tax_doc.insert()
 
 	return new_doc.name
 
 @frappe.whitelist()
 def add_charge(transaction_type, amount, sub_folio, remark, parent):
+	# Create Inn Folio Transaction Bundle
+	ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+	ftb_doc.transaction_type = transaction_type
+	ftb_doc.insert()
+
 	debit_account, credit_account = get_accounts_from_id(transaction_type)
 	new_doc = frappe.new_doc('Inn Folio Transaction')
 	new_doc.flag = 'Debit'
@@ -75,12 +87,18 @@ def add_charge(transaction_type, amount, sub_folio, remark, parent):
 	new_doc.parent = parent
 	new_doc.parenttype = 'Inn Folio'
 	new_doc.parentfield = 'folio_transaction'
+	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
 
 	return new_doc.name
 
 @frappe.whitelist()
 def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, parent):
+	# Create Inn Folio Transaction Bundle
+	ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+	ftb_doc.transaction_type = transaction_type
+	ftb_doc.insert()
+
 	_, credit_account = get_accounts_from_id(transaction_type)
 	debit_account = get_mode_of_payment_account(mode_of_payment)
 	new_doc = frappe.new_doc('Inn Folio Transaction')
@@ -97,6 +115,7 @@ def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, pa
 	new_doc.parent = parent
 	new_doc.parenttype = 'Inn Folio'
 	new_doc.parentfield = 'folio_transaction'
+	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
 
 	return new_doc.name
