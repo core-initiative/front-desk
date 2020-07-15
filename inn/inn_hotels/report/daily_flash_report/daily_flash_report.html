@@ -7,7 +7,7 @@
 <hr>
 
 <p class="text-center"><b>{%= __("Daily Flash Report") %}</b></p>
-<p class="text-center">{%= data[0].date %}</p>
+<p class="text-center">{%= frappe.datetime.str_to_user(filters.date) %}</p>
 
 <table class="table">
     <thead>

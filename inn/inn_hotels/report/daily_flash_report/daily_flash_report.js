@@ -4,7 +4,12 @@
 
 frappe.query_reports["Daily Flash Report"] = {
 	"filters": [
-
+		{
+            fieldname: 'date',
+            label: __('Date'),
+			fieldtype: 'Date',
+			default: frappe.datetime.get_today()
+		}
 	],
 	"tree": true,
 	"name_field": "account",
