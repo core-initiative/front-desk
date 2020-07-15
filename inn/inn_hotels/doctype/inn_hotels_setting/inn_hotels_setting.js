@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Inn Hotels Setting', {
+	refresh: function(frm) {
+		if (frappe.user.has_role('Housekeeping Supervisor') || frappe.user.has_role('Administrator')) {
+			frm.add_custom_button(__('Show Supervisor Passcode'), function () {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.show_supervisor_passcode',
+				});
+			});
+		}
+	},
 	folio_transaction_type_generator: function(frm) {
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_folio_transaction_type',
@@ -22,6 +31,11 @@ frappe.ui.form.on('Inn Hotels Setting', {
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_hotel_account',
 			});
+		});
+	},
+	test: function () {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_supervisor_passcode'
 		});
 	}
 });

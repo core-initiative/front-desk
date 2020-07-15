@@ -102,7 +102,7 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"inn.tasks.all"
 # 	],
@@ -112,13 +112,13 @@ doc_events = {
 # 	"hourly": [
 # 		"inn.tasks.hourly"
 # 	],
-# 	"weekly": [
-# 		"inn.tasks.weekly"
-# 	]
+	"weekly": [
+		"inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.generate_supervisor_passcode"
+	]
 # 	"monthly": [
 # 		"inn.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
