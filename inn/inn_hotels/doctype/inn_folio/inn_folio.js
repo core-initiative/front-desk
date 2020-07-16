@@ -683,6 +683,9 @@ function close_folio(frm) {
 				if (r.message === 'Closed') {
 					frappe.show_alert("Folio Closed successfully");
 				}
+				else {
+					frappe.msgprint(r.message);
+				}
 			}
 		});
 	});
