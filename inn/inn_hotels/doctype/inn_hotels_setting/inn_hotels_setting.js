@@ -3,7 +3,9 @@
 
 frappe.ui.form.on('Inn Hotels Setting', {
 	refresh: function(frm) {
-		if (frappe.user.has_role('Housekeeping Supervisor') || frappe.user.has_role('Administrator')) {
+		if (frappe.user.has_role('Hotel Manager') ||
+			frappe.user.has_role('Hotel Reservation User') ||
+			frappe.user.has_role('Administrator')) {
 			frm.add_custom_button(__('Show Supervisor Passcode'), function () {
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.show_supervisor_passcode',

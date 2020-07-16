@@ -4,7 +4,7 @@
 frappe.ui.form.on('Inn Void Folio Transaction', {
 	refresh: function(frm) {
 		if ((frm.doc.status == 'Requested') &&
-			(frappe.user.has_role('Housekeeping Supervisor') || frappe.user.has_role('Administrator'))) {
+			(frappe.user.has_role('Hotel Manager') || frappe.user.has_role('Hotel Reservation User') || frappe.user.has_role('Administrator'))) {
 			frm.add_custom_button(__('Respond to Request'), function () {
 				respond_request(frm);
 			});
