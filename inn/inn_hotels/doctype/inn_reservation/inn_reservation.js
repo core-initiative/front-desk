@@ -981,20 +981,23 @@ function process_check_out(frm) {
 						},
 						callback: (r) => {
 							if (r.message == 'Finish') {
-									frappe.call({
-										method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
-										args: {
-											reservation_id: frm.doc.name
-										},
-										callback: (r) => {
-											if (r.message) {
-												console.log(r.message);
-											}
+								frappe.call({
+									method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+									args: {
+										reservation_id: frm.doc.name
+									},
+									callback: (r) => {
+										if (r.message) {
+											console.log(r.message);
 										}
-									});
-									frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
-									frappe.show_alert('Successfully Check Out Reservation: ' + frm.doc.name);
-								}
+									}
+								});
+								frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+								frappe.show_alert('Successfully Check Out Reservation: ' + frm.doc.name);
+							}
+							else {
+								frappe.msgprint(r.message);
+							}
 						}
 					});
 				}
