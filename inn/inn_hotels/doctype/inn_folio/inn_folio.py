@@ -137,3 +137,14 @@ def close_folio(folio_id):
 		ar_city_ledger.insert()
 
 	return frappe.db.get_value('Inn Folio', folio_id, 'status')
+
+@frappe.whitelist()
+def check_void_request(folio_id):
+	need_resolve = []
+	folio = frappe.get_doc('Inn Folio', folio_id)
+	trx_list = folio.get('folio_transaction')
+	for item in trx_list:
+		if item.is_void == 0 and item.void_id is not None:
+			if frappe.db.get_value('Inn Void Folio Transaction', {'name': item.void_id }, 'status') == 'Requested':
+				need_resolve.append(item.name)
+	return need_resolve
