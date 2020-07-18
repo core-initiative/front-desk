@@ -150,6 +150,9 @@ def void_transaction(trx_id, use_passcode, applicant_reason, requester, supervis
 			trx_doc = frappe.get_doc('Inn Folio Transaction', trx_id)
 			if void_doc.status == 'Approved':
 				trx_doc.is_void = 1
+				trx_doc.remark = trx_doc.remark + \
+								 "\n This transaction is VOIDED. Details in Inn Void Folio Transaction: " + \
+								 void_doc.name
 				trx_doc.void_id = void_doc.name
 				trx_doc.save()
 

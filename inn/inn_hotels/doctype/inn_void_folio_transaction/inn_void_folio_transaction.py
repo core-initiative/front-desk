@@ -22,6 +22,9 @@ def respond_void(id, response, denied_reason=None):
 	if doc.status == 'Approved':
 		trx_doc = frappe.get_doc('Inn Folio Transaction', doc.folio_transaction_id)
 		trx_doc.is_void = 1
+		trx_doc.remark = trx_doc.remark + \
+						 "\n This transaction is VOIDED. Details in Inn Void Folio Transaction: " + \
+						 doc.name
 		trx_doc.save()
 
 		return 1
