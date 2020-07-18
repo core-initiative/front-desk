@@ -43,7 +43,7 @@ def populate_tobe_posted():
 			room_charge_remark = 'Room Charge: Room Rate (Nett): ' + reservation.actual_room_id + " - " + \
 								 get_last_audit_date().strftime("%d-%m-%Y")
 			if not frappe.db.exists('Inn Folio Transaction',
-								{'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
+								{'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark, 'is_void': 0}):
 				tobe_posted = frappe.new_doc('Inn Room Charge To Be Posted')
 				tobe_posted.reservation_id = item.reservation_id
 				tobe_posted.folio_id = item.name
