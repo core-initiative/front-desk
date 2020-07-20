@@ -62,11 +62,14 @@ def erase_card(flag, card_name):
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
 			doc.save()
+			return doc.is_active
+		elif card_number_returned == "E2" or card_number_returned == "ED":
+			return 'ERROR'
 	elif flag == 'without':
 		doc.expired_date = datetime.today() - timedelta(1)
 		doc.is_active = 0
 		doc.save()
-	return doc.is_active
+		return doc.is_active
 
 def tesa_erase():
 	# api-endpoint

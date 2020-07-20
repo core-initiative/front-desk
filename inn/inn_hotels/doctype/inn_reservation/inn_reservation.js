@@ -873,7 +873,10 @@ function erase_card(flag, card_name) {
 			expiration_date: formatDate(yesterday)
 		},
 		callback: (r) => {
-			if (r.message === 0) {
+			if (r.message === 'ERROR') {
+				frappe.msgprint("Error Erasing Card, Please Redo the Process.")
+			}
+			else if (r.message === 0) {
 				cur_frm.reload_doc();
 				if (flag === 'with') {
 					frappe.show_alert(__("Card Erased.")); return;
