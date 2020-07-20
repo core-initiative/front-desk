@@ -25,6 +25,16 @@ def create_folio(reservation_id):
 		doc.close = reservation.expected_departure
 		doc.insert()
 
+def update_close_by_reservation(reservation_id):
+	folio_list = frappe.get_all('Inn Folio', filters={'reservation_id': reservation_id})
+	reservation = frappe.get_doc('Inn Reservation', reservation_id)
+	# Update except status finish, because when Checking Out, Close is handled by close_folio function
+	if reservation.status != 'Finish':
+		for item in folio_list:
+			doc_folio = frappe.get_doc('Inn Folio', item.name)
+			doc_folio.close = reservation.departure.strftime('%Y-%m-%d')
+			doc_folio.save()
+
 @frappe.whitelist()
 def get_reservation_id(folio_id):
 	doc = frappe.get_doc('Inn Folio', folio_id)
