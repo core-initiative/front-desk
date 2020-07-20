@@ -36,15 +36,18 @@ def issue_card(reservation_id):
 
 	new_card = frappe.new_doc('Inn Key Card')
 	new_card.card_number = tesa_checkin(cmd, room, expiryDate)
-	new_card.room_id = doc.actual_room_id
-	new_card.issue_date = datetime.today()
-	new_card.expired_date = doc.departure
-	new_card.parent = doc.name
-	new_card.parentfield = 'issued_card'
-	new_card.parenttype = 'Inn Reservation'
-	new_card.insert()
+	if new_card.card_number == "E2" or new_card.card_number == "ED":
+		return 'ERROR'
+	else:
+		new_card.room_id = doc.actual_room_id
+		new_card.issue_date = datetime.today()
+		new_card.expired_date = doc.departure
+		new_card.parent = doc.name
+		new_card.parentfield = 'issued_card'
+		new_card.parenttype = 'Inn Reservation'
+		new_card.insert()
 
-	return new_card.card_number
+		return new_card.card_number
 
 @frappe.whitelist()
 def erase_card(flag, card_name):

@@ -568,9 +568,12 @@ frappe.ui.form.on('Inn Reservation', {
 						reservation_id: frm.doc.name
 					},
 					callback: (r) => {
-						if (r.message) {
+						if (r.message !== 'ERROR') {
 							frm.reload_doc();
 							frappe.show_alert(__("Card " + r.message + " issued for this Reservation.")); return;
+						}
+						else {
+							frappe.msgprint("Error Issuing Card, Please Redo the Process.")
 						}
 					}
 				});
