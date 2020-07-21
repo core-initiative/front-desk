@@ -596,25 +596,30 @@ function void_transaction(child) {
 	// 	}
 	// });
 	if (child.is_void === 0) {
-		if (child.void_id) {
-			frappe.call({
-				method: 'inn.inn_hotels.doctype.inn_void_folio_transaction.inn_void_folio_transaction.request_status',
-				args: {
-					id: child.void_id
-				},
-				callback: (r) => {
-					if (r.message == 'Requested') {
-						frappe.msgprint("This transaction already requested to be voided. Please wait for supervisor approval.");
+		if (!child.journal_entry_id) {
+			if (child.void_id) {
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_void_folio_transaction.inn_void_folio_transaction.request_status',
+					args: {
+						id: child.void_id
+					},
+					callback: (r) => {
+						if (r.message == 'Requested') {
+							frappe.msgprint("This transaction already requested to be voided. Please wait for supervisor approval.");
+						}
+						else if (r.message == 'Denied') {
+							void_window(child);
+						}
 					}
-					else if (r.message == 'Denied') {
-						void_window(child);
-					}
-				}
-			});
+				});
+			}
+			else {
+				void_window(child);
+			}
+		} else {
+			frappe.msgprint("Cannot void this transaction anymore, because this transaction has been inputted to Journal.");
 		}
-		else {
-			void_window(child);
-		}
+
 
 	}
 	else {
