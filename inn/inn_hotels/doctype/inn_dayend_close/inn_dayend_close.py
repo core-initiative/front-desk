@@ -96,7 +96,10 @@ def process_dayend_close(doc_id):
 			# Get all Closed folio with close date == last audit date
 			if doc_folio.journal_entry_id_closed is None and doc_folio.close == get_last_audit_date():
 				closed_folio_remark = 'Closed Folio Transaction'
-				closed_trx_list = doc_folio.get('folio_transaction')
+				# Get all transactions that not void
+				closed_trx_list = frappe.get_all('Inn Folio Transaction',
+														filters={'parent': item.name,'is_void': 0},
+														fields=['*'])
 				# Folio must not be empty, Because Journal Entry Table Account not allowed to be empty
 				if len(closed_trx_list) > 0:
 					doc_je = frappe.new_doc('Journal Entry')
@@ -110,25 +113,24 @@ def process_dayend_close(doc_id):
 					doc_je.user_remark = closed_folio_remark
 
 					for trx in closed_trx_list:
-						if trx.is_void == 0:
-							if trx.flag == 'Debit':
-								doc_jea_debit = frappe.new_doc('Journal Entry Account')
-								doc_jea_debit.account = trx.debit_account
-								doc_jea_debit.debit = trx.amount
-								doc_jea_debit.credit_in_account_currency = trx.amount #amount flipped to credit
-								doc_jea_debit.party_type = 'Customer'
-								doc_jea_debit.party = cust_name
-								doc_jea_debit.user_remark = closed_folio_remark
-								doc_je.append('accounts', doc_jea_debit)
-							elif trx.flag == 'Credit':
-								doc_jea_credit = frappe.new_doc('Journal Entry Account')
-								doc_jea_credit.account = trx.credit_account
-								doc_jea_credit.credit = trx.amount
-								doc_jea_credit.debit_in_account_currency = trx.amount #amount flipped to debit
-								doc_jea_credit.party_type = 'Customer'
-								doc_jea_credit.party = cust_name
-								doc_jea_credit.user_remark = closed_folio_remark
-								doc_je.append('accounts', doc_jea_credit)
+						if trx.flag == 'Debit':
+							doc_jea_debit = frappe.new_doc('Journal Entry Account')
+							doc_jea_debit.account = trx.debit_account
+							doc_jea_debit.debit = trx.amount
+							doc_jea_debit.credit_in_account_currency = trx.amount #amount flipped to credit
+							doc_jea_debit.party_type = 'Customer'
+							doc_jea_debit.party = cust_name
+							doc_jea_debit.user_remark = closed_folio_remark
+							doc_je.append('accounts', doc_jea_debit)
+						elif trx.flag == 'Credit':
+							doc_jea_credit = frappe.new_doc('Journal Entry Account')
+							doc_jea_credit.account = trx.credit_account
+							doc_jea_credit.credit = trx.amount
+							doc_jea_credit.debit_in_account_currency = trx.amount #amount flipped to debit
+							doc_jea_credit.party_type = 'Customer'
+							doc_jea_credit.party = cust_name
+							doc_jea_credit.user_remark = closed_folio_remark
+							doc_je.append('accounts', doc_jea_credit)
 
 					doc_je.save()
 					doc_je.submit()
