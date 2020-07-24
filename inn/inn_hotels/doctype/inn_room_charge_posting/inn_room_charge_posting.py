@@ -55,42 +55,6 @@ def populate_tobe_posted():
 	return tobe_posted_list
 
 @frappe.whitelist()
-def get_posted_lists():
-	tobe_posted_list = []
-	already_posted_list = []
-	folio_list = frappe.get_all('Inn Folio', filters={'status': 'Open', 'type': 'Guest'}, fields=['*'])
-	for item in folio_list:
-		reservation = frappe.get_doc('Inn Reservation', item.reservation_id)
-		if reservation.status == 'In House' or reservation.status == 'Finish':
-			room_charge_remark = 'Room Charge: Room Rate (Nett): ' + reservation.actual_room_id + " - " + \
-								 get_last_audit_date().strftime("%d-%m-%Y")
-			if frappe.db.exists('Inn Folio Transaction',
-								{'parent': item.name, 'transaction_type': 'Room Charge', 'remark': room_charge_remark}):
-				folio_trx = frappe.get_doc('Inn Folio Transaction',
-										   {'parent': item.name, 'transaction_type': 'Room Charge',
-											'remark': room_charge_remark})
-				posted = frappe.new_doc('Inn Room Charge Posted')
-				posted.reservation_id = item.reservation_id
-				posted.folio_id = item.name
-				posted.room_id = reservation.actual_room_id
-				posted.customer_id = reservation.customer_id
-				posted.room_rate_id = reservation.room_rate
-				posted.actual_room_rate = reservation.actual_room_rate
-				posted.folio_transaction_id = folio_trx.name
-				already_posted_list.append(posted)
-			else:
-				tobe_posted = frappe.new_doc('Inn Room Charge To Be Posted')
-				tobe_posted.reservation_id = item.reservation_id
-				tobe_posted.folio_id = item.name
-				tobe_posted.room_id = reservation.actual_room_id
-				tobe_posted.customer_id = reservation.customer_id
-				tobe_posted.room_rate_id = reservation.room_rate
-				tobe_posted.actual_room_rate = reservation.actual_room_rate
-				tobe_posted_list.append(tobe_posted)
-
-	return tobe_posted_list, already_posted_list
-
-@frappe.whitelist()
 def post_individual_room_charges(parent_id, tobe_posted_list):
 	return_value = ''
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
@@ -260,6 +224,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		frappe.delete_doc('Inn Room Charge To Be Posted', item_doc.name)
 
 	room_charge_posting_doc.save()
+	calculate_already_posted_total(room_charge_posting_doc.name)
 	return return_value
 
 @frappe.whitelist()
@@ -435,4 +400,16 @@ def post_room_charges(parent_id, tobe_posted_list):
 		frappe.delete_doc('Inn Room Charge To Be Posted', item['name'])
 
 	room_charge_posting_doc.save()
+	calculate_already_posted_total(room_charge_posting_doc.name)
+
 	return return_value
+
+def calculate_already_posted_total(room_charge_posting_id):
+	total = 0.0
+	doc = frappe.get_doc('Inn Room Charge Posting', room_charge_posting_id)
+	posted = doc.get('already_posted')
+	if len(posted) > 0:
+		for item in posted:
+			total += item.actual_room_rate
+
+	frappe.db.set_value('Inn Room Charge Posting', doc.name, 'already_posted_total', total)
