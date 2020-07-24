@@ -11,10 +11,7 @@ class InnFolioTransactionBundle(Document):
 
 @frappe.whitelist()
 def get_trx_list(bundle_id, len_only=False):
-	if bundle_id:
-		if len_only:
-			return len(frappe.get_all('Inn Folio Transaction', filters={'ftb_id': bundle_id}))
-		else:
-			return frappe.get_all('Inn Folio Transaction', filters={'ftb_id': bundle_id})
+	if len_only:
+		return len(frappe.get_all('Inn Folio Transaction', filters={'ftb_id': bundle_id}))
 	else:
-		return 1
+		return frappe.get_all('Inn Folio Transaction', filters={'ftb_id': bundle_id}, fields=['name'])
