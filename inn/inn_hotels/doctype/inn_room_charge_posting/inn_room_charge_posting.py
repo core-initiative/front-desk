@@ -124,6 +124,12 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 
 		return_value = return_value + '<li>' + room_charge_folio_trx.remark + '</li>'
 
+		# Create Inn Folio Transaction Bundle Detail Item Room Charge
+		ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+		ftbd_doc.transaction_type = room_charge_folio_trx.transaction_type
+		ftbd_doc.transaction_id = room_charge_folio_trx.name
+		ftb_doc.append('transaction_detail', ftbd_doc)
+
 		# Posting Room Charge Tax/Service
 		room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
 																	  reservation.actual_room_rate_tax)
@@ -144,6 +150,12 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.ftb_id = ftb_doc.name
 			room_tax_doc.insert()
 
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = room_tax_doc.transaction_type
+			ftbd_doc.transaction_id = room_tax_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
 		# Posting Breakfast Charge
 		breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
 		breakfast_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
@@ -161,6 +173,12 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
 		breakfast_charge_folio_trx.ftb_id = ftb_doc.name
 		breakfast_charge_folio_trx.insert()
+
+		# Create Inn Folio Transaction Bundle Detail Item Breakfast Charge
+		ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+		ftbd_doc.transaction_type = breakfast_charge_folio_trx.transaction_type
+		ftbd_doc.transaction_id = breakfast_charge_folio_trx.name
+		ftb_doc.append('transaction_detail', ftbd_doc)
 
 		# Posting Breakfast Tax/Service
 		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
@@ -182,6 +200,12 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.ftb_id = ftb_doc.name
 			breakfast_tax_doc.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Breakfast Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = breakfast_tax_doc.transaction_type
+			ftbd_doc.transaction_id = breakfast_tax_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
 
 		print("accumulated amount = " + str(accumulated_amount))
 		print("math_ceil(accumulated amount) = " + str(math.ceil(accumulated_amount)))
@@ -216,6 +240,9 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			room_charge_folio_trx.save()
 			breakfast_charge_folio_trx.amount = adjusted_breakfast_charge_amount
 			breakfast_charge_folio_trx.save()
+
+		# Resave Bundle to save Detail
+		ftb_doc.save()
 
 		posted = frappe.new_doc('Inn Room Charge Posted')
 		posted.reservation_id = item_doc.reservation_id
@@ -269,6 +296,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 
 		return_value = return_value + '<li>' + room_charge_folio_trx.remark + '</li>'
 
+		# Create Inn Folio Transaction Bundle Detail Item Room Charge
+		ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+		ftbd_doc.transaction_type = room_charge_folio_trx.transaction_type
+		ftbd_doc.transaction_id = room_charge_folio_trx.name
+		ftb_doc.append('transaction_detail', ftbd_doc)
+
 		# Posting Room Charge Tax/Service
 		room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
 																	  reservation.actual_room_rate_tax)
@@ -290,6 +323,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.ftb_id = ftb_doc.name
 			room_tax_doc.insert()
 
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = room_tax_doc.transaction_type
+			ftbd_doc.transaction_id = room_tax_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
 		# Posting Breakfast Charge
 		breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
 		breakfast_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
@@ -308,6 +347,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 		breakfast_charge_folio_trx.parentfield = 'folio_transaction'
 		breakfast_charge_folio_trx.ftb_id = ftb_doc.name
 		breakfast_charge_folio_trx.insert()
+
+		# Create Inn Folio Transaction Bundle Detail Item Breakfast Charge
+		ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+		ftbd_doc.transaction_type = breakfast_charge_folio_trx.transaction_type
+		ftbd_doc.transaction_id = breakfast_charge_folio_trx.name
+		ftb_doc.append('transaction_detail', ftbd_doc)
 
 		# Posting Breakfast Tax/Service
 		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
@@ -330,6 +375,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 			breakfast_tax_doc.parentfield = 'folio_transaction'
 			breakfast_tax_doc.ftb_id = ftb_doc.name
 			breakfast_tax_doc.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Breakfast Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = breakfast_tax_doc.transaction_type
+			ftbd_doc.transaction_id = breakfast_tax_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
 
 		print("accumulated amount = " + str(accumulated_amount))
 		print("math_ceil(accumulated amount) = " + str(math.ceil(accumulated_amount)))
@@ -364,6 +415,9 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_charge_folio_trx.save()
 			breakfast_charge_folio_trx.amount = adjusted_breakfast_charge_amount
 			breakfast_charge_folio_trx.save()
+
+		# Resave Bundle to save Detail
+		ftb_doc.save()
 
 		posted = frappe.new_doc('Inn Room Charge Posted')
 		posted.reservation_id = item['reservation_id']

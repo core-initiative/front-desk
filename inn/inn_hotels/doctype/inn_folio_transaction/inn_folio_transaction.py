@@ -47,6 +47,12 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
 
+	# Create Inn Folio Transaction Bundle Detail Item Package
+	ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+	ftbd_doc.transaction_type = new_doc.transaction_type
+	ftbd_doc.transaction_id = new_doc.name
+	ftb_doc.append('transaction_detail', ftbd_doc)
+
 	tb_id, tb_amount, _ = calculate_inn_tax_and_charges(package_doc.total_amount, package_doc.inn_tax_id)
 	for index, package_tax_item_name in enumerate(tb_id):
 		new_tax_doc = frappe.new_doc('Inn Folio Transaction')
@@ -65,6 +71,15 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 		new_tax_doc.parentfield = 'folio_transaction'
 		new_tax_doc.ftb_id = ftb_doc.name
 		new_tax_doc.insert()
+
+		# Create Inn Folio Transaction Bundle Detail Item Package Tax/Charges
+		ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+		ftbd_doc.transaction_type = new_tax_doc.transaction_type
+		ftbd_doc.transaction_id = new_tax_doc.name
+		ftb_doc.append('transaction_detail', ftbd_doc)
+
+	# Resave Bundle to save Detail
+	ftb_doc.save()
 
 	return new_doc.name
 
@@ -91,6 +106,15 @@ def add_charge(transaction_type, amount, sub_folio, remark, parent):
 	new_doc.parentfield = 'folio_transaction'
 	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
+
+	# Create Inn Folio Transaction Bundle Detail Item Charge
+	ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+	ftbd_doc.transaction_type = new_doc.transaction_type
+	ftbd_doc.transaction_id = new_doc.name
+	ftb_doc.append('transaction_detail', ftbd_doc)
+
+	# Resave Bundle to save Detail
+	ftb_doc.save()
 
 	return new_doc.name
 
@@ -119,6 +143,15 @@ def add_payment(transaction_type, amount, mode_of_payment, sub_folio, remark, pa
 	new_doc.parentfield = 'folio_transaction'
 	new_doc.ftb_id = ftb_doc.name
 	new_doc.insert()
+
+	# Create Inn Folio Transaction Bundle Detail Item Payment
+	ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+	ftbd_doc.transaction_type = new_doc.transaction_type
+	ftbd_doc.transaction_id = new_doc.name
+	ftb_doc.append('transaction_detail', ftbd_doc)
+
+	# Resave Bundle to save Detail
+	ftb_doc.save()
 
 	return new_doc.name
 
