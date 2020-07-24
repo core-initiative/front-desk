@@ -17,4 +17,4 @@ def get_trx_list(bundle_id, len_only=False):
 		else:
 			return frappe.get_all('Inn Folio Transaction', filters={'ftb_id': bundle_id})
 	else:
-		return None
+		return 1
