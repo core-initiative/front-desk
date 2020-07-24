@@ -18,7 +18,6 @@ def respond_void(id, response, bundle_len, denied_reason=None):
 		for item in list:
 			trx_doc = frappe.get_doc('Inn Folio Transaction', item.name)
 			respond_single_void_request(trx_doc.void_id, response, denied_reason)
-
 		if response == 'Approved':
 			return 1
 		elif response == 'Denied':
@@ -51,4 +50,7 @@ def respond_single_void_request(id, response, denied_reason):
 						 "\n This transaction is VOIDED. Details in Inn Void Folio Transaction: " + \
 						 doc.name
 		trx_doc.save()
+		if trx_doc.transaction_type == 'Room Charge':
+			already_posted_doc = frappe.get_doc('Inn Room Charge Posted', {'folio_transaction_id': trx_doc.name})
+			frappe.delete_doc('Inn Room Charge Posted', already_posted_doc.name)
 	return doc.status

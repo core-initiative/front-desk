@@ -208,6 +208,9 @@ def void_single_trx(trx_id, applicant_reason, requester):
 						 void_doc.name
 		trx_doc.void_id = void_doc.name
 		trx_doc.save()
+		if trx_doc.transaction_type == 'Room Charge':
+			already_posted_doc = frappe.get_doc('Inn Room Charge Posted', {'folio_transaction_id': trx_doc.name})
+			frappe.delete_doc('Inn Room Charge Posted', already_posted_doc.name)
 
 	return trx_doc.is_void
 
