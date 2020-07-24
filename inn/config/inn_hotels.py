@@ -26,6 +26,11 @@ def get_data():
 					"type": "doctype",
 					"name": "Inn Shift",
 					"description": _("Shift for Inn Hotels")
+				},
+				{
+					"type": "doctype",
+					"name": "Inn Void Folio Transaction",
+					"description": _("List of Request to Void an Inn Folio Transaction for Inn Hotels")
 				}
 			]
 		},
@@ -171,6 +176,12 @@ def get_data():
 					"type": "report",
 					"name": "Report PNL",
 					"doctype": "GL Entry",
+					"is_query_report": True
+				},
+				{
+					"type": "report",
+					"name": "Daily Flash Report",
+					"doctype": "Inn Room",
 					"is_query_report": True
 				},
 			]
