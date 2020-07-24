@@ -492,11 +492,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
-<<<<<<< HEAD
  "modified": "2020-07-24 09:49:42.803174",
-=======
- "modified": "2020-07-14 17:19:51.991306",
->>>>>>> 49d6f7360da013347a497ccb4e32d53eeb74af48
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Room Charge Posting",
