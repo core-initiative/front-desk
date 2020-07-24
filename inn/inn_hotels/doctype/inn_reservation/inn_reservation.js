@@ -568,9 +568,12 @@ frappe.ui.form.on('Inn Reservation', {
 						reservation_id: frm.doc.name
 					},
 					callback: (r) => {
-						if (r.message) {
+						if (r.message !== 'ERROR') {
 							frm.reload_doc();
 							frappe.show_alert(__("Card " + r.message + " issued for this Reservation.")); return;
+						}
+						else {
+							frappe.msgprint("Error Issuing Card, Please Redo the Process.")
 						}
 					}
 				});
@@ -870,7 +873,10 @@ function erase_card(flag, card_name) {
 			expiration_date: formatDate(yesterday)
 		},
 		callback: (r) => {
-			if (r.message === 0) {
+			if (r.message === 'ERROR') {
+				frappe.msgprint("Error Erasing Card, Please Redo the Process.")
+			}
+			else if (r.message === 0) {
 				cur_frm.reload_doc();
 				if (flag === 'with') {
 					frappe.show_alert(__("Card Erased.")); return;
@@ -981,20 +987,23 @@ function process_check_out(frm) {
 						},
 						callback: (r) => {
 							if (r.message == 'Finish') {
-									frappe.call({
-										method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
-										args: {
-											reservation_id: frm.doc.name
-										},
-										callback: (r) => {
-											if (r.message) {
-												console.log(r.message);
-											}
+								frappe.call({
+									method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
+									args: {
+										reservation_id: frm.doc.name
+									},
+									callback: (r) => {
+										if (r.message) {
+											console.log(r.message);
 										}
-									});
-									frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
-									frappe.show_alert('Successfully Check Out Reservation: ' + frm.doc.name);
-								}
+									}
+								});
+								frappe.set_route('Form', 'Inn Reservation', frm.doc.name);
+								frappe.show_alert('Successfully Check Out Reservation: ' + frm.doc.name);
+							}
+							else {
+								frappe.msgprint(r.message);
+							}
 						}
 					});
 				}

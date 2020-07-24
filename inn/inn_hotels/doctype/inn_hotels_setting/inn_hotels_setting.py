@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 import frappe
+import random
+import string
 from frappe import _
 from frappe.model.document import Document
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
@@ -287,3 +289,17 @@ def generate_hotel_account():
 	# 	frappe.msgprint("Generating Account Success")
 	# else:
 	# 	frappe.msgprint("Please Create account 6000.0000 and 7000.000 in the Chart of Account First")
+
+@frappe.whitelist()
+def generate_supervisor_passcode():
+	digits = string.digits
+	passcode = ''.join(random.choice(digits) for i in range(6))
+	frappe.db.set_value('Inn Hotels Setting', 'Inn Hotels Setting', 'supervisor_passcode', passcode)
+
+@frappe.whitelist()
+def show_supervisor_passcode():
+	if frappe.db.get_single_value('Inn Hotels Setting', 'supervisor_passcode'):
+		frappe.msgprint(frappe.db.get_single_value('Inn Hotels Setting', 'supervisor_passcode'))
+	else:
+		generate_supervisor_passcode()
+		show_supervisor_passcode()

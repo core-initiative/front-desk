@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_folio.inn_folio import update_close_by_reservation
 
 
 class InnRoomBooking(Document):
@@ -16,6 +17,10 @@ class InnRoomBooking(Document):
 def update_by_reservation(reservation_id):
 	return_message = ''
 	reservation_doc = frappe.get_doc('Inn Reservation', reservation_id)
+
+	# Update Folio Close if Reservation get Updated
+	update_close_by_reservation(reservation_id)
+
 	if reservation_doc.status == 'Cancel':
 		# If Reservation Canceled, set the Room Booking Status to Canceled
 		room_booking_doc = frappe.get_doc('Inn Room Booking',

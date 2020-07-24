@@ -25,6 +25,16 @@ def create_folio(reservation_id):
 		doc.close = reservation.expected_departure
 		doc.insert()
 
+def update_close_by_reservation(reservation_id):
+	folio_list = frappe.get_all('Inn Folio', filters={'reservation_id': reservation_id})
+	reservation = frappe.get_doc('Inn Reservation', reservation_id)
+	# Update except status finish, because when Checking Out, Close is handled by close_folio function
+	if reservation.status != 'Finish':
+		for item in folio_list:
+			doc_folio = frappe.get_doc('Inn Folio', item.name)
+			doc_folio.close = reservation.departure.strftime('%Y-%m-%d')
+			doc_folio.save()
+
 @frappe.whitelist()
 def get_reservation_id(folio_id):
 	doc = frappe.get_doc('Inn Folio', folio_id)
@@ -107,33 +117,51 @@ def is_using_city_ledger(folio_id):
 
 @frappe.whitelist()
 def close_folio(folio_id):
+	list = check_void_request(folio_id)
+	if len(list) == 0:
+		folio = frappe.get_doc('Inn Folio', folio_id)
+		folio.status = 'Closed'
+		folio.close = datetime.date.today()
+		folio.save()
+
+		# Create AR City Ledger if There are payment using City Ledger as mode_of_payment
+		if is_using_city_ledger(folio_id):
+			total_amount = 0.0
+			trx_list = frappe.get_all('Inn Folio Transaction', filters={'parent': folio_id, 'is_void': 0, 'flag': 'Credit',
+																		'mode_of_payment': 'City Ledger'}, fields=['amount'])
+			for trx in trx_list:
+				total_amount += trx.amount
+
+			ar_city_ledger = frappe.new_doc('AR City Ledger')
+			ar_city_ledger.naming_series = 'AR-CL-.YYYY.-'
+			ar_city_ledger.is_paid = 0
+			ar_city_ledger.customer_id = folio.customer_id
+			if folio.type == 'Guest':
+				ar_city_ledger.inn_channel_id = frappe.db.get_value('Inn Reservation', folio.reservation_id, 'channel')
+			else:
+				ar_city_ledger.inn_group_id = folio.group_id
+			ar_city_ledger.total_amount = total_amount
+			ar_city_ledger.folio_id = folio_id
+			ar_city_ledger.folio_type = folio.type
+			ar_city_ledger.folio_status = folio.status
+			ar_city_ledger.folio_open = folio.open
+			ar_city_ledger.folio_close = folio.close
+			ar_city_ledger.insert()
+
+		return frappe.db.get_value('Inn Folio', folio_id, 'status')
+	else:
+		return "There are void transaction request that still not responded. " \
+			   "Please consult the supervisor to resolve this before closing Folio." + \
+			   "<br /> Transaction need to be resolved: <br />" + list
+
+
+@frappe.whitelist()
+def check_void_request(folio_id):
+	need_resolve = []
 	folio = frappe.get_doc('Inn Folio', folio_id)
-	folio.status = 'Closed'
-	folio.close = datetime.date.today()
-	folio.save()
-
-	# Create AR City Ledger if There are payment using City Ledger as mode_of_payment
-	if is_using_city_ledger(folio_id):
-		total_amount = 0.0
-		trx_list = frappe.get_all('Inn Folio Transaction', filters={'parent': folio_id, 'is_void': 0, 'flag': 'Credit',
-																	'mode_of_payment': 'City Ledger'}, fields=['amount'])
-		for trx in trx_list:
-			total_amount += trx.amount
-
-		ar_city_ledger = frappe.new_doc('AR City Ledger')
-		ar_city_ledger.naming_series = 'AR-CL-.YYYY.-'
-		ar_city_ledger.is_paid = 0
-		ar_city_ledger.customer_id = folio.customer_id
-		if folio.type == 'Guest':
-			ar_city_ledger.inn_channel_id = frappe.db.get_value('Inn Reservation', folio.reservation_id, 'channel')
-		else:
-			ar_city_ledger.inn_group_id = folio.group_id
-		ar_city_ledger.total_amount = total_amount
-		ar_city_ledger.folio_id = folio_id
-		ar_city_ledger.folio_type = folio.type
-		ar_city_ledger.folio_status = folio.status
-		ar_city_ledger.folio_open = folio.open
-		ar_city_ledger.folio_close = folio.close
-		ar_city_ledger.insert()
-
-	return frappe.db.get_value('Inn Folio', folio_id, 'status')
+	trx_list = folio.get('folio_transaction')
+	for item in trx_list:
+		if item.is_void == 0 and item.void_id is not None:
+			if frappe.db.get_value('Inn Void Folio Transaction', {'name': item.void_id }, 'status') == 'Requested':
+				need_resolve.append(item.name)
+	return need_resolve

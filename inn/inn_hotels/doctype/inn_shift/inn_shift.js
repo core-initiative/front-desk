@@ -85,20 +85,25 @@ frappe.ui.form.on('Inn Shift', {
 		}
 	},
 	close_shift_button: function (frm) {
-		frappe.confirm(__("You are about to close the shift. Are you sure?"), function() {
-			frappe.call({
-				method: "inn.inn_hotels.doctype.inn_shift.inn_shift.close_shift",
-				args: {
-					shift_id: frm.doc.name,
-				},
-				callback: (r) => {
-					if (r.message) {
-						frappe.show_alert(__("Shift Closed."));
-						frm.reload_doc();
+		if (frm.is_dirty()) {
+			frappe.msgprint("There are changes  not yet saved in this Shift. Please save the shift first.");
+		}
+		else {
+			frappe.confirm(__("You are about to close the shift. Are you sure?"), function() {
+				frappe.call({
+					method: "inn.inn_hotels.doctype.inn_shift.inn_shift.close_shift",
+					args: {
+						shift_id: frm.doc.name,
+					},
+					callback: (r) => {
+						if (r.message) {
+							frappe.show_alert(__("Shift Closed."));
+							frm.reload_doc();
+						}
 					}
-				}
+				});
 			});
-		});
+		}
 	}
 });
 frappe.ui.form.on('Inn CC Detail',{

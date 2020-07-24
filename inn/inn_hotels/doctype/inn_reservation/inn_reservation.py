@@ -186,19 +186,20 @@ def check_out_reservation(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
 	room_doc = frappe.get_doc('Inn Room', doc.actual_room_id)
 	folio_doc = frappe.get_doc('Inn Folio', {'reservation_id': reservation_id})
-	if (doc.status == 'In House'):
-		doc.departure = datetime.datetime.now()
-		doc.status = 'Finish'
-		doc.save()
-		if doc.status == 'Finish':
-			# Change room status
-			room_doc.room_status = 'Vacant Dirty'
-			room_doc.save()
-
-			# Change folio status
-			close_folio(folio_doc.name)
-
-	return doc.status
+	# Change folio status
+	folio_status = close_folio(folio_doc.name)
+	if folio_status == 'Closed':
+		if (doc.status == 'In House'):
+			doc.departure = datetime.datetime.now()
+			doc.status = 'Finish'
+			doc.save()
+			if doc.status == 'Finish':
+				# Change room status
+				room_doc.room_status = 'Vacant Dirty'
+				room_doc.save()
+		return doc.status
+	else:
+		return folio_status
 
 def generate_wifi_password(reservation_id):
 	reservation = frappe.get_doc('Inn Reservation', reservation_id)
