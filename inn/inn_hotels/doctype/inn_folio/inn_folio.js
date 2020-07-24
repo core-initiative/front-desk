@@ -611,7 +611,7 @@ function void_transaction(child) {
 							frappe.call({
 								method: 'inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_bundle.get_trx_list',
 								args: {
-									bundle_id: child.ftb_id,
+									trx_id: child.name,
 									len_only: true
 								},
 								callback: (resp) => {
@@ -628,7 +628,7 @@ function void_transaction(child) {
 				frappe.call({
 					method: 'inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_bundle.get_trx_list',
 					args: {
-						bundle_id: child.ftb_id,
+						trx_id: child.name,
 						len_only: true
 					},
 					callback: (resp) => {

@@ -131,7 +131,7 @@ def add_audit_date(doc, method):
 
 @frappe.whitelist()
 def void_transaction(trx_id, use_passcode, applicant_reason, requester, bundle_len, supervisor_passcode=None):
-	list = get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id'))
+	list = get_trx_list(trx_id)
 	print (list)
 	if int(use_passcode) == 1:
 		if supervisor_passcode != frappe.db.get_single_value('Inn Hotels Setting', 'supervisor_passcode'):
@@ -141,7 +141,7 @@ def void_transaction(trx_id, use_passcode, applicant_reason, requester, bundle_l
 			return 1
 		else:
 			if int(bundle_len) > 1:
-				for item in get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id')):
+				for item in list:
 					void_single_trx(item.name, applicant_reason, requester)
 			else:
 				void_single_trx(trx_id, applicant_reason, requester)
@@ -149,7 +149,7 @@ def void_transaction(trx_id, use_passcode, applicant_reason, requester, bundle_l
 			return 0
 	else:
 		if int(bundle_len) > 1:
-			for item in get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id')):
+			for item in list:
 				request_void_single_trx(item.name, applicant_reason, requester)
 		else:
 			request_void_single_trx(trx_id, applicant_reason, requester)
