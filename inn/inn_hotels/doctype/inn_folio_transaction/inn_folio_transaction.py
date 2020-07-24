@@ -8,6 +8,7 @@ import datetime
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
 from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
 from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
+from inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_bundle import get_trx_list
 from frappe.model.document import Document
 
 class InnFolioTransaction(Document):
@@ -129,7 +130,9 @@ def add_audit_date(doc, method):
 		doc.audit_date = audit_date
 
 @frappe.whitelist()
-def void_transaction(trx_id, use_passcode, applicant_reason, requester, supervisor_passcode=None):
+def void_transaction(trx_id, use_passcode, applicant_reason, requester, bundle_len, supervisor_passcode=None):
+	list = get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id'))
+	print (list)
 	if int(use_passcode) == 1:
 		if supervisor_passcode != frappe.db.get_single_value('Inn Hotels Setting', 'supervisor_passcode'):
 			frappe.msgprint("<b>Error: Passcode not correct.</b> <br /> Please consult the correct passcode to supervisor, "
@@ -137,38 +140,56 @@ def void_transaction(trx_id, use_passcode, applicant_reason, requester, supervis
 							"<br /><br />If you choose to void without passcode, supervisor have to approve the void request manually.")
 			return 1
 		else:
-			void_doc = frappe.new_doc('Inn Void Folio Transaction')
-			void_doc.folio_transaction_id = trx_id
-			void_doc.use_passcode = 1
-			void_doc.status = 'Approved'
-			void_doc.applicant_reason = applicant_reason
-			void_doc.applicant_id = requester
-			void_doc.approver_id = requester
-			void_doc.void_timestamp = datetime.datetime.now()
-			void_doc.save()
-
-			trx_doc = frappe.get_doc('Inn Folio Transaction', trx_id)
-			if void_doc.status == 'Approved':
-				trx_doc.is_void = 1
-				trx_doc.remark = trx_doc.remark + \
-								 "\n This transaction is VOIDED. Details in Inn Void Folio Transaction: " + \
-								 void_doc.name
-				trx_doc.void_id = void_doc.name
-				trx_doc.save()
+			if int(bundle_len) > 1:
+				for item in get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id')):
+					void_single_trx(item.name, applicant_reason, requester)
+			else:
+				void_single_trx(trx_id, applicant_reason, requester)
 
 			return 0
 	else:
-		void_doc = frappe.new_doc('Inn Void Folio Transaction')
-		void_doc.folio_transaction_id = trx_id
-		void_doc.use_passcode = 0
-		void_doc.status = 'Requested'
-		void_doc.applicant_reason = applicant_reason
-		void_doc.applicant_id = requester
-		void_doc.save()
-
-		trx_doc = frappe.get_doc('Inn Folio Transaction', trx_id)
-		if void_doc.status == 'Requested':
-			trx_doc.void_id = void_doc.name
-			trx_doc.save()
+		if int(bundle_len) > 1:
+			for item in get_trx_list(frappe.db.get_value('Inn Folio Transaction', {'name': trx_id}, 'ftb_id')):
+				request_void_single_trx(item.name, applicant_reason, requester)
+		else:
+			request_void_single_trx(trx_id, applicant_reason, requester)
 
 		return 2
+
+def void_single_trx(trx_id, applicant_reason, requester):
+	void_doc = frappe.new_doc('Inn Void Folio Transaction')
+	void_doc.folio_transaction_id = trx_id
+	void_doc.use_passcode = 1
+	void_doc.status = 'Approved'
+	void_doc.applicant_reason = applicant_reason
+	void_doc.applicant_id = requester
+	void_doc.approver_id = requester
+	void_doc.void_timestamp = datetime.datetime.now()
+	void_doc.save()
+
+	trx_doc = frappe.get_doc('Inn Folio Transaction', trx_id)
+	if void_doc.status == 'Approved':
+		trx_doc.is_void = 1
+		trx_doc.remark = trx_doc.remark + \
+						 "\n This transaction is VOIDED. Details in Inn Void Folio Transaction: " + \
+						 void_doc.name
+		trx_doc.void_id = void_doc.name
+		trx_doc.save()
+
+	return trx_doc.is_void
+
+def request_void_single_trx(trx_id, applicant_reason, requester):
+	void_doc = frappe.new_doc('Inn Void Folio Transaction')
+	void_doc.folio_transaction_id = trx_id
+	void_doc.use_passcode = 0
+	void_doc.status = 'Requested'
+	void_doc.applicant_reason = applicant_reason
+	void_doc.applicant_id = requester
+	void_doc.save()
+
+	trx_doc = frappe.get_doc('Inn Folio Transaction', trx_id)
+	if void_doc.status == 'Requested':
+		trx_doc.void_id = void_doc.name
+		trx_doc.save()
+
+	return void_doc.status

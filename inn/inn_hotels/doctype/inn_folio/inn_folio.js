@@ -679,7 +679,7 @@ function void_window(child, bundle_len) {
 			'By voiding this transaction, the other transactions in the bundle <b>will also be voided</b> for data integrity purposes.',
 		'read_only': 1
 	};
-	if (bundle_len > 1) {
+	if (parseInt(bundle_len) > 1) {
 		fields = [info_field].concat(default_fields);
 	}
 	else {
@@ -697,6 +697,7 @@ function void_window(child, bundle_len) {
 				use_passcode: d.get_values().use_passcode,
 				applicant_reason: d.get_values().applicant_reason,
 				requester: frappe.session.user,
+				bundle_len: bundle_len,
 				supervisor_passcode: d.get_values().supervisor_passcode
 			},
 			callback: (r) => {
