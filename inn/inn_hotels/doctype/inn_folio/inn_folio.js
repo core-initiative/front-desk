@@ -608,13 +608,35 @@ function void_transaction(child) {
 							frappe.msgprint("This transaction already requested to be voided. Please wait for supervisor approval.");
 						}
 						else if (r.message == 'Denied') {
-							void_window(child);
+							frappe.call({
+								method: 'inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_bundle.get_trx_list',
+								args: {
+									trx_id: child.name,
+									len_only: true
+								},
+								callback: (resp) => {
+									if (resp.message) {
+										void_window(child, resp.message);
+									}
+								}
+							});
 						}
 					}
 				});
 			}
 			else {
-				void_window(child);
+				frappe.call({
+					method: 'inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_bundle.get_trx_list',
+					args: {
+						trx_id: child.name,
+						len_only: true
+					},
+					callback: (resp) => {
+						if (resp.message) {
+							void_window(child, resp.message);
+						}
+					}
+				});
 			}
 		} else {
 			frappe.msgprint("Cannot void this transaction anymore, because this transaction has been inputted to Journal.");
@@ -627,28 +649,45 @@ function void_transaction(child) {
 	}
 }
 
-function void_window(child) {
+function void_window(child, bundle_len) {
+	let fields = [];
+	let default_fields= [
+		{
+			'label': 'Use Passcode',
+			'fieldname': 'use_passcode',
+			'fieldtype': 'Check',
+			"description": "Check if you have Supervisor Passcode to bypass the Approval Void Request by Supervisor Process",
+		},
+		{
+			'label': 'Supervisor Passcode',
+			'fieldname': 'supervisor_passcode',
+			'fieldtype': 'Data',
+			'depends_on': 'eval:doc.use_passcode==1'
+		},
+		{
+			'label': 'Void Reason',
+			'fieldname': 'applicant_reason',
+			'fieldtype': 'Small Text',
+			'reqd': 1
+		},
+	];
+	let info_field = {
+		'label': 'Info:',
+		'fieldname': 'Info',
+		'fieldtype': 'Small Text',
+		'default': 'This transaction is a <b>part of a bundle of transaction</b> that <b>consist of multiple transactions</b>. <br />' +
+			'By voiding this transaction, the other transactions in the bundle <b>will also be voided</b> for data integrity purposes.',
+		'read_only': 1
+	};
+	if (parseInt(bundle_len) > 1) {
+		fields = [info_field].concat(default_fields);
+	}
+	else {
+		fields = default_fields;
+	}
 	var d = new frappe.ui.Dialog({
 		title: __('Request Void Transaction ' + child.name),
-		fields: [
-			{
-				'label': 'Use Passcode',
-				'fieldname': 'use_passcode',
-				'fieldtype': 'Check',
-			},
-			{
-				'label': 'Supervisor Passcode',
-				'fieldname': 'supervisor_passcode',
-				'fieldtype': 'Data',
-				'depends_on': 'eval:doc.use_passcode==1'
-			},
-			{
-				'label': 'Void Reason',
-				'fieldname': 'applicant_reason',
-				'fieldtype': 'Small Text',
-				'reqd': 1
-			},
-		]
+		fields: fields
 	});
 	d.set_primary_action(__('Request Void'), () => {
 		frappe.call({
@@ -658,6 +697,7 @@ function void_window(child) {
 				use_passcode: d.get_values().use_passcode,
 				applicant_reason: d.get_values().applicant_reason,
 				requester: frappe.session.user,
+				bundle_len: bundle_len,
 				supervisor_passcode: d.get_values().supervisor_passcode
 			},
 			callback: (r) => {
