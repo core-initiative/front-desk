@@ -1,0 +1,23 @@
+{
+ "align_labels_right": 0,
+ "creation": "2020-07-28 13:10:55.855463",
+ "custom_format": 1,
+ "default_print_language": "en",
+ "disabled": 0,
+ "doc_type": "Inn Reservation",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "font": "Default",
+ "html": "<div>\n  <h3><b>HOTEL DAILY INN</b></h3>\n  <p>Jl. Jenderal Ahmad Yani Kavling 67 Cempaka Putih Timur, Jakarta Pusat</p>\n  <p>Jakarta Indonesia. 10510</p>\n  <p>Phone: 021-21473999 Fax: 021-21473998</p>\n  <hr style='border:0.5px solid black; width:100%; margin:5px 0px 10px 0px;'>\n</div>\n\n<div class=\"row\">\n  <div class=\"col-xs-2\">\n    <b>Customer: </b>\n  </div>\n  <div class=\"col-xs-10\">\n    {{doc.customer_id}}\n  </div>\n</div>\n\n<table class= \"table table-bordered\">\n  <tr>\n    <th>No</th>\n    <th>Arrival Date</th>\n    <th>Departure Data</th>\n    <th>Room Type</th>\n    <th>Room Rate</th>\n    <th>Total Room</th>\n    <th>Total Night</th>\n    <th>Total</th>\n  </tr>\n{% if doc.group_id == None %}\n  <tr>\n    <td>1</td>\n    <td>{{doc.expected_arrival}}</td>\n    <td>{{doc.expected_departure}}</td>\n    <td>{{doc.room_type}}</td>\n    <td>{{doc.room_rate}}</td>\n    <td>1</td>\n    <td>{{doc.total_night}}</td>\n    <td></td>\n  </tr>\n{% else %}\n  {% set reservation = frappe.get_doc(\"Inn Reservation\", {\"group_id\": doc.group_id}) %}\n  {% set date = {} %}\n  <p>{{reservation}}</p>\n{% endif %}\n</table>",
+ "idx": 0,
+ "line_breaks": 0,
+ "modified": "2020-07-30 16:18:24.924151",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Proforma Invoice Reservation",
+ "owner": "Administrator",
+ "print_format_builder": 0,
+ "print_format_type": "Server",
+ "show_section_headings": 0,
+ "standard": "Yes"
+}
