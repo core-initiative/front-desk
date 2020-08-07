@@ -48,30 +48,30 @@ def get_total_room():
 	return frappe.db.sql("""
 		select count(name) as total from `tabInn Room`""", as_dict=True)
 
-def get_room_booking(date):
+def get_room_booking(current_year, next_year):
 	return frappe.db.sql("""
 		select rb.start, rb.end, rb.room_availability, r.room_type
 		from `tabInn Room Booking` rb
 		left join `tabInn Room` r on r.name = rb.room_id 
-		where end>=%s""", (date), as_dict=True)
+		where end>=%s and start<%s""", (current_year, next_year), as_dict=True)
 
-def get_reservation(date):
+def get_reservation(current_year, next_year):
 	return frappe.db.sql("""
 		select arrival, departure, status, channel, actual_room_rate
 		from `tabInn Reservation`
-		where departure>=%s""", (date), as_dict=True)
+		where departure>=%s and arrival<%s""", (current_year, next_year), as_dict=True)
 
-def get_gl_entry(date):
+def get_gl_entry(current_year, next_year):
 	return frappe.db.sql("""
         select posting_date, account, credit, debit
         from `tabGL Entry`
-        where posting_date>=%s""", (date), as_dict=True)
+        where posting_date>=%s and posting_date<%s""", (current_year, next_year), as_dict=True)
 
-def get_folio_transaction(date):
+def get_folio_transaction(current_year, next_year):
 	return frappe.db.sql("""
         select audit_date, amount, mode_of_payment
         from `tabInn Folio Transaction`
-        where flag='Credit' and audit_date>=%s""", (date), as_dict=True)
+        where flag='Credit' and audit_date>=%s and audit_date<%s""", (current_year, next_year), as_dict=True)
 
 def get_mode_of_payment():
 	return frappe.db.sql("""
@@ -83,13 +83,9 @@ def get_data(filters):
 	if filters.date:
 		today = datetime.datetime.strptime(filters.date, '%Y-%m-%d').date()
 		current_year = datetime.datetime(year=today.year, month=1, day=1).date()
+		next_year = datetime.datetime(year=today.year+1, month=1, day=1).date()
 		current_month = datetime.datetime(year=today.year, month=today.month, day=1).date()
 		last_month = datetime.datetime(year=today.year, month=today.month-1, day=1).date()
-		
-		print(today)
-		print(current_month)
-		print(current_year)
-		print(last_month)
 
 		room = {}
 
@@ -109,7 +105,7 @@ def get_data(filters):
 			'year_to_date': total_room*((today-current_year).days+1)
 		}
 
-		room_booking = get_room_booking(current_year)
+		room_booking = get_room_booking(current_year, next_year)
 		for rb in room_booking:
 			start = rb['start']
 			end = rb['end']
@@ -121,18 +117,18 @@ def get_data(filters):
 						room[availability]['year_to_date'] = room[availability]['year_to_date'] + 1
 						if date == today:
 							room[availability]['today_actual'] = room[availability]['today_actual'] + 1
-						if date >= current_month:
+						if date >= current_month and date <= today:
 							room[availability]['mtd_actual'] = room[availability]['mtd_actual'] + 1
-						elif date >= last_month:
+						elif date >= last_month and date < current_month:
 							room[availability]['mtd_last_month'] = room[availability]['mtd_last_month'] + 1
-					elif availability == 'Room Sold':
+					elif availability == 'Room Sold' and rb.status == 'Stayed':
 						type = rb.room_type
 						room[type]['year_to_date'] = room[type]['year_to_date'] + 1
 						if date == today:
 							room[type]['today_actual'] = room[type]['today_actual'] + 1
-						if date >= current_month:
+						if date >= current_month and date <= today:
 							room[type]['mtd_actual'] = room[type]['mtd_actual'] + 1
-						elif date >= last_month:
+						elif date >= last_month and date < current_month:
 							room[type]['mtd_last_month'] = room[type]['mtd_last_month'] + 1
 		
 		room['Saleable Room'] = {
@@ -144,7 +140,7 @@ def get_data(filters):
 		
 		average_room_rate = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
-		reservation = get_reservation(current_year)
+		reservation = get_reservation(current_year, next_year)
 		for r in reservation:
 			start = r['arrival'].date()
 			end = r['departure'].date()
@@ -153,9 +149,9 @@ def get_data(filters):
 				room['Day Use']['year_to_date'] = room['Day Use']['year_to_date'] + 1
 				if start == today:
 					room['Day Use']['today_actual'] = room['Day Use']['today_actual'] + 1
-				if start >= current_month:
+				if start >= current_month and start <= today:
 					room['Day Use']['mtd_actual'] = room['Day Use']['mtd_actual'] + 1
-				elif start >= last_month:
+				elif start >= last_month and start < current_month:
 					room['Day Use']['mtd_last_month'] = room['Day Use']['mtd_last_month'] + 1
 
 			for i in range((end-start).days+1):
@@ -168,10 +164,10 @@ def get_data(filters):
 						if date == today:
 							room[status]['today_actual'] = room[status]['today_actual'] + 1
 							average_room_rate['today_actual'] = (average_room_rate['today_actual'] + r['actual_room_rate']) / 2
-						if date >= current_month:
+						if date >= current_month and date <= today:
 							room[status]['mtd_actual'] = room[status]['mtd_actual'] + 1
 							average_room_rate['mtd_actual'] = (average_room_rate['mtd_actual'] + r['actual_room_rate']) / 2
-						elif date >= last_month:
+						elif date >= last_month and date < current_month:
 							room[status]['mtd_last_month'] = room[status]['mtd_last_month'] + 1
 							average_room_rate['mtd_last_month'] = (average_room_rate['mtd_last_month'] + r['actual_room_rate']) / 2
 
@@ -181,9 +177,9 @@ def get_data(filters):
 							room[channel]['year_to_date'] = room[channel]['year_to_date'] + 1
 							if date == today:
 								room[channel]['today_actual'] = room[channel]['today_actual'] + 1
-							if date >= current_month:
+							if date >= current_month and date <= today:
 								room[channel]['mtd_actual'] = room[channel]['mtd_actual'] + 1
-							elif date >= last_month:
+							elif date >= last_month and date < current_month:
 								room[channel]['mtd_last_month'] = room[channel]['mtd_last_month'] + 1
 
 		room['Vacant Room'] = {
@@ -204,7 +200,7 @@ def get_data(filters):
 		for key in keys:
 			revenue[key] = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 
-		gl_entry = get_gl_entry(current_year)
+		gl_entry = get_gl_entry(current_year, next_year)
 		for ge in gl_entry:
 			account = ge.account[:8]
 			if account == '4210.001' or \
@@ -216,9 +212,9 @@ def get_data(filters):
 				revenue[account]['year_to_date'] = revenue[account]['year_to_date'] + ge.credit - ge.debit
 				if ge.posting_date == today:
 					revenue[account]['today_actual'] = revenue[account]['today_actual'] + ge.credit - ge.debit
-				if ge.posting_date >= current_month:
+				if ge.posting_date >= current_month and ge.posting_date <= today:
 					revenue[account]['mtd_actual'] = revenue[account]['mtd_actual'] + ge.credit - ge.debit
-				elif ge.posting_date >= last_month:
+				elif ge.posting_date >= last_month and ge.posting_date < current_month:
 					revenue[account]['mtd_last_month'] = revenue[account]['mtd_last_month'] + ge.credit - ge.debit
 
 		payment = {}
@@ -236,14 +232,14 @@ def get_data(filters):
 				payment[mp.name]['mtd_last_month'] = 0
 				payment[mp.name]['year_to_date'] = 0
 
-		folio_transaction = get_folio_transaction(current_year)
+		folio_transaction = get_folio_transaction(current_year, next_year)
 		for ft in folio_transaction:
 			payment[ft.mode_of_payment]['year_to_date'] = payment[ft.mode_of_payment]['year_to_date'] + ft.amount
 			if ft.audit_date == today:
 				payment[ft.mode_of_payment]['today_actual'] = payment[ft.mode_of_payment]['today_actual'] + ft.amount
-			if ft.audit_date >= current_month:
+			if ft.audit_date >= current_month and ft.audit_date <= today:
 				payment[ft.mode_of_payment]['mtd_actual'] = payment[ft.mode_of_payment]['mtd_actual'] + ft.amount
-			elif ft.audit_date >= last_month:
+			elif ft.audit_date >= last_month and ft.audit_date < current_month:
 				payment[ft.mode_of_payment]['mtd_last_month'] = payment[ft.mode_of_payment]['mtd_last_month'] + ft.amount
 
 		for key in room:
