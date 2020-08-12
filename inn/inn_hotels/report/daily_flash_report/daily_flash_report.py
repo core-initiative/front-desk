@@ -109,27 +109,27 @@ def get_data(filters):
 		for rb in room_booking:
 			start = rb['start']
 			end = rb['end']
-			for i in range((end-start).days+1):
+			
+			for i in range((end-start).days):
 				date = start + datetime.timedelta(days=i)
-				if date >= current_year:
-					availability = rb.room_availability
-					if availability == 'Out of Order' or availability == 'House Use':
-						room[availability]['year_to_date'] = room[availability]['year_to_date'] + 1
-						if date == today:
-							room[availability]['today_actual'] = room[availability]['today_actual'] + 1
-						if date >= current_month and date <= today:
-							room[availability]['mtd_actual'] = room[availability]['mtd_actual'] + 1
-						elif date >= last_month and date < current_month:
-							room[availability]['mtd_last_month'] = room[availability]['mtd_last_month'] + 1
-					elif availability == 'Room Sold' and rb.status == 'Stayed':
-						type = rb.room_type
-						room[type]['year_to_date'] = room[type]['year_to_date'] + 1
-						if date == today:
-							room[type]['today_actual'] = room[type]['today_actual'] + 1
-						if date >= current_month and date <= today:
-							room[type]['mtd_actual'] = room[type]['mtd_actual'] + 1
-						elif date >= last_month and date < current_month:
-							room[type]['mtd_last_month'] = room[type]['mtd_last_month'] + 1
+				availability = rb.room_availability
+				if availability == 'Out of Order' or availability == 'House Use':
+					room[availability]['year_to_date'] = room[availability]['year_to_date'] + 1
+					if date == today:
+						room[availability]['today_actual'] = room[availability]['today_actual'] + 1
+					if date >= current_month and date <= today:
+						room[availability]['mtd_actual'] = room[availability]['mtd_actual'] + 1
+					elif date >= last_month and date < current_month:
+						room[availability]['mtd_last_month'] = room[availability]['mtd_last_month'] + 1
+				elif availability == 'Room Sold' and (rb.status == 'Stayed' or rb.status == 'Finished'):
+					type = rb.room_type
+					room[type]['year_to_date'] = room[type]['year_to_date'] + 1
+					if date == today:
+						room[type]['today_actual'] = room[type]['today_actual'] + 1
+					if date >= current_month and date <= today:
+						room[type]['mtd_actual'] = room[type]['mtd_actual'] + 1
+					elif date >= last_month and date < current_month:
+						room[type]['mtd_last_month'] = room[type]['mtd_last_month'] + 1
 		
 		room['Saleable Room'] = {
 			'today_actual': room['Available']['today_actual'] - room['Out of Order']['today_actual'], 
@@ -154,33 +154,32 @@ def get_data(filters):
 				elif start >= last_month and start < current_month:
 					room['Day Use']['mtd_last_month'] = room['Day Use']['mtd_last_month'] + 1
 
-			for i in range((end-start).days+1):
+			for i in range((end-start).days):
 				date = start + datetime.timedelta(days=i)
-				if date >= current_year:
-					status = r.status
-					if status == 'In House':
-						room[status]['year_to_date'] = room[status]['year_to_date'] + 1
-						average_room_rate['year_to_date'] = (average_room_rate['year_to_date'] + r['actual_room_rate']) / 2
-						if date == today:
-							room[status]['today_actual'] = room[status]['today_actual'] + 1
-							average_room_rate['today_actual'] = (average_room_rate['today_actual'] + r['actual_room_rate']) / 2
-						if date >= current_month and date <= today:
-							room[status]['mtd_actual'] = room[status]['mtd_actual'] + 1
-							average_room_rate['mtd_actual'] = (average_room_rate['mtd_actual'] + r['actual_room_rate']) / 2
-						elif date >= last_month and date < current_month:
-							room[status]['mtd_last_month'] = room[status]['mtd_last_month'] + 1
-							average_room_rate['mtd_last_month'] = (average_room_rate['mtd_last_month'] + r['actual_room_rate']) / 2
+				status = r.status
+				if status == 'In House':
+					room[status]['year_to_date'] = room[status]['year_to_date'] + 1
+					average_room_rate['year_to_date'] = (average_room_rate['year_to_date'] + r['actual_room_rate']) / 2
+					if date == today:
+						room[status]['today_actual'] = room[status]['today_actual'] + 1
+						average_room_rate['today_actual'] = (average_room_rate['today_actual'] + r['actual_room_rate']) / 2
+					if date >= current_month and date <= today:
+						room[status]['mtd_actual'] = room[status]['mtd_actual'] + 1
+						average_room_rate['mtd_actual'] = (average_room_rate['mtd_actual'] + r['actual_room_rate']) / 2
+					elif date >= last_month and date < current_month:
+						room[status]['mtd_last_month'] = room[status]['mtd_last_month'] + 1
+						average_room_rate['mtd_last_month'] = (average_room_rate['mtd_last_month'] + r['actual_room_rate']) / 2
 
-						
-						channel = r.channel
-						if channel == 'Walk In':
-							room[channel]['year_to_date'] = room[channel]['year_to_date'] + 1
-							if date == today:
-								room[channel]['today_actual'] = room[channel]['today_actual'] + 1
-							if date >= current_month and date <= today:
-								room[channel]['mtd_actual'] = room[channel]['mtd_actual'] + 1
-							elif date >= last_month and date < current_month:
-								room[channel]['mtd_last_month'] = room[channel]['mtd_last_month'] + 1
+					
+					channel = r.channel
+					if channel == 'Walk In':
+						room[channel]['year_to_date'] = room[channel]['year_to_date'] + 1
+						if date == today:
+							room[channel]['today_actual'] = room[channel]['today_actual'] + 1
+						if date >= current_month and date <= today:
+							room[channel]['mtd_actual'] = room[channel]['mtd_actual'] + 1
+						elif date >= last_month and date < current_month:
+							room[channel]['mtd_last_month'] = room[channel]['mtd_last_month'] + 1
 
 		room['Vacant Room'] = {
 			'today_actual': room['Available']['today_actual'] - room['In House']['today_actual'], 
