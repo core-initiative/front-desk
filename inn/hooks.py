@@ -134,6 +134,7 @@ scheduler_events = {
 
 jenv = {
 	"methods": [
-		"get_data:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_data"
+		"get_total_deposit:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_total_deposit",
+		"get_date:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date"
 	]
 }

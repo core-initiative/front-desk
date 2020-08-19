@@ -241,7 +241,7 @@ def allowed_to_in_house(reservation_id):
 	return deposit
 
 @frappe.whitelist()
-def get_data(doc):
+def get_total_deposit(doc):
 	if doc.group_id != None:
 		return frappe.db.sql("""SELECT SUM(amount) AS amount 
 			FROM `tabInn Folio Transaction` ft
@@ -254,3 +254,7 @@ def get_data(doc):
 			LEFT JOIN `tabInn Folio` f ON f.name=ft.parent
 			LEFT JOIN `tabInn Reservation` r ON r.name=f.reservation_id
 			WHERE r.name=%s AND ft.transaction_type='Down Payment'""", doc.name, as_dict=True)
+
+@frappe.whitelist()
+def get_date():
+	return datetime.datetime.now().strftime("%d/%m/%Y")
