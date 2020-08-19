@@ -132,3 +132,8 @@ scheduler_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "inn.event.get_events"
 # }
 
+jenv = {
+	"methods": [
+		"get_data:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_data"
+	]
+}
