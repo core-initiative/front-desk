@@ -51,7 +51,7 @@ def update_balance(folio_id):
 			total_debit += float(trx.amount)
 		elif trx.flag == 'Credit' and trx.is_void == 0:
 			total_credit += float(trx.amount)
-	balance = total_credit - math.ceil(total_debit)
+	balance = total_credit - total_debit
 
 	if balance != doc.balance:
 		frappe.db.set_value('Inn Folio', doc.name, 'total_debit', math.ceil(total_debit))
