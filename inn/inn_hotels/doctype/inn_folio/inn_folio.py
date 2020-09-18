@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 # Copyright (c) 2020, Core Initiative and contributors
 # For license information, please see license.txt
@@ -48,10 +49,10 @@ def update_balance(folio_id):
 	total_credit = 0.0
 	for trx in trx_list:
 		if trx.flag == 'Debit' and trx.is_void == 0:
-			total_debit += float(trx.amount)
+			total_debit += round(trx.amount)
 		elif trx.flag == 'Credit' and trx.is_void == 0:
 			total_credit += float(trx.amount)
-	balance = total_credit - total_debit
+	balance = total_credit - math.ceil(total_debit)
 
 	if balance != doc.balance:
 		frappe.db.set_value('Inn Folio', doc.name, 'total_debit', math.ceil(total_debit))
