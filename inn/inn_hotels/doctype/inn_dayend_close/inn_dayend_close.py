@@ -24,7 +24,7 @@ def is_there_open_dayend_close():
 def process_dayend_close(doc_id):
 	need_resolve_flag = False
 	# Create Journal Entry Pairing for Every Eligible Inn Folio Transactions
-	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']]})
+	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']], 'journal_entry_id_closed': ['=', '']})
 	for item in folio_list:
 		need_resolve_list = check_void_request(item.name)
 		if len(need_resolve_list) > 0:
@@ -33,7 +33,9 @@ def process_dayend_close(doc_id):
 	if need_resolve_flag:
 		return "There are transaction requested to be voided not yet responded. Please resolve the request first."
 	else:
+		print('Folio List Size: ',len(folio_list))
 		for item in folio_list:
+			print(datetime.datetime.now(),': Folio ', item.name)
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			if doc_folio.reservation_id:
 				reservation = frappe.get_doc('Inn Reservation', doc_folio.reservation_id)
@@ -89,7 +91,7 @@ def process_dayend_close(doc_id):
 					trx.save()
 
 		# Create Journal Entry Pairing for Every Eligible Inn Folio
-		closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed'})
+		closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed', 'journal_entry_id_closed':['=', '']})
 		for item in closed_folio_list:
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			cust_name = doc_folio.customer_id
