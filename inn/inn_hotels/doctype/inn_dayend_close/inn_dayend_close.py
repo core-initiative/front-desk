@@ -91,7 +91,7 @@ def process_dayend_close(doc_id):
 					trx.save()
 
 		# Create Journal Entry Pairing for Every Eligible Inn Folio
-		closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed', 'journal_entry_id_closed':['=', '']})
+		closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed', 'journal_entry_id_closed': ['=', '']})
 		for item in closed_folio_list:
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			cust_name = doc_folio.customer_id
