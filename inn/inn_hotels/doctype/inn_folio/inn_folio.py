@@ -49,7 +49,7 @@ def update_balance(folio_id):
 	total_credit = 0.0
 	for trx in trx_list:
 		if trx.flag == 'Debit' and trx.is_void == 0:
-			total_debit += round(trx.amount)
+			total_debit += float(trx.amount)
 		elif trx.flag == 'Credit' and trx.is_void == 0:
 			total_credit += float(trx.amount)
 	balance = total_credit - math.ceil(total_debit)
