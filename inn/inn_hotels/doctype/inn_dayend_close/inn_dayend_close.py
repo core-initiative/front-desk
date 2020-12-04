@@ -200,7 +200,6 @@ def get_closed_today(date):
 	return return_list
 
 def get_ongoing_order_need_to_be_finished():
-	frappe.msgprint("masuk ke child latest")
 	return_list = []
 	list = frappe.get_all('Inn Restaurant Ongoing Order', fields=['*'])
 	for item in list:
