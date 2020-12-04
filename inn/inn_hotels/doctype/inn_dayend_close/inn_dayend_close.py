@@ -33,7 +33,9 @@ def process_dayend_close(doc_id):
 	if need_resolve_flag:
 		return "There are transaction requested to be voided not yet responded. Please resolve the request first."
 	else:
+		print('Folio List Size: ',len(folio_list))
 		for item in folio_list:
+			print(datetime.datetime.now(),': Folio ', item.name)
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			if doc_folio.reservation_id:
 				reservation = frappe.get_doc('Inn Reservation', doc_folio.reservation_id)
