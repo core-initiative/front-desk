@@ -89,7 +89,12 @@ def process_dayend_close(doc_id):
 					trx.save()
 
 		# Create Journal Entry Pairing for Every Eligible Inn Folio
-		closed_folio_list = frappe.get_all('Inn Folio', filters={'status': 'Closed', 'journal_entry_id_closed': ['=', '']})
+		closed_folio_list = frappe.get_all('Inn Folio', filters={
+			'status': 'Closed',
+			'total_credit': ['!=', 0],
+			'total_debit': ['!=', 0],
+			'journal_entry_id_closed': ['=', '']
+		})
 		for item in closed_folio_list:
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			cust_name = doc_folio.customer_id
@@ -153,7 +158,7 @@ def process_dayend_close(doc_id):
 @frappe.whitelist()
 def load_child(date):
 	audit_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-	return get_arrived_today(audit_date), get_departed_today(audit_date), get_closed_today(audit_date)
+	return get_arrived_today(audit_date), get_departed_today(audit_date), get_closed_today(audit_date), get_ongoing_order_need_to_be_finished()
 
 def get_arrived_today(date):
 	return_list = []
@@ -192,4 +197,17 @@ def get_closed_today(date):
 			new_closed.customer_id = item.customer_id
 			new_closed.description = 'Must Close Today'
 			return_list.append(new_closed)
+	return return_list
+
+def get_ongoing_order_need_to_be_finished():
+	frappe.msgprint("masuk ke child latest")
+	return_list = []
+	list = frappe.get_all('Inn Restaurant Ongoing Order', fields=['*'])
+	for item in list:
+		new_order_need_to_finish = frappe.new_doc('Inn Restaurant Order Expected to be Finished')
+		new_order_need_to_finish.ongoing_order_id = item.name
+		new_order_need_to_finish.restaurant = item.restaurant
+		new_order_need_to_finish.customer = item.customer
+		new_order_need_to_finish.description = 'Restaurant Order need to be finished today'
+		return_list.append(new_order_need_to_finish)
 	return return_list

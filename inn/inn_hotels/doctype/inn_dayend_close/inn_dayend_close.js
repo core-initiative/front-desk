@@ -9,6 +9,7 @@ frappe.ui.form.on('Inn Dayend Close', {
 		frm.get_field("arrived_today").grid.only_sortable();
 		frm.get_field("departed_today").grid.only_sortable();
 		frm.get_field("closed_today").grid.only_sortable();
+		frm.get_field("resto_order_finished_today").grid.only_sortable();
 	},
 	refresh: function(frm) {
 		if (frm.doc.__islocal === 1) {
@@ -79,7 +80,7 @@ function populate_child(frm) {
 						frm.refresh_field('departed_today');
 						frm.set_value('closed_today', []);
 						if (r.message[2].length > 0) {
-							$.each(r.message[0], function (i, d) {
+							$.each(r.message[2], function (i, d) {
 								var item = frm.add_child('closed_today');
 								item.type = d.type;
 								item.folio_id = d.folio_id;
@@ -88,6 +89,17 @@ function populate_child(frm) {
 							});
 						}
 						frm.refresh_field('closed_today');
+
+						if (r.message[3].length > 0) {
+							$.each(r.message[3], function (i, d) {
+								var item = frm.add_child('resto_order_finished_today');
+								item.ongoing_order_id = d.ongoing_order_id;
+								item.restaurant = d.restaurant;
+								item.customer = d.customer;
+								item.description = d.description;
+							});
+						}
+						frm.refresh_field('resto_order_finished_today');
 
 						frappe.call({
 							method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.is_there_open_room_charge_posting',
@@ -98,7 +110,7 @@ function populate_child(frm) {
 								else {
 									posting_still_open = false;
 								}
-								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[1].length > 0) {
+								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[2].length > 0 || r.message[3].length > 0) {
 									show_button = false;
 								}
 								else {
