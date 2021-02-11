@@ -273,7 +273,7 @@ def populate_cr_refund(shift_id):
 	cr_refund = frappe.new_doc('Inn CR Refund Detail')
 	cr_refund.type = 'Refund'
 	cr_refund.amount = 0
-	reservation_list = frappe.get_all('Inn Reservation', filters={'status': ['in', ['In House', 'Finish']]},
+	reservation_list = frappe.get_all('Inn Reservation', filters={'status': ['in', ['In House', 'Finish', 'Cancel']]},
 									  fields=['*'])
 
 	if shift_id:
