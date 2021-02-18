@@ -19,6 +19,7 @@ def get_payments_accounts(mode_of_payment):
 @frappe.whitelist()
 def make_payment(id):
 	doc = frappe.get_doc('AR City Ledger Invoice', id)
+	doc_arc_ledger = frappe.get_doc('AR City Ledger', {'ar_city_ledger_invoice_id': id})
 	payments = doc.get('payments')
 	return_status = 1
 
@@ -62,5 +63,7 @@ def make_payment(id):
 		if return_status == 1:
 			doc.status = 'Paid'
 			doc.save()
+			doc_arc_ledger.is_paid = 1
+			doc_arc_ledger.save()
 
 	return return_status
