@@ -114,7 +114,7 @@
    "report_hide": 0,
    "reqd": 1,
    "search_index": 0,
-   "set_only_once": 1,
+   "set_only_once": 0,
    "translatable": 0,
    "unique": 0
   },
@@ -1389,7 +1389,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2020-07-03 19:58:40.761979",
+ "modified": "2020-12-26 15:07:05.063997",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Reservation",

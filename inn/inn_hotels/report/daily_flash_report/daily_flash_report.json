@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-06-23 00:22:13.193098",
+ "modified": "2020-08-03 13:39:25.090517",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Daily Flash Report",
@@ -22,6 +22,12 @@
   },
   {
    "role": "Hotel Reservation User"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "Accounts Manager"
   }
  ]
 }

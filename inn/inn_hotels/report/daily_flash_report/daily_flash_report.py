@@ -50,7 +50,7 @@ def get_total_room():
 
 def get_room_booking(current_year, next_year):
 	return frappe.db.sql("""
-		select rb.start, rb.end, rb.room_availability, r.room_type
+		select rb.start, rb.end, rb.room_availability, r.room_type, rb.status
 		from `tabInn Room Booking` rb
 		left join `tabInn Room` r on r.name = rb.room_id 
 		where end>=%s and start<%s""", (current_year, next_year), as_dict=True)
@@ -85,7 +85,8 @@ def get_data(filters):
 		current_year = datetime.datetime(year=today.year, month=1, day=1).date()
 		next_year = datetime.datetime(year=today.year+1, month=1, day=1).date()
 		current_month = datetime.datetime(year=today.year, month=today.month, day=1).date()
-		last_month = datetime.datetime(year=today.year, month=today.month-1, day=1).date()
+		tmp = today.month-1 if today.month > 1 else 12
+		last_month = datetime.datetime(year=today.year, month=tmp, day=1).date()
 
 		room = {}
 
@@ -98,10 +99,11 @@ def get_data(filters):
 			room[key] = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0} 
 
 		total_room = get_total_room()[0]['total']
+		tmp = today.month-1 if today.month > 1 else 12
 		room['Available'] = {
 			'today_actual': total_room,
 			'mtd_actual': total_room*today.day,
-			'mtd_last_month': total_room*calendar.monthrange(today.year, today.month-1)[1],
+			'mtd_last_month': total_room*calendar.monthrange(today.year, tmp)[1],
 			'year_to_date': total_room*((today-current_year).days+1)
 		}
 
@@ -109,7 +111,6 @@ def get_data(filters):
 		for rb in room_booking:
 			start = rb['start']
 			end = rb['end']
-			
 			for i in range((end-start).days):
 				date = start + datetime.timedelta(days=i)
 				availability = rb.room_availability
