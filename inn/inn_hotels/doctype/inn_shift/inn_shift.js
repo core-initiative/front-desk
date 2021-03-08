@@ -84,6 +84,19 @@ frappe.ui.form.on('Inn Shift', {
 			}
 		}
 	},
+	reset_cash_count: function (frm) {
+		let cash_count = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
+		frm.set_value('cc_detail', []);
+		for (var i = 0; i < cash_count.length; i++) {
+			var item = frm.add_child('cc_detail');
+			item.nominal = cash_count[i];
+			item.qty = 0;
+			item.amount = 0;
+		}
+		frm.set_value('total_cash_qty', 0);
+		frm.set_value('total_cash_count', 0);
+		frm.refresh_field('cc_detail');
+	},
 	close_shift_button: function (frm) {
 		if (frm.is_dirty()) {
 			frappe.msgprint("There are changes  not yet saved in this Shift. Please save the shift first.");
