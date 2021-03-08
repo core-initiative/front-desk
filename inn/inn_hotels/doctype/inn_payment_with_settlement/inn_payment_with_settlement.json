@@ -294,7 +294,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2020-10-13 17:26:50.741597",
+ "modified": "2020-12-11 17:11:22.608254",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Payment with Settlement",
@@ -321,7 +321,7 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
+ "quick_entry": 0,
  "read_only": 0,
  "read_only_onload": 0,
  "show_name_in_global_search": 0,
