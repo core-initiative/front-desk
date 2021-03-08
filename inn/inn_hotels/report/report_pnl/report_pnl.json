@@ -7,7 +7,7 @@
  "doctype": "Report",
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2020-05-02 00:27:50.759152",
+ "modified": "2020-07-27 13:19:44.271962",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Report PNL",
@@ -25,6 +25,9 @@
   },
   {
    "role": "Auditor"
+  },
+  {
+   "role": "Employee"
   }
  ]
 }

@@ -46,11 +46,19 @@ def execute(filters=None):
 
 def get_total_room():
 	return frappe.db.sql("""
-		select count(name) as total from `tabInn Room`""", as_dict=True)
+		SELECT 
+			SUM(CASE WHEN rt.name = 'Studio' THEN 1 ELSE 0 END) AS studio,
+			SUM(CASE WHEN rt.name = 'Superior' THEN 1 ELSE 0 END) AS superior,
+			SUM(CASE WHEN rt.name = 'Deluxe' THEN 1 ELSE 0 END) AS deluxe,
+			SUM(CASE WHEN rt.name = 'Executive' THEN 1 ELSE 0 END) AS executive,
+			SUM(CASE WHEN rt.name = 'Suite' THEN 1 ELSE 0 END) AS suite,
+			COUNT(*) AS total
+		FROM `tabInn Room` r
+		LEFT JOIN `tabInn Room Type` rt ON r.room_type=rt.name""", as_dict=True)
 
 def get_room_booking(current_year, next_year):
 	return frappe.db.sql("""
-		select rb.start, rb.end, rb.room_availability, r.room_type
+		select rb.start, rb.end, rb.room_availability, r.room_type, rb.status
 		from `tabInn Room Booking` rb
 		left join `tabInn Room` r on r.name = rb.room_id 
 		where end>=%s and start<%s""", (current_year, next_year), as_dict=True)
@@ -85,57 +93,79 @@ def get_data(filters):
 		current_year = datetime.datetime(year=today.year, month=1, day=1).date()
 		next_year = datetime.datetime(year=today.year+1, month=1, day=1).date()
 		current_month = datetime.datetime(year=today.year, month=today.month, day=1).date()
-		last_month = datetime.datetime(year=today.year, month=today.month-1, day=1).date()
+		tmp = today.month-1 if today.month > 1 else 12
+		last_month = datetime.datetime(year=today.year, month=tmp, day=1).date()
 
 		room = {}
 
-		keys = ['Available', 'Out of Order', 'House Use', 
-			'Sold', 'Studio', 'Superior', 'Deluxe', 'Executive', 'Suite',
-			'Saleable Room',
-			'Day Use', 'In House', 'Walk In', 'Vacant Room']
+		keys = ['Total Room Available', 'Total Room Out of Order', 'Total Room House Use', 
+			'Total Room Sold', 'Studio Sold', 'Superior Sold', 'Deluxe Sold', 'Executive Sold', 'Suite Sold',
+			'Total Room Reserved', 'Studio Reserved', 'Superior Reserved', 'Deluxe Reserved', 'Executive Reserved', 'Suite Reserved',
+			'Total Room Available', 'Studio Available', 'Superior Available', 'Deluxe Available', 'Executive Available', 'Suite Available',
+			'Total Saleable Room',
+			'Total Day Use', 'Total In House', 'Total Walk In', 'Total Vacant Room']
 
 		for key in keys:
 			room[key] = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0} 
 
-		total_room = get_total_room()[0]['total']
-		room['Available'] = {
-			'today_actual': total_room,
-			'mtd_actual': total_room*today.day,
-			'mtd_last_month': total_room*calendar.monthrange(today.year, today.month-1)[1],
-			'year_to_date': total_room*((today-current_year).days+1)
-		}
-
 		room_booking = get_room_booking(current_year, next_year)
+		
 		for rb in room_booking:
 			start = rb['start']
 			end = rb['end']
-			
+
 			for i in range((end-start).days):
 				date = start + datetime.timedelta(days=i)
 				availability = rb.room_availability
+
 				if availability == 'Out of Order' or availability == 'House Use':
-					room[availability]['year_to_date'] = room[availability]['year_to_date'] + 1
+					key = 'Total Room ' + availability 
+
+					room[key]['year_to_date'] = room[key]['year_to_date'] + 1
 					if date == today:
-						room[availability]['today_actual'] = room[availability]['today_actual'] + 1
+						room[key]['today_actual'] = room[key]['today_actual'] + 1
 					if date >= current_month and date <= today:
-						room[availability]['mtd_actual'] = room[availability]['mtd_actual'] + 1
+						room[key]['mtd_actual'] = room[key]['mtd_actual'] + 1
 					elif date >= last_month and date < current_month:
-						room[availability]['mtd_last_month'] = room[availability]['mtd_last_month'] + 1
+						room[key]['mtd_last_month'] = room[key]['mtd_last_month'] + 1
+
 				elif availability == 'Room Sold' and (rb.status == 'Stayed' or rb.status == 'Finished'):
-					type = rb.room_type
-					room[type]['year_to_date'] = room[type]['year_to_date'] + 1
+					key = rb.room_type + ' Sold'
+
+					room[key]['year_to_date'] = room[key]['year_to_date'] + 1
 					if date == today:
-						room[type]['today_actual'] = room[type]['today_actual'] + 1
+						room[key]['today_actual'] = room[key]['today_actual'] + 1
 					if date >= current_month and date <= today:
-						room[type]['mtd_actual'] = room[type]['mtd_actual'] + 1
+						room[key]['mtd_actual'] = room[key]['mtd_actual'] + 1
 					elif date >= last_month and date < current_month:
-						room[type]['mtd_last_month'] = room[type]['mtd_last_month'] + 1
+						room[key]['mtd_last_month'] = room[key]['mtd_last_month'] + 1
+				
+				elif availability == 'Room Sold' and rb.status == 'Booked':
+					key = rb.room_type + ' Reserved'
+
+					room[key]['year_to_date'] = room[key]['year_to_date'] + 1
+					if date == today:
+						room[key]['today_actual'] = room[key]['today_actual'] + 1
+					if date >= current_month and date <= today:
+						room[key]['mtd_actual'] = room[key]['mtd_actual'] + 1
+					elif date >= last_month and date < current_month:
+						room[key]['mtd_last_month'] = room[key]['mtd_last_month'] + 1
 		
-		room['Saleable Room'] = {
-			'today_actual': room['Available']['today_actual'] - room['Out of Order']['today_actual'], 
-			'mtd_actual': room['Available']['mtd_actual'] - room['Out of Order']['mtd_actual'], 
-			'mtd_last_month': room['Available']['mtd_last_month'] - room['Out of Order']['mtd_last_month'], 
-			'year_to_date': room['Available']['year_to_date'] - room['Out of Order']['year_to_date'], 
+		room['Total Saleable Room'] = {
+			'today_actual': room['Total Room Available']['today_actual'] - room['Total Room Out of Order']['today_actual'], 
+			'mtd_actual': room['Total Room Available']['mtd_actual'] - room['Total Room Out of Order']['mtd_actual'], 
+			'mtd_last_month': room['Total Room Available']['mtd_last_month'] - room['Total Room Out of Order']['mtd_last_month'], 
+			'year_to_date': room['Total Room Available']['year_to_date'] - room['Total Room Out of Order']['year_to_date'], 
+		}
+
+		total_room = get_total_room()[0]['total']
+		tmp = today.month-1 if today.month > 1 else 12
+		
+		room['Total Room Available'] = {
+			'today_actual': total_room,
+			'mtd_actual': total_room*today.day,
+			'mtd_last_month': total_room*calendar.monthrange(today.year, tmp)[1],
+			'year_to_date': total_room*((today-current_year).days+1)
 		}
 		
 		average_room_rate = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
@@ -146,46 +176,47 @@ def get_data(filters):
 			end = r['departure'].date()
 
 			if start == end:
-				room['Day Use']['year_to_date'] = room['Day Use']['year_to_date'] + 1
+				room['Total Day Use']['year_to_date'] = room['Total Day Use']['year_to_date'] + 1
 				if start == today:
-					room['Day Use']['today_actual'] = room['Day Use']['today_actual'] + 1
+					room['Total Day Use']['today_actual'] = room['Total Day Use']['today_actual'] + 1
 				if start >= current_month and start <= today:
-					room['Day Use']['mtd_actual'] = room['Day Use']['mtd_actual'] + 1
+					room['Total Day Use']['mtd_actual'] = room['Total Day Use']['mtd_actual'] + 1
 				elif start >= last_month and start < current_month:
-					room['Day Use']['mtd_last_month'] = room['Day Use']['mtd_last_month'] + 1
+					room['Total Day Use']['mtd_last_month'] = room['Total Day Use']['mtd_last_month'] + 1
 
 			for i in range((end-start).days):
 				date = start + datetime.timedelta(days=i)
 				status = r.status
+
 				if status == 'In House':
-					room[status]['year_to_date'] = room[status]['year_to_date'] + 1
+					room['Total In House']['year_to_date'] = room['Total In House']['year_to_date'] + 1
 					average_room_rate['year_to_date'] = (average_room_rate['year_to_date'] + r['actual_room_rate']) / 2
 					if date == today:
-						room[status]['today_actual'] = room[status]['today_actual'] + 1
+						room['Total In House']['today_actual'] = room['Total In House']['today_actual'] + 1
 						average_room_rate['today_actual'] = (average_room_rate['today_actual'] + r['actual_room_rate']) / 2
 					if date >= current_month and date <= today:
-						room[status]['mtd_actual'] = room[status]['mtd_actual'] + 1
+						room['Total In House']['mtd_actual'] = room['Total In House']['mtd_actual'] + 1
 						average_room_rate['mtd_actual'] = (average_room_rate['mtd_actual'] + r['actual_room_rate']) / 2
 					elif date >= last_month and date < current_month:
-						room[status]['mtd_last_month'] = room[status]['mtd_last_month'] + 1
+						room['Total In House']['mtd_last_month'] = room['Total In House']['mtd_last_month'] + 1
 						average_room_rate['mtd_last_month'] = (average_room_rate['mtd_last_month'] + r['actual_room_rate']) / 2
 
 					
 					channel = r.channel
 					if channel == 'Walk In':
-						room[channel]['year_to_date'] = room[channel]['year_to_date'] + 1
+						room['Total Walk In']['year_to_date'] = room['Total Walk In']['year_to_date'] + 1
 						if date == today:
-							room[channel]['today_actual'] = room[channel]['today_actual'] + 1
+							room['Total Walk In']['today_actual'] = room['Total Walk In']['today_actual'] + 1
 						if date >= current_month and date <= today:
-							room[channel]['mtd_actual'] = room[channel]['mtd_actual'] + 1
+							room['Total Walk In']['mtd_actual'] = room['Total Walk In']['mtd_actual'] + 1
 						elif date >= last_month and date < current_month:
-							room[channel]['mtd_last_month'] = room[channel]['mtd_last_month'] + 1
+							room['Total Walk In']['mtd_last_month'] = room['Total Walk In']['mtd_last_month'] + 1
 
-		room['Vacant Room'] = {
-			'today_actual': room['Available']['today_actual'] - room['In House']['today_actual'], 
-			'mtd_actual': room['Available']['mtd_actual'] - room['In House']['mtd_actual'], 
-			'mtd_last_month': room['Available']['mtd_last_month'] - room['In House']['mtd_last_month'], 
-			'year_to_date': room['Available']['year_to_date'] - room['In House']['year_to_date']
+		room['Total Vacant Room'] = {
+			'today_actual': room['Total Room Available']['today_actual'] - room['Total In House']['today_actual'], 
+			'mtd_actual': room['Total Room Available']['mtd_actual'] - room['Total In House']['mtd_actual'], 
+			'mtd_last_month': room['Total Room Available']['mtd_last_month'] - room['Total In House']['mtd_last_month'], 
+			'year_to_date': room['Total Room Available']['year_to_date'] - room['Total In House']['year_to_date']
 		}
 
 		revenue = {}
@@ -242,27 +273,22 @@ def get_data(filters):
 				payment[ft.mode_of_payment]['mtd_last_month'] = payment[ft.mode_of_payment]['mtd_last_month'] + ft.amount
 
 		for key in room:
-			title = ''
+			title = key
 			indent = 0.0
 
-			if key == 'Studio' or key == 'Superior' or key == 'Deluxe' or key == 'Executive' or key == 'Suite':
-				title = key
+			if key == 'Studio Sold' or key == 'Superior Sold' or key == 'Deluxe Sold' or key == 'Executive Sold' or key == 'Suite Sold' or key == 'Studio Reserved' or key == 'Superior Reserved' or key == 'Deluxe Reserved' or key == 'Executive Reserved' or key == 'Suite Reserved':
 				indent = 1.0
-			elif key == 'Available' or key == 'Out of Order' or key == 'House Use' or key == 'Sold':
-				title = 'Total Room ' + key
-			else:
-				title = 'Total ' + key
+							
+			today_actual = '{:,}'.format(room[key]['today_actual']).replace(',','.')
+			mtd_actual = '{:,}'.format(room[key]['mtd_actual']).replace(',','.')
+			mtd_last_month = '{:,}'.format(room[key]['mtd_last_month']).replace(',','.')
+			year_to_date = '{:,}'.format(room[key]['year_to_date']).replace(',','.')
 
-			today_actual = ''
-			mtd_actual = ''
-			mtd_last_month = ''
-			year_to_date = ''
-
-			if key != 'Sold':	
-				today_actual = '{:,}'.format(room[key]['today_actual']).replace(',','.')
-				mtd_actual = '{:,}'.format(room[key]['mtd_actual']).replace(',','.')
-				mtd_last_month = '{:,}'.format(room[key]['mtd_last_month']).replace(',','.')
-				year_to_date = '{:,}'.format(room[key]['year_to_date']).replace(',','.')
+			if key == 'Total Room Sold' or key == 'Total Room Reserved':
+				today_actual = ''
+				mtd_actual = ''
+				mtd_last_month = ''
+				year_to_date = ''
 
 			data.append({
 				'statistic': title, 
@@ -283,6 +309,8 @@ def get_data(filters):
 			'indent': 0.0,
 			'is_currency': True,
 		})
+
+		total_revenue = {'today_actual': 0, 'mtd_actual': 0, 'mtd_last_month': 0, 'year_to_date': 0}
 		
 		for key in revenue:
 			title = ''
@@ -338,6 +366,16 @@ def get_data(filters):
 				title = 'Banquet Meeting'
 			elif key == '2141.000':
 				data.append({
+					'statistic': 'Total Revenue', 
+					'today_actual': '{:,}'.format(int(round(total_revenue['today_actual']))).replace(',','.'),
+					'mtd_actual': '{:,}'.format(int(round(total_revenue['mtd_actual']))).replace(',','.'),
+					'mtd_last_month': '{:,}'.format(int(round(total_revenue['mtd_last_month']))).replace(',','.'),
+					'year_to_date': '{:,}'.format(int(round(total_revenue['year_to_date']))).replace(',','.'),
+					'indent': 0.0,
+					'is_currency': True,
+				})
+
+				data.append({
 					'statistic': 'Tax and Service', 
 					'today_actual': '',
 					'mtd_actual': '',
@@ -359,6 +397,14 @@ def get_data(filters):
 				'indent': indent,
 				'is_currency': True,
 			})
+
+			if key != '2141.000' and key != '2110.004':
+				total_revenue = {
+					'today_actual': total_revenue['today_actual'] + revenue[key]['today_actual'],
+					'mtd_actual': total_revenue['mtd_actual'] + revenue[key]['mtd_actual'],
+					'mtd_last_month': total_revenue['mtd_last_month'] + revenue[key]['mtd_last_month'],
+					'year_to_date': total_revenue['year_to_date'] + revenue[key]['year_to_date']
+				}
 
 		data.append({
 			'statistic': 'Payment', 
