@@ -32,6 +32,8 @@ def autofill_inn_tax_value(doc, method):
 	doc.inn_tax_value = value
 
 def calculate_inn_tax_and_charges(base_total, inn_tax_id):
+	# UPDATE: FOR NOW, THE OPTION OF TAX BREAKDOWN IS LIMITED TO ON NET TOTAL
+
 	tax_breakdown_list = frappe.get_all('Inn Tax Breakdown', filters={'parent': inn_tax_id}, order_by="idx asc", fields=['*'])
 
 	if len(tax_breakdown_list) > 0:
@@ -44,6 +46,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 
 		for index, item in enumerate(tax_breakdown_list):
 			tb_id[index] = item.name
+			# OPTION DISABLED
 			if item.breakdown_type == 'Amount':
 				tb_amount[index] = item.breakdown_amount
 				if index == 0:
@@ -52,6 +55,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 				else:
 					# this row total is previous row total plus fixed amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
+
 			elif item.breakdown_type == 'On Net Total':
 				if index == 0:
 					# this row amount is it's rate multiplied with base_total
@@ -63,7 +67,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 					tb_amount[index] = float(int(item.breakdown_rate/100.0 * tb_total[index-1]))
 					# this row total is previous row total plus this row amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
-
+			# OPTION DISABLED
 			elif item.breakdown_type == 'On Previous Row Amount':
 				#  this type of tax breakdown must not be the first row
 				if index > 0:
@@ -72,6 +76,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 					# this row total is previous row total plus this row amount
 					tb_total[index] = tb_total[index-1] + tb_amount[index]
 
+			# OPTION DISABLED
 			elif item.breakdown_type == 'On Previous Row Total':
 				#  this type of tax breakdown must not be the first row
 				if index > 0:
