@@ -81,6 +81,28 @@ def add_package_charge(package_name, sub_folio, remark, parent):
 	# Resave Bundle to save Detail
 	ftb_doc.save()
 
+	# CALCULATING DIFFERENCE
+
+	total_tb = 0.0
+	for tb_item in tb_amount:
+		total_tb += float(tb_item)
+	difference = package_doc.total_amount_after_tax - (total_tb + package_doc.total_amount)
+
+	if difference > 0:
+		# Difference lebih dari 0, get folio trx yang type package tax dari ftb_id terkait, reverse name desc, biar tax element jadi yg pertama, dan service yg selanjutnya.
+		tax_list = frappe.get_all('Inn Folio Transaction', filters={'ftb_id': ftb_doc.name, 'transaction_type': 'Package Tax'}, fields=['*'], order_by='name desc')
+		if tax_list[0].amount == 0.0:
+			# jika tax amountnya 0, maka di alihkan penambahannya ke element selanjutnya
+			frappe.db.set_value('Inn Folio Transaction', tax_list[1].name, 'amount', tax_list[1].amount + difference)
+		else:
+			# jika element tax amoutnyan tidak 0, maka penambahan difference dilakukan di sini
+			frappe.db.set_value('Inn Folio Transaction', tax_list[0].name, 'amount', tax_list[0].amount + difference)
+	elif difference < 0:
+		# Difference kurang dari 0, get folio trx yg typenya package dari ftb_id terkait.
+		package = frappe.get_all('Inn Folio Transaction', filters={'ftb_id': ftb_doc.name, 'transaction_type': 'Package'}, fields=['*'])
+		# kurangi amount dari package charge sesuai dengan difference (ini ditambah karena nilai difference negatif, jadi sama saja dengan amount + (- difference)
+		frappe.db.set_value('Inn Folio Transaction', package[0].name, 'amount', package[0].amount + difference)
+
 	return new_doc.name
 
 @frappe.whitelist()
