@@ -157,25 +157,30 @@ def process_dayend_close(doc_id):
 			restaurant_other = 0
 
 			# 1. ORDER ITEM IN RESTAURANT FINISHED ORDER
-			order_item_list = order.get('order_item')
+			order_item_list = frappe.get_all('Inn Restaurant Order Item', filters={'parent': order.name}, fields=['*'])
+
+			print("order item list of " + order.name + " is " + str(len(order_item_list)))
 			if order_item_list is not None and len(order_item_list) > 0:
+				print("masuk if order list exist")
 				# Calculate Total Amount of Food, Beverages and Other Charges in Restaurant Order
 				for item in order_item_list:
 					print('item now = ' + item.name)
 					menu_type = frappe.db.get_value('Inn Restaurant Menu Item', item.item, 'item_type')
 					print('menu type = ' + menu_type)
 					if menu_type == 'Food':
-						restaurant_food += item.rate
+						restaurant_food += float(item.rate)
 						print('restaurant_food now = ' + str(restaurant_food))
 					elif menu_type == 'Beverage':
-						restaurant_beverage += item.rate
+						restaurant_beverage += float(item.rate)
 						print('restaurant_beverage now = ' + str(restaurant_beverage))
 					elif menu_type == 'Other':
-						restaurant_other += item.rate
+						restaurant_other += float(item.rate)
 						print('restaurant_other now = ' + str(restaurant_other))
-
+			else:
+				print("order list not exist")
 			# Create Journal Entry for Total Amount of Orders for Food, Beverages, and Other Restaurant charges
 			if restaurant_food > 0:
+				print("entry restaurant food")
 				food_title = 'Restaurant Food of ' + order.name
 				food_remark = 'Restaurant Food Charges from Restaurant Order: ' + order.name
 				food_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Food').debit_account
@@ -183,12 +188,14 @@ def process_dayend_close(doc_id):
 				create_journal_entry(food_title, food_remark, food_debit_account, food_credit_account, restaurant_food)
 
 			if restaurant_beverage > 0:
+				print("entry restaurant beverage")
 				bev_title = 'Restaurant Beverages of ' + order.name
 				bev_remark = 'Restaurant Beverage Charges from Restaurant Order: ' + order.name
 				bev_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Beverages').debit_account
 				bev_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Beverages').credit_account
 				create_journal_entry(bev_title, bev_remark, bev_debit_account, bev_credit_account, restaurant_beverage)
 			if restaurant_other > 0:
+				print("entry restaurant other")
 				other_title = 'Restaurant Other of ' + order.name
 				other_remark = 'Restaurant Other Charges from Restaurant Order: ' + order.name
 				other_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Other').debit_account
@@ -196,11 +203,13 @@ def process_dayend_close(doc_id):
 				create_journal_entry(other_title, other_remark, other_debit_account, other_credit_account, restaurant_other)
 
 			# Create Journal Entry for Round Off Charges
-			ro_title = 'Round Off of ' + order.name
-			ro_remark = 'Rounding off Amount of Restaurant Charges from Restaurant Order: ' + order.name
-			ro_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').debit_account
-			ro_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').credit_account
-			create_journal_entry(ro_title, ro_remark, ro_debit_account, ro_credit_account, order.rounding_amount)
+			if float(order.rounding_amount) > 0:
+				ro_title = 'Round Off of ' + order.name
+				ro_remark = 'Rounding off Amount of Restaurant Charges from Restaurant Order: ' + order.name
+				ro_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').debit_account
+				ro_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').credit_account
+				create_journal_entry(ro_title, ro_remark, ro_debit_account, ro_credit_account, order.rounding_amount)
+
 			# Create Journal Entry for Service
 			service_title = 'FBS -- Service 10 % of ' + order.name
 			service_remark = 'Service of Restaurant Charges from Restaurant Order: ' + order.name
@@ -299,6 +308,7 @@ def get_ongoing_order_need_to_be_finished():
 	return return_list
 
 def create_journal_entry(title, remark, debit_account, credit_account, amount):
+	print("Journal Entry Title: " + title)
 	customer_name = 'Customer Restaurant'
 	doc_je = frappe.new_doc('Journal Entry')
 	doc_je.title = title
