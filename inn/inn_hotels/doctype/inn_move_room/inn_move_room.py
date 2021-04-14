@@ -72,7 +72,7 @@ def create_move_room_by_reservation(reservation_id, mv_room_type, mv_bed_type, m
 		new_room_booking.room_availability = 'Room Sold'
 		new_room_booking.reference_type = 'Inn Reservation'
 		new_room_booking.reference_name = reservation_id
-		new_room_booking.status = 'Booked'
+		new_room_booking.status = 'Stayed'
 		new_room_booking.insert()
 
 	# Update Rooms Status
