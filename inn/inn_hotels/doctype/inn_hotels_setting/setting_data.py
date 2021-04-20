@@ -87,7 +87,7 @@ def get_account():
 			"account_number": "1113.000",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "",
+			"account_type": "Cash",
 			"root_type": "Asset"
 		},
 		{
@@ -154,6 +154,15 @@ def get_account():
 			"root_type": "Asset"
 		},
 		{
+			"account_name": "CC Mega",
+			"parent_number": "1121.000",
+			"account_number": "1121.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Bank",
+			"root_type": "Asset"
+		},
+		{
 			"account_name": "Bank Other Currency",
 			"parent_number": "1120.000",
 			"account_number": "1122.000",
@@ -186,7 +195,7 @@ def get_account():
 			"account_number": "1131.001",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -195,7 +204,7 @@ def get_account():
 			"account_number": "1131.002",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -204,7 +213,7 @@ def get_account():
 			"account_number": "1131.003",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -213,7 +222,7 @@ def get_account():
 			"account_number": "1131.004",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -222,7 +231,7 @@ def get_account():
 			"account_number": "1131.005",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -240,7 +249,7 @@ def get_account():
 			"account_number": "1132.001",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -249,7 +258,7 @@ def get_account():
 			"account_number": "1132.002",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -258,7 +267,7 @@ def get_account():
 			"account_number": "1132.003",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -267,7 +276,7 @@ def get_account():
 			"account_number": "1132.004",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -276,7 +285,7 @@ def get_account():
 			"account_number": "1132.005",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "Bank",
 			"root_type": "Asset"
 		},
 		{
@@ -285,7 +294,7 @@ def get_account():
 			"account_number": "1132.006",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "",
 			"root_type": "Asset"
 		},
 		{
@@ -294,7 +303,7 @@ def get_account():
 			"account_number": "1132.007",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "",
 			"root_type": "Asset"
 		},
 		{
@@ -303,7 +312,7 @@ def get_account():
 			"account_number": "1132.008",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "",
 			"root_type": "Asset"
 		},
 		{
@@ -321,7 +330,7 @@ def get_account():
 			"account_number": "1133.001",
 			"is_group": "0",
 			"account_currency": "IDR",
-			"account_type": "Receivable",
+			"account_type": "",
 			"root_type": "Asset"
 		},
 		{
@@ -541,6 +550,15 @@ def get_account():
 			"root_type": "Asset"
 		},
 		{
+			"account_name": "Office Equipment",
+			"parent_number": "1211.000",
+			"account_number": "1211.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Fixed Asset",
+			"root_type": "Asset"
+		},
+		{
 			"account_name": "Accumulated Depreciation of Asset",
 			"parent_number": "1210.000",
 			"account_number": "1212.000",
@@ -556,6 +574,24 @@ def get_account():
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "Accumulated Depreciation",
+			"root_type": "Asset"
+		},
+		{
+			"account_name": "Deposit Alistair",
+			"parent_number": "1212.000",
+			"account_number": "1212.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Depreciation",
+			"root_type": "Asset"
+		},
+		{
+			"account_name": "Allowance for Doubtful Account",
+			"parent_number": "1212.000",
+			"account_number": "1212.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Depreciation",
 			"root_type": "Asset"
 		},
 		{
@@ -931,6 +967,15 @@ def get_account():
 			"account_name": "A/P In Transit",
 			"parent_number": "2110.000",
 			"account_number": "2110.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Liability"
+		},
+		{
+			"account_name": "A/P Voucher",
+			"parent_number": "2110.000",
+			"account_number": "2110.014",
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "Payable",
@@ -1309,6 +1354,15 @@ def get_account():
 			"account_name": "A/E Other",
 			"parent_number": "2131.000",
 			"account_number": "2131.036",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Liability"
+		},
+		{
+			"account_name": "A/E BPJS Ketenagakerjaan",
+			"parent_number": "2131.000",
+			"account_number": "2131.037",
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "",
@@ -1774,6 +1828,33 @@ def get_account():
 			"root_type": "Income"
 		},
 		{
+			"account_name": "Banquet Meeting",
+			"parent_number": "4150.000",
+			"account_number": "4150.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Income Account",
+			"root_type": "Income"
+		},
+		{
+			"account_name": "Banquet Other Revenue",
+			"parent_number": "4150.000",
+			"account_number": "4150.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Income Account",
+			"root_type": "Income"
+		},
+		{
+			"account_name": "Banquet Wedding Revenue",
+			"parent_number": "4150.000",
+			"account_number": "4150.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Income Account",
+			"root_type": "Income"
+		},
+		{
 			"account_name": "Other Food and Beverages Revenue",
 			"parent_number": "4100.000",
 			"account_number": "4160.000",
@@ -1882,6 +1963,15 @@ def get_account():
 			"root_type": "Income"
 		},
 		{
+			"account_name": "Revenue from Warehouse",
+			"parent_number": "4300.000",
+			"account_number": "4300.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Income Account",
+			"root_type": "Income"
+		},
+		{
 			"account_name": "Cost of Sale",
 			"parent_number": "",
 			"account_number": "5000.000",
@@ -1915,6 +2005,15 @@ def get_account():
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "Cost of Goods Sold",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Grab Food Cost",
+			"parent_number": "5100.000",
+			"account_number": "5130.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "",
 			"root_type": "Expense"
 		},
 		{
@@ -1972,7 +2071,7 @@ def get_account():
 			"root_type": "Expense"
 		},
 		{
-			"account_name": "Payroll",
+			"account_name": "Expenses",
 			"parent_number": "",
 			"account_number": "6000.000",
 			"is_group": "1",
@@ -2152,6 +2251,3462 @@ def get_account():
 			"root_type": "Expense"
 		},
 		{
+			"account_name": "Corporate Other Expense",
+			"parent_number": "6000.000",
+			"account_number": "6920.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Voucher Payment",
+			"parent_number": "6920.000",
+			"account_number": "6920.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Bank",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Legal",
+			"parent_number": "6920.000",
+			"account_number": "6920.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6010.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Daily Worker Salary",
+			"parent_number": "6010.000",
+			"account_number": "6010.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Salaries & Wages",
+			"parent_number": "6010.000",
+			"account_number": "6010.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Jamsostek",
+			"parent_number": "6010.000",
+			"account_number": "6010.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Casual Worker",
+			"parent_number": "6010.000",
+			"account_number": "6010.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Bonus/THR",
+			"parent_number": "6010.000",
+			"account_number": "6010.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Employee Meals",
+			"parent_number": "6010.000",
+			"account_number": "6010.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Payroll Taxes & Benefits",
+			"parent_number": "6010.000",
+			"account_number": "6010.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Medical",
+			"parent_number": "6010.000",
+			"account_number": "6010.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Staff Transportation/Relocation",
+			"parent_number": "6010.000",
+			"account_number": "6010.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO BPJS Kesehatan",
+			"parent_number": "6010.000",
+			"account_number": "6010.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6020.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO China,Glass,Silver",
+			"parent_number": "6020.000",
+			"account_number": "6020.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Linen",
+			"parent_number": "6020.000",
+			"account_number": "6020.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Cleaning Supplies",
+			"parent_number": "6020.000",
+			"account_number": "6020.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Guest Supplies",
+			"parent_number": "6020.000",
+			"account_number": "6020.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Paper Supplies",
+			"parent_number": "6020.000",
+			"account_number": "6020.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Uniforms",
+			"parent_number": "6020.000",
+			"account_number": "6020.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Decoration",
+			"parent_number": "6020.000",
+			"account_number": "6020.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Menus",
+			"parent_number": "6020.000",
+			"account_number": "6020.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Systems Support",
+			"parent_number": "6020.000",
+			"account_number": "6020.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Other Supplies",
+			"parent_number": "6020.000",
+			"account_number": "6020.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Telephone & Fax",
+			"parent_number": "6020.000",
+			"account_number": "6020.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Contract Services",
+			"parent_number": "6020.000",
+			"account_number": "6020.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Travel & Entertainment",
+			"parent_number": "6020.000",
+			"account_number": "6020.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Transportation",
+			"parent_number": "6020.000",
+			"account_number": "6020.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Other Professional Services",
+			"parent_number": "6020.000",
+			"account_number": "6020.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Postage / Express",
+			"parent_number": "6020.000",
+			"account_number": "6020.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Dues & Subscription",
+			"parent_number": "6020.000",
+			"account_number": "6020.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Training",
+			"parent_number": "6020.000",
+			"account_number": "6020.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Equipment Rental",
+			"parent_number": "6020.000",
+			"account_number": "6020.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Licenses & Fees",
+			"parent_number": "6020.000",
+			"account_number": "6020.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Printing & Stationary",
+			"parent_number": "6020.000",
+			"account_number": "6020.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Music & Entertainment",
+			"parent_number": "6020.000",
+			"account_number": "6020.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Other Expenses",
+			"parent_number": "6020.000",
+			"account_number": "6020.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Laundry & Dry Cleaning Linen",
+			"parent_number": "6020.000",
+			"account_number": "6020.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Laundry & Dry Cleaning Uniform",
+			"parent_number": "6020.000",
+			"account_number": "6020.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Guest Transportation",
+			"parent_number": "6020.000",
+			"account_number": "6020.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Travel Agency Commission",
+			"parent_number": "6020.000",
+			"account_number": "6020.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Cable & TV Satelite",
+			"parent_number": "6020.000",
+			"account_number": "6020.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Laundry",
+			"parent_number": "6020.000",
+			"account_number": "6020.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Complimentary Breakfast",
+			"parent_number": "6020.000",
+			"account_number": "6020.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Systems Support / Internet",
+			"parent_number": "6020.000",
+			"account_number": "6020.031",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Comp. Welcome Drink",
+			"parent_number": "6020.000",
+			"account_number": "6020.032",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Comp. Fruit Basket & B'day Cake",
+			"parent_number": "6020.000",
+			"account_number": "6020.033",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "FO Entertainment",
+			"parent_number": "6020.000",
+			"account_number": "6020.034",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6110.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Salaries & Wages",
+			"parent_number": "6110.000",
+			"account_number": "6110.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Jamsostek",
+			"parent_number": "6110.000",
+			"account_number": "6110.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Casual Worker",
+			"parent_number": "6110.000",
+			"account_number": "6110.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Bonus/THR",
+			"parent_number": "6110.000",
+			"account_number": "6110.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Employee Meals",
+			"parent_number": "6110.000",
+			"account_number": "6110.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Payroll Taxes & Benefits",
+			"parent_number": "6110.000",
+			"account_number": "6110.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Medical",
+			"parent_number": "6110.000",
+			"account_number": "6110.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Staff Transportation/Relocation",
+			"parent_number": "6110.000",
+			"account_number": "6110.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Daily Worker Salary",
+			"parent_number": "6110.000",
+			"account_number": "6110.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK BPJS Kesehatan",
+			"parent_number": "6110.000",
+			"account_number": "6110.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6120.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK China,Glass,Silver",
+			"parent_number": "6120.000",
+			"account_number": "6120.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Linen",
+			"parent_number": "6120.000",
+			"account_number": "6120.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Cleaning Supplies",
+			"parent_number": "6120.000",
+			"account_number": "6120.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Guest Supplies",
+			"parent_number": "6120.000",
+			"account_number": "6120.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Paper Supplies",
+			"parent_number": "6120.000",
+			"account_number": "6120.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Uniforms",
+			"parent_number": "6120.000",
+			"account_number": "6120.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Decoration",
+			"parent_number": "6120.000",
+			"account_number": "6120.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Menus",
+			"parent_number": "6120.000",
+			"account_number": "6120.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Pest Control",
+			"parent_number": "6120.000",
+			"account_number": "6120.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Other Supplies",
+			"parent_number": "6120.000",
+			"account_number": "6120.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Telephone & Fax",
+			"parent_number": "6120.000",
+			"account_number": "6120.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Contract Services",
+			"parent_number": "6120.000",
+			"account_number": "6120.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Travel & Entertainment",
+			"parent_number": "6120.000",
+			"account_number": "6120.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Transportation",
+			"parent_number": "6120.000",
+			"account_number": "6120.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Other Professional Services",
+			"parent_number": "6120.000",
+			"account_number": "6120.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Postage / Express",
+			"parent_number": "6120.000",
+			"account_number": "6120.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Dues & Subscription",
+			"parent_number": "6120.000",
+			"account_number": "6120.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Training",
+			"parent_number": "6120.000",
+			"account_number": "6120.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Equipment Rental",
+			"parent_number": "6120.000",
+			"account_number": "6120.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Licenses & Fees",
+			"parent_number": "6120.000",
+			"account_number": "6120.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Printing & Stationary",
+			"parent_number": "6120.000",
+			"account_number": "6120.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Music & Entertainment",
+			"parent_number": "6120.000",
+			"account_number": "6120.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Other Expenses",
+			"parent_number": "6120.000",
+			"account_number": "6120.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Laundry & Dry Cleaning Linen",
+			"parent_number": "6120.000",
+			"account_number": "6120.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Laundry & Dry Cleaning Uniform",
+			"parent_number": "6120.000",
+			"account_number": "6120.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Guest Transportation",
+			"parent_number": "6120.000",
+			"account_number": "6120.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Travel Agency Commission",
+			"parent_number": "6120.000",
+			"account_number": "6120.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Cable & TV Satelite",
+			"parent_number": "6120.000",
+			"account_number": "6120.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Laundry",
+			"parent_number": "6120.000",
+			"account_number": "6120.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Complimentary Breakfast",
+			"parent_number": "6120.000",
+			"account_number": "6120.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Systems Support / Internet",
+			"parent_number": "6120.000",
+			"account_number": "6120.031",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Comp. Welcome Drink",
+			"parent_number": "6120.000",
+			"account_number": "6120.032",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Comp. Fruit Basket & B'day Cake",
+			"parent_number": "6120.000",
+			"account_number": "6120.033",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HK Entertainment",
+			"parent_number": "6120.000",
+			"account_number": "6120.034",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6210.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Salaries & Wages",
+			"parent_number": "6210.000",
+			"account_number": "6210.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Jamsostek",
+			"parent_number": "6210.000",
+			"account_number": "6210.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Casual Worker",
+			"parent_number": "6210.000",
+			"account_number": "6210.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Bonus/THR",
+			"parent_number": "6210.000",
+			"account_number": "6210.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Employee Meals",
+			"parent_number": "6210.000",
+			"account_number": "6210.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Payroll Taxes & Benefits",
+			"parent_number": "6210.000",
+			"account_number": "6210.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Medical",
+			"parent_number": "6210.000",
+			"account_number": "6210.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Staff Transportation",
+			"parent_number": "6210.000",
+			"account_number": "6210.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Daily Worker Salary",
+			"parent_number": "6210.000",
+			"account_number": "6210.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO BPJS Kesehatan",
+			"parent_number": "6210.000",
+			"account_number": "6210.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6220.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO China,Glass,Silver",
+			"parent_number": "6220.000",
+			"account_number": "6220.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Linen",
+			"parent_number": "6220.000",
+			"account_number": "6220.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Cleaning Supplies",
+			"parent_number": "6220.000",
+			"account_number": "6220.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Guest Supplies",
+			"parent_number": "6220.000",
+			"account_number": "6220.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Paper Supplies",
+			"parent_number": "6220.000",
+			"account_number": "6220.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Uniforms",
+			"parent_number": "6220.000",
+			"account_number": "6220.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Decorations",
+			"parent_number": "6220.000",
+			"account_number": "6220.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Menus",
+			"parent_number": "6220.000",
+			"account_number": "6220.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Telephone",
+			"parent_number": "6220.000",
+			"account_number": "6220.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Contract Services",
+			"parent_number": "6220.000",
+			"account_number": "6220.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Entertainment",
+			"parent_number": "6220.000",
+			"account_number": "6220.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Transportation",
+			"parent_number": "6220.000",
+			"account_number": "6220.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Special Promotion",
+			"parent_number": "6220.000",
+			"account_number": "6220.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Postage / Express",
+			"parent_number": "6220.000",
+			"account_number": "6220.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Bar Supplies",
+			"parent_number": "6220.000",
+			"account_number": "6220.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Training",
+			"parent_number": "6220.000",
+			"account_number": "6220.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Equipment Rental",
+			"parent_number": "6220.000",
+			"account_number": "6220.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Licenses Fees",
+			"parent_number": "6220.000",
+			"account_number": "6220.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Printing & Stationary",
+			"parent_number": "6220.000",
+			"account_number": "6220.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Music & Entertainment",
+			"parent_number": "6220.000",
+			"account_number": "6220.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Spoilage",
+			"parent_number": "6220.000",
+			"account_number": "6220.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Other Expenses",
+			"parent_number": "6220.000",
+			"account_number": "6220.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Laundry & Dry Cleaning Li",
+			"parent_number": "6220.000",
+			"account_number": "6220.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Laundry & Dry Cleaning Un",
+			"parent_number": "6220.000",
+			"account_number": "6220.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Utensil",
+			"parent_number": "6220.000",
+			"account_number": "6220.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Banquet Expense",
+			"parent_number": "6220.000",
+			"account_number": "6220.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Dues Subscription",
+			"parent_number": "6220.000",
+			"account_number": "6220.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "RESTO Exterm Desinfectan",
+			"parent_number": "6220.000",
+			"account_number": "6220.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6310.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Salaries & Wages",
+			"parent_number": "6310.000",
+			"account_number": "6310.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Jamsostek",
+			"parent_number": "6310.000",
+			"account_number": "6310.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Casual Worker",
+			"parent_number": "6310.000",
+			"account_number": "6310.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Bonus/THR",
+			"parent_number": "6310.000",
+			"account_number": "6310.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Employee Meals",
+			"parent_number": "6310.000",
+			"account_number": "6310.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Payroll Taxes & Benefits",
+			"parent_number": "6310.000",
+			"account_number": "6310.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Medical",
+			"parent_number": "6310.000",
+			"account_number": "6310.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Staff Transportation",
+			"parent_number": "6310.000",
+			"account_number": "6310.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Daily Worker Salary",
+			"parent_number": "6310.000",
+			"account_number": "6310.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN BPJS Kesehatan",
+			"parent_number": "6310.000",
+			"account_number": "6310.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6320.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN China,Glass,Silver",
+			"parent_number": "6320.000",
+			"account_number": "6320.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Linen",
+			"parent_number": "6320.000",
+			"account_number": "6320.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Cleaning Supplies",
+			"parent_number": "6320.000",
+			"account_number": "6320.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Guest Supplies",
+			"parent_number": "6320.000",
+			"account_number": "6320.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Paper Supplies",
+			"parent_number": "6320.000",
+			"account_number": "6320.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Uniforms",
+			"parent_number": "6320.000",
+			"account_number": "6320.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Decorations",
+			"parent_number": "6320.000",
+			"account_number": "6320.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Menus",
+			"parent_number": "6320.000",
+			"account_number": "6320.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Fuel",
+			"parent_number": "6320.000",
+			"account_number": "6320.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Supplies",
+			"parent_number": "6320.000",
+			"account_number": "6320.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Telephone",
+			"parent_number": "6320.000",
+			"account_number": "6320.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Contract Services",
+			"parent_number": "6320.000",
+			"account_number": "6320.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Entertainment",
+			"parent_number": "6320.000",
+			"account_number": "6320.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Transportation",
+			"parent_number": "6320.000",
+			"account_number": "6320.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Special Promotion",
+			"parent_number": "6320.000",
+			"account_number": "6320.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Postage / Express",
+			"parent_number": "6320.000",
+			"account_number": "6320.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Bar Supplies",
+			"parent_number": "6320.000",
+			"account_number": "6320.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Training",
+			"parent_number": "6320.000",
+			"account_number": "6320.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Equipment Rental",
+			"parent_number": "6320.000",
+			"account_number": "6320.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Licenses Fees",
+			"parent_number": "6320.000",
+			"account_number": "6320.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Printing & Stationary",
+			"parent_number": "6320.000",
+			"account_number": "6320.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Music & Entertainment",
+			"parent_number": "6320.000",
+			"account_number": "6320.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Spoilage",
+			"parent_number": "6320.000",
+			"account_number": "6320.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Other Expenses",
+			"parent_number": "6320.000",
+			"account_number": "6320.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Laundry & Dry Cleaning Li",
+			"parent_number": "6320.000",
+			"account_number": "6320.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Laundry & Dry Cleaning Un",
+			"parent_number": "6320.000",
+			"account_number": "6320.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Utensil",
+			"parent_number": "6320.000",
+			"account_number": "6320.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Banquet Expense",
+			"parent_number": "6320.000",
+			"account_number": "6320.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Dues Subscription",
+			"parent_number": "6320.000",
+			"account_number": "6320.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "KITCHEN Exterm Desinfectan",
+			"parent_number": "6320.000",
+			"account_number": "6320.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6410.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Salaries & Wages",
+			"parent_number": "6410.000",
+			"account_number": "6410.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Jamsostek",
+			"parent_number": "6410.000",
+			"account_number": "6410.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Casual Worker",
+			"parent_number": "6410.000",
+			"account_number": "6410.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Bonus/THR",
+			"parent_number": "6410.000",
+			"account_number": "6410.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Employee Meals",
+			"parent_number": "6410.000",
+			"account_number": "6410.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Payroll Taxes & Benefits",
+			"parent_number": "6410.000",
+			"account_number": "6410.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Medical",
+			"parent_number": "6410.000",
+			"account_number": "6410.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Staff Transportation",
+			"parent_number": "6410.000",
+			"account_number": "6410.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Daily Worker Salary",
+			"parent_number": "6410.000",
+			"account_number": "6410.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M BPJS Kesehatan",
+			"parent_number": "6410.000",
+			"account_number": "6410.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6420.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Uniforms",
+			"parent_number": "6420.000",
+			"account_number": "6420.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Systems Support",
+			"parent_number": "6420.000",
+			"account_number": "6420.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Telephone",
+			"parent_number": "6420.000",
+			"account_number": "6420.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Contract Services",
+			"parent_number": "6420.000",
+			"account_number": "6420.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Sales Call Outside",
+			"parent_number": "6420.000",
+			"account_number": "6420.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Transportation",
+			"parent_number": "6420.000",
+			"account_number": "6420.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M National Advertising Campaign",
+			"parent_number": "6420.000",
+			"account_number": "6420.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Postage / Express",
+			"parent_number": "6420.000",
+			"account_number": "6420.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Dues & Subscription",
+			"parent_number": "6420.000",
+			"account_number": "6420.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Training",
+			"parent_number": "6420.000",
+			"account_number": "6420.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Printing & Stationary",
+			"parent_number": "6420.000",
+			"account_number": "6420.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Other Expenses",
+			"parent_number": "6420.000",
+			"account_number": "6420.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Laundry & Dry Cleaning Uniform",
+			"parent_number": "6420.000",
+			"account_number": "6420.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Promotion",
+			"parent_number": "6420.000",
+			"account_number": "6420.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Entertaintment",
+			"parent_number": "6420.000",
+			"account_number": "6420.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Trade Show",
+			"parent_number": "6420.000",
+			"account_number": "6420.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Royalty & Marketing",
+			"parent_number": "6420.000",
+			"account_number": "6420.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Travelling Expenses",
+			"parent_number": "6420.000",
+			"account_number": "6420.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Adv Print Media Newspaper",
+			"parent_number": "6420.000",
+			"account_number": "6420.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Adv Rooms Electronic",
+			"parent_number": "6420.000",
+			"account_number": "6420.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Promotion VIP",
+			"parent_number": "6420.000",
+			"account_number": "6420.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Collateral Electronic",
+			"parent_number": "6420.000",
+			"account_number": "6420.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising F&B Print",
+			"parent_number": "6420.000",
+			"account_number": "6420.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising F&B Electroni",
+			"parent_number": "6420.000",
+			"account_number": "6420.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising F&B Outdoor",
+			"parent_number": "6420.000",
+			"account_number": "6420.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising Booking Engine",
+			"parent_number": "6420.000",
+			"account_number": "6420.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising Site Minder",
+			"parent_number": "6420.000",
+			"account_number": "6420.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising Revinate",
+			"parent_number": "6420.000",
+			"account_number": "6420.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Advertising Live Chat",
+			"parent_number": "6420.000",
+			"account_number": "6420.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Collateral Print",
+			"parent_number": "6420.000",
+			"account_number": "6420.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Collateral F&B Electronic",
+			"parent_number": "6420.000",
+			"account_number": "6420.031",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Giveaways Rooms",
+			"parent_number": "6420.000",
+			"account_number": "6420.032",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Giveaways F&B",
+			"parent_number": "6420.000",
+			"account_number": "6420.033",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Civic Community Project",
+			"parent_number": "6420.000",
+			"account_number": "6420.034",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Photography",
+			"parent_number": "6420.000",
+			"account_number": "6420.035",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Fee For Outside Service",
+			"parent_number": "6420.000",
+			"account_number": "6420.036",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Group Advertising Campaign",
+			"parent_number": "6420.000",
+			"account_number": "6420.037",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Fee",
+			"parent_number": "6420.000",
+			"account_number": "6420.038",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "S&M Kit",
+			"parent_number": "6420.000",
+			"account_number": "6420.039",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6510.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Salaries & Wages",
+			"parent_number": "6510.000",
+			"account_number": "6510.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Jamsostek",
+			"parent_number": "6510.000",
+			"account_number": "6510.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Casual Worker",
+			"parent_number": "6510.000",
+			"account_number": "6510.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Bonus/THR",
+			"parent_number": "6510.000",
+			"account_number": "6510.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Employee Meals",
+			"parent_number": "6510.000",
+			"account_number": "6510.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Payroll Taxes & Benefits",
+			"parent_number": "6510.000",
+			"account_number": "6510.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Medical",
+			"parent_number": "6510.000",
+			"account_number": "6510.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Staff Transportation/Relocation",
+			"parent_number": "6510.000",
+			"account_number": "6510.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Staff Housing",
+			"parent_number": "6510.000",
+			"account_number": "6510.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Daily Worker",
+			"parent_number": "6510.000",
+			"account_number": "6510.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC BPJS Kesehatan",
+			"parent_number": "6510.000",
+			"account_number": "6510.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6520.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Uniforms",
+			"parent_number": "6520.000",
+			"account_number": "6520.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Systems Support",
+			"parent_number": "6520.000",
+			"account_number": "6520.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Other Supplies",
+			"parent_number": "6520.000",
+			"account_number": "6520.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Telephone",
+			"parent_number": "6520.000",
+			"account_number": "6520.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Contract Services",
+			"parent_number": "6520.000",
+			"account_number": "6520.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Travel & Entertainment",
+			"parent_number": "6520.000",
+			"account_number": "6520.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Transportation",
+			"parent_number": "6520.000",
+			"account_number": "6520.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Other Professional Services",
+			"parent_number": "6520.000",
+			"account_number": "6520.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Postage / Express",
+			"parent_number": "6520.000",
+			"account_number": "6520.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Dues & Subscription",
+			"parent_number": "6520.000",
+			"account_number": "6520.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Training",
+			"parent_number": "6520.000",
+			"account_number": "6520.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Licenses & Fees",
+			"parent_number": "6520.000",
+			"account_number": "6520.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Printing & Stationary",
+			"parent_number": "6520.000",
+			"account_number": "6520.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Other Expenses",
+			"parent_number": "6520.000",
+			"account_number": "6520.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Laundry & Dry Cleaning Uniform",
+			"parent_number": "6520.000",
+			"account_number": "6520.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC IT Exp Software",
+			"parent_number": "6520.000",
+			"account_number": "6520.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC IT Exp Hardware",
+			"parent_number": "6520.000",
+			"account_number": "6520.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Credit Card Commissions",
+			"parent_number": "6520.000",
+			"account_number": "6520.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Credit & Collection Expense",
+			"parent_number": "6520.000",
+			"account_number": "6520.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC In House Intertainment",
+			"parent_number": "6520.000",
+			"account_number": "6520.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Legal Fees",
+			"parent_number": "6520.000",
+			"account_number": "6520.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Audit Fees",
+			"parent_number": "6520.000",
+			"account_number": "6520.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Accounting Fees",
+			"parent_number": "6520.000",
+			"account_number": "6520.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Donations",
+			"parent_number": "6520.000",
+			"account_number": "6520.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Recruitment",
+			"parent_number": "6520.000",
+			"account_number": "6520.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Bad Debt",
+			"parent_number": "6520.000",
+			"account_number": "6520.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Provision For Bad Debt.",
+			"parent_number": "6520.000",
+			"account_number": "6520.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Cashier Over/ Short",
+			"parent_number": "6520.000",
+			"account_number": "6520.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Bank Charges",
+			"parent_number": "6520.000",
+			"account_number": "6520.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Loss & Damages",
+			"parent_number": "6520.000",
+			"account_number": "6520.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Protective Services",
+			"parent_number": "6520.000",
+			"account_number": "6520.031",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Employee Relations",
+			"parent_number": "6520.000",
+			"account_number": "6520.032",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Difference Exchange Rate",
+			"parent_number": "6520.000",
+			"account_number": "6520.033",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "ACC Entertainment",
+			"parent_number": "6520.000",
+			"account_number": "6520.034",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6610.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Salaries & Wages",
+			"parent_number": "6610.000",
+			"account_number": "6610.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Jamsostek",
+			"parent_number": "6610.000",
+			"account_number": "6610.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Casual Worker",
+			"parent_number": "6610.000",
+			"account_number": "6610.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Bonus/THR",
+			"parent_number": "6610.000",
+			"account_number": "6610.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Employee Meals",
+			"parent_number": "6610.000",
+			"account_number": "6610.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Payroll Taxes & Benefits",
+			"parent_number": "6610.000",
+			"account_number": "6610.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Medical",
+			"parent_number": "6610.000",
+			"account_number": "6610.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Staff Transportation/Relocation",
+			"parent_number": "6610.000",
+			"account_number": "6610.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Daily Worker",
+			"parent_number": "6610.000",
+			"account_number": "6610.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD BPJS Kesehatan",
+			"parent_number": "6610.000",
+			"account_number": "6610.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6620.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Uniforms",
+			"parent_number": "6620.000",
+			"account_number": "6620.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Telephone",
+			"parent_number": "6620.000",
+			"account_number": "6620.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Contract Services",
+			"parent_number": "6620.000",
+			"account_number": "6620.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Transportation",
+			"parent_number": "6620.000",
+			"account_number": "6620.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Postage / Express",
+			"parent_number": "6620.000",
+			"account_number": "6620.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Dues & Subscription",
+			"parent_number": "6620.000",
+			"account_number": "6620.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Training",
+			"parent_number": "6620.000",
+			"account_number": "6620.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Printing & Stationary",
+			"parent_number": "6620.000",
+			"account_number": "6620.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Other Expenses",
+			"parent_number": "6620.000",
+			"account_number": "6620.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Laundry & Dry Cleaning Uniform",
+			"parent_number": "6620.000",
+			"account_number": "6620.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Photography",
+			"parent_number": "6620.000",
+			"account_number": "6620.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Advertising",
+			"parent_number": "6620.000",
+			"account_number": "6620.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Recruitment",
+			"parent_number": "6620.000",
+			"account_number": "6620.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Donations",
+			"parent_number": "6620.000",
+			"account_number": "6620.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Sport & Social Activity",
+			"parent_number": "6620.000",
+			"account_number": "6620.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Employee Relation",
+			"parent_number": "6620.000",
+			"account_number": "6620.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Loss & Damage",
+			"parent_number": "6620.000",
+			"account_number": "6620.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Outsource Expenses",
+			"parent_number": "6620.000",
+			"account_number": "6620.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Entertainment",
+			"parent_number": "6620.000",
+			"account_number": "6620.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD License",
+			"parent_number": "6620.000",
+			"account_number": "6620.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "HRD Ceremonies",
+			"parent_number": "6620.000",
+			"account_number": "6620.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6710.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Salaries & Wages",
+			"parent_number": "6710.000",
+			"account_number": "6710.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Jamsostek",
+			"parent_number": "6710.000",
+			"account_number": "6710.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Casual Worker",
+			"parent_number": "6710.000",
+			"account_number": "6710.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Bonus/THR",
+			"parent_number": "6710.000",
+			"account_number": "6710.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Employee Meals",
+			"parent_number": "6710.000",
+			"account_number": "6710.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Payroll Taxes & Benefits",
+			"parent_number": "6710.000",
+			"account_number": "6710.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Medical",
+			"parent_number": "6710.000",
+			"account_number": "6710.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Staff Transportation/Relocation",
+			"parent_number": "6710.000",
+			"account_number": "6710.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Daily Worker",
+			"parent_number": "6710.000",
+			"account_number": "6710.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security BPJS Kesehatan",
+			"parent_number": "6710.000",
+			"account_number": "6710.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Security Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6720.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6810.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Salaries & Wages",
+			"parent_number": "6810.000",
+			"account_number": "6810.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Jamsostek",
+			"parent_number": "6810.000",
+			"account_number": "6810.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Casual Worker",
+			"parent_number": "6810.000",
+			"account_number": "6810.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Bonus/THR",
+			"parent_number": "6810.000",
+			"account_number": "6810.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Employee Meals",
+			"parent_number": "6810.000",
+			"account_number": "6810.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Payroll Taxes & Benefits",
+			"parent_number": "6810.000",
+			"account_number": "6810.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Medical",
+			"parent_number": "6810.000",
+			"account_number": "6810.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Staff Transportation/Relocation",
+			"parent_number": "6810.000",
+			"account_number": "6810.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Daily Worker",
+			"parent_number": "6810.000",
+			"account_number": "6810.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering BPJS Kesehatan",
+			"parent_number": "6810.000",
+			"account_number": "6810.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Other Expenses",
+			"parent_number": "6000.000",
+			"account_number": "6820.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Uniforms",
+			"parent_number": "6820.000",
+			"account_number": "6820.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Other Supplies",
+			"parent_number": "6820.000",
+			"account_number": "6820.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Postage/Express",
+			"parent_number": "6820.000",
+			"account_number": "6820.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Contract Services",
+			"parent_number": "6820.000",
+			"account_number": "6820.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Transportation",
+			"parent_number": "6820.000",
+			"account_number": "6820.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Telephone and Fax",
+			"parent_number": "6820.000",
+			"account_number": "6820.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Due Subcription",
+			"parent_number": "6820.000",
+			"account_number": "6820.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Printing & Stationary",
+			"parent_number": "6820.000",
+			"account_number": "6820.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Other Expenses",
+			"parent_number": "6820.000",
+			"account_number": "6820.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Laundry & Dry Cleaning Uniform",
+			"parent_number": "6820.000",
+			"account_number": "6820.010",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Cleaning Supplies",
+			"parent_number": "6820.000",
+			"account_number": "6820.011",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Entertainment",
+			"parent_number": "6820.000",
+			"account_number": "6820.012",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Aircon & Ventilation",
+			"parent_number": "6820.000",
+			"account_number": "6820.013",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Building",
+			"parent_number": "6820.000",
+			"account_number": "6820.014",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Audio Visual And Sound System",
+			"parent_number": "6820.000",
+			"account_number": "6820.015",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Electrical",
+			"parent_number": "6820.000",
+			"account_number": "6820.016",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Electric Bulbs",
+			"parent_number": "6820.000",
+			"account_number": "6820.017",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Elev & Escalators",
+			"parent_number": "6820.000",
+			"account_number": "6820.018",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Floor Covering",
+			"parent_number": "6820.000",
+			"account_number": "6820.019",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Furniture",
+			"parent_number": "6820.000",
+			"account_number": "6820.020",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Grounds & L&scape",
+			"parent_number": "6820.000",
+			"account_number": "6820.021",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering F&B Kithcen & Refrig",
+			"parent_number": "6820.000",
+			"account_number": "6820.022",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Laundry",
+			"parent_number": "6820.000",
+			"account_number": "6820.023",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Mechanical",
+			"parent_number": "6820.000",
+			"account_number": "6820.024",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Vehicle Maintenance",
+			"parent_number": "6820.000",
+			"account_number": "6820.025",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Painting & Decoration",
+			"parent_number": "6820.000",
+			"account_number": "6820.026",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Plumbing & Heating",
+			"parent_number": "6820.000",
+			"account_number": "6820.027",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Recreation Facilities",
+			"parent_number": "6820.000",
+			"account_number": "6820.028",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Genset",
+			"parent_number": "6820.000",
+			"account_number": "6820.029",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Gondola",
+			"parent_number": "6820.000",
+			"account_number": "6820.030",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Office Equipment",
+			"parent_number": "6820.000",
+			"account_number": "6820.031",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Removal of Waste Matter",
+			"parent_number": "6820.000",
+			"account_number": "6820.032",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Life Safety",
+			"parent_number": "6820.000",
+			"account_number": "6820.033",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Locks & Keys",
+			"parent_number": "6820.000",
+			"account_number": "6820.034",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Water Treatment",
+			"parent_number": "6820.000",
+			"account_number": "6820.035",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering STP",
+			"parent_number": "6820.000",
+			"account_number": "6820.036",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Payroll and Related",
+			"parent_number": "6000.000",
+			"account_number": "6910.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Salaries & Wages",
+			"parent_number": "6910.000",
+			"account_number": "6910.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Jamsostek",
+			"parent_number": "6910.000",
+			"account_number": "6910.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Casual Worker",
+			"parent_number": "6910.000",
+			"account_number": "6910.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Bonus/THR",
+			"parent_number": "6910.000",
+			"account_number": "6910.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Employee Meals",
+			"parent_number": "6910.000",
+			"account_number": "6910.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Payroll Taxes & Benefits",
+			"parent_number": "6910.000",
+			"account_number": "6910.006",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Medical",
+			"parent_number": "6910.000",
+			"account_number": "6910.007",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate Staff Transportation/Relocation",
+			"parent_number": "6910.000",
+			"account_number": "6910.008",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Corporate BPJS Kesehatan",
+			"parent_number": "6910.000",
+			"account_number": "6910.009",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Energy Cost",
+			"parent_number": "6000.000",
+			"account_number": "6830.000",
+			"is_group": "1",
+			"account_currency": "IDR",
+			"account_type": "",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Electricity",
+			"parent_number": "6830.000",
+			"account_number": "6830.001",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Boiler Fuel",
+			"parent_number": "6830.000",
+			"account_number": "6830.002",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Diesel Fuel",
+			"parent_number": "6830.000",
+			"account_number": "6830.003",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Steam",
+			"parent_number": "6830.000",
+			"account_number": "6830.004",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Water & Sewage",
+			"parent_number": "6830.000",
+			"account_number": "6830.005",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
 			"account_name": "Expense",
 			"parent_number": "",
 			"account_number": "7000.000",
@@ -2233,9 +5788,27 @@ def get_account():
 			"root_type": "Expense"
 		},
 		{
-			"account_name": "Sales Supplies",
+			"account_name": "Sales & Marketing Supplies",
 			"parent_number": "7100.000",
 			"account_number": "7108.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Engineering Supplies",
+			"parent_number": "7100.000",
+			"account_number": "7109.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Electric Bulb Supplies",
+			"parent_number": "7100.000",
+			"account_number": "7110.000",
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "Expense Account",
@@ -2359,7 +5932,7 @@ def get_account():
 			"root_type": "Expense"
 		},
 		{
-			"account_name": "Mechanical and Electrical Equipment",
+			"account_name": "Engineering Equipment",
 			"parent_number": "7200.000",
 			"account_number": "7213.000",
 			"is_group": "0",
@@ -2371,6 +5944,33 @@ def get_account():
 			"account_name": "Other Building and Office Expense",
 			"parent_number": "7200.000",
 			"account_number": "7214.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Audio Visual and Sound System",
+			"parent_number": "7200.000",
+			"account_number": "7215.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Room/Bathroom Equipment",
+			"parent_number": "7200.000",
+			"account_number": "7216.000",
+			"is_group": "0",
+			"account_currency": "IDR",
+			"account_type": "Expense Account",
+			"root_type": "Expense"
+		},
+		{
+			"account_name": "Mechanical and Electrical Equipment",
+			"parent_number": "7200.000",
+			"account_number": "7217.000",
 			"is_group": "0",
 			"account_currency": "IDR",
 			"account_type": "Expense Account",
