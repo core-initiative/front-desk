@@ -32,7 +32,6 @@ def generate_folio_transaction_type():
 	create_account('Room Revenue', '4210.000', '4210.001', 0, 'IDR', 'Income Account', 'Income', default_company)
 
 	folio_transaction_type_records = []
-
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Package Tax'}):
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
@@ -97,6 +96,14 @@ def generate_folio_transaction_type():
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '1113.000'})[0].name,
 			'debit_account': frappe.db.get_list('Account', filters={'account_number': '2110.005'})[0].name
 		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'DP Kamar'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('DP Kamar'),
+			'type': _('Credit'),
+			'is_included': 0,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2110.005'})[0].name,
+		}]
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Room Payment'}):
 		folio_transaction_type_records += [{
 			'doctype': 'Inn Folio Transaction Type',
@@ -137,6 +144,69 @@ def generate_folio_transaction_type():
 			'is_included': 1,
 			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
 			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.002'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Restaurant Food'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Restaurant Food'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Restaurant Beverages'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Restaurant Beverages'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.002'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Restaurant Other'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Restaurant Other'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4160.000'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Room Service'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Room Service'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4140.001'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'FBS -- Service 10 %'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('FBS -- Service 10 %'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2110.004'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'FBS -- Tax 11 %'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('FBS -- Tax 11 %'),
+			'type': _('Debit'),
+			'is_included': 1,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '2141.000'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
+		}]
+	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Round Off'}):
+		folio_transaction_type_records += [{
+			'doctype': 'Inn Folio Transaction Type',
+			'trx_name': _('Round Off'),
+			'type': _('Debit'),
+			'is_included': 0,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4300.001'})[0].name,
+			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
 		}]
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Laundry'}):
 		folio_transaction_type_records += [{
