@@ -151,7 +151,7 @@ def generate_folio_transaction_type():
 			'trx_name': _('Restaurant Food'),
 			'type': _('Debit'),
 			'is_included': 1,
-			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.001'})[0].name,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4120.001'})[0].name,
 			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
 		}]
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Restaurant Beverages'}):
@@ -160,7 +160,7 @@ def generate_folio_transaction_type():
 			'trx_name': _('Restaurant Beverages'),
 			'type': _('Debit'),
 			'is_included': 1,
-			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4210.002'})[0].name,
+			'credit_account': frappe.db.get_list('Account', filters={'account_number': '4120.002'})[0].name,
 			'debit_account': frappe.db.get_list('Account', filters={'account_number': '1133.003'})[0].name,
 		}]
 	if not frappe.db.exists('Inn Folio Transaction Type', {'trx_name': 'Restaurant Other'}):
