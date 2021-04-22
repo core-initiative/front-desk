@@ -89,7 +89,7 @@ function populate_child(frm) {
 							});
 						}
 						frm.refresh_field('closed_today');
-
+						frm.set_value('resto_order_finished_today', []);
 						if (r.message[3].length > 0) {
 							$.each(r.message[3], function (i, d) {
 								var item = frm.add_child('resto_order_finished_today');
