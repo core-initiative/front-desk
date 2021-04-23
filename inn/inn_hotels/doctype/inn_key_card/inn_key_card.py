@@ -20,34 +20,55 @@ def room_max_active_card():
 
 @frappe.whitelist()
 def issue_card(reservation_id):
-	doc = frappe.get_doc('Inn Reservation', reservation_id)
-	room = doc.actual_room_id
-	expiryDate = datetime.strftime(doc.departure, "%d/%m/%Y")
+	door_lock_provider = frappe.db.get_single_value('Inn Hotels Setting', 'door_lock_api_provider')
+	if door_lock_provider == 'TESA':
+		doc = frappe.get_doc('Inn Reservation', reservation_id)
+		room = doc.actual_room_id
+		expiryDate = datetime.strftime(doc.departure, "%d/%m/%Y")
 
-	cards = doc.issued_card
-	active_card = 0
-	for card in cards:
-		active_card += int(card.is_active)
+		cards = doc.issued_card
+		active_card = 0
+		for card in cards:
+			active_card += int(card.is_active)
 
-	if active_card == 0:
-		cmd = "CI"
-	else:
-		cmd = "CG"
+		if active_card == 0:
+			cmd = "CI"
+		else:
+			cmd = "CG"
 
-	new_card = frappe.new_doc('Inn Key Card')
-	new_card.card_number = tesa_checkin(cmd, room, expiryDate)
-	if new_card.card_number == "E2" or new_card.card_number == "ED":
-		return 'ERROR'
-	else:
-		new_card.room_id = doc.actual_room_id
-		new_card.issue_date = datetime.today()
-		new_card.expired_date = doc.departure
-		new_card.parent = doc.name
-		new_card.parentfield = 'issued_card'
-		new_card.parenttype = 'Inn Reservation'
-		new_card.insert()
+		new_card = frappe.new_doc('Inn Key Card')
+		new_card.card_number = tesa_checkin(cmd, room, expiryDate)
+		if new_card.card_number == "E2" or new_card.card_number == "ED":
+			return 'ERROR'
+		else:
+			new_card.room_id = doc.actual_room_id
+			new_card.issue_date = datetime.today()
+			new_card.expired_date = doc.departure
+			new_card.parent = doc.name
+			new_card.parentfield = 'issued_card'
+			new_card.parenttype = 'Inn Reservation'
+			new_card.insert()
 
-		return new_card.card_number
+			return new_card.card_number
+	elif door_lock_provider == 'DOWS':
+		doc = frappe.get_doc('Inn Reservation', reservation_id)
+		room = doc.actual_room_id
+		expiryDate = datetime.strftime(doc.departure, "%Y-%m-%d")
+
+		new_card = frappe.new_doc('Inn Key Card')
+		new_card.card_number = dows_checkin("01", room, expiryDate)
+		if new_card.card_number is None:
+			return 'ERROR'
+		else:
+			new_card.room_id = doc.actual_room_id
+			new_card.issue_date = datetime.today()
+			new_card.expired_date = doc.departure
+			new_card.parent = doc.name
+			new_card.parentfield = 'issued_card'
+			new_card.parenttype = 'Inn Reservation'
+			new_card.insert()
+
+			return new_card.card_number
 
 @frappe.whitelist()
 def erase_card(flag, card_name):
@@ -162,6 +183,29 @@ def tesa_verify(track):
 			return returned
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
+
+def dows_checkin(building, room_id, expiry_date):
+	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/checkin'
+	params = {
+		"building": building,
+		"room": room_id.replace('R-', '').zfill(4),
+		"door": "00",
+		"arrival": datetime.today().strftime("%Y-%m-%d") + " 12:00:00",
+		"departure": expiry_date + " 12:00:00",
+	}
+	if api_checkin_url is not None:
+		headers = {"Content-Type": "application/json"}
+		r = requests.post(api_checkin_url, json=params, headers=headers)
+		if r:
+			returned = json.loads(r.text)
+			return returned['cardNo']
+		else:
+			frappe.msgprint("Card Reader failed to return meaningful message.")
+
+def dows_verifiy():
+	pass
+def dows_erase():
+	pass
 
 @frappe.whitelist()
 def test_api(option):
