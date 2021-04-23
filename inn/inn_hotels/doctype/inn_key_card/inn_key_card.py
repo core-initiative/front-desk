@@ -72,25 +72,39 @@ def issue_card(reservation_id):
 
 @frappe.whitelist()
 def erase_card(flag, card_name):
+	door_lock_provider = frappe.db.get_single_value('Inn Hotels Setting', 'door_lock_api_provider')
+	if door_lock_provider == 'TESA':
+		doc = frappe.get_doc('Inn Key Card', card_name)
+		room = doc.room_id
+		expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%d/%m/%Y')
 
-	doc = frappe.get_doc('Inn Key Card', card_name)
-	room = doc.room_id
-	expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%d/%m/%Y')
-
-	if flag == 'with':
-		card_number_returned = tesa_erase()
-		if card_number_returned == doc.card_number:
+		if flag == 'with':
+			card_number_returned = tesa_erase()
+			if card_number_returned == doc.card_number:
+				doc.expired_date = datetime.today() - timedelta(1)
+				doc.is_active = 0
+				doc.save()
+				return doc.is_active
+			elif card_number_returned == "E2" or card_number_returned == "ED":
+				return 'ERROR'
+		elif flag == 'without':
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
 			doc.save()
 			return doc.is_active
-		elif card_number_returned == "E2" or card_number_returned == "ED":
-			return 'ERROR'
-	elif flag == 'without':
-		doc.expired_date = datetime.today() - timedelta(1)
-		doc.is_active = 0
-		doc.save()
-		return doc.is_active
+	elif door_lock_provider == 'DOWS':
+		doc = frappe.get_doc('Inn Key Card', card_name)
+		room = doc.room_id
+		expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%Y/%m/%d %H:%M:%S')
+
+		if flag == 'with':
+			card_number_returned = dows_erase()
+			# tunggu
+		elif flag == 'without':
+			doc.expired_date = datetime.today() - timedelta(1)
+			doc.is_active = 0
+			doc.save()
+			return doc.is_active
 
 def tesa_erase():
 	# api-endpoint
@@ -120,6 +134,7 @@ def tesa_erase():
 			msg_hex = returned['rawMsgHex']
 			data = msg_hex.split("B3")
 			card_number = bytearray.fromhex(data[-2]).decode()
+			r.close()
 			return card_number
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
@@ -152,6 +167,7 @@ def tesa_checkin(cmd, room_id, expiry_date):
 			msg_hex = returned['rawMsgHex']
 			data = msg_hex.split("B3")
 			card_number = bytearray.fromhex(data[-2]).decode()
+			r.close()
 			return card_number
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
@@ -180,6 +196,7 @@ def tesa_verify(track):
 
 		if r:
 			returned = json.loads(r.text)
+			r.close()
 			return returned
 	else:
 		frappe.msgprint("Card API url not defined yet. Define the URL in Inn Hotel Setting")
@@ -198,12 +215,22 @@ def dows_checkin(building, room_id, expiry_date):
 		r = requests.post(api_checkin_url, json=params, headers=headers)
 		if r:
 			returned = json.loads(r.text)
+			r.close()
 			return returned['cardNo']
 		else:
 			frappe.msgprint("Card Reader failed to return meaningful message.")
 
-def dows_verifiy():
-	pass
+
+def dows_verify():
+	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/verify'
+	if api_checkin_url is not None:
+		headers = {"Content-Type": "application/json"}
+		r = requests.get(api_checkin_url, headers= headers)
+		if r:
+			returned = json.loads(r.text)
+			r.close()
+			return returned
+
 def dows_erase():
 	pass
 
@@ -236,10 +263,16 @@ def test_api(option):
 
 @frappe.whitelist()
 def verify_card(track):
-	returned = tesa_verify(track)
-	frappe.msgprint("User = " + returned['user'])
-	frappe.msgprint("Expiry Date = " + returned['expiryDate'])
-	frappe.msgprint("Expiry Time = " + returned['expiryTime'])
+	door_lock_provider = frappe.db.get_single_value('Inn Hotels Setting', 'door_lock_api_provider')
+	if door_lock_provider == 'TESA':
+		returned = tesa_verify(track)
+		frappe.msgprint("User = " + returned['user'])
+		frappe.msgprint("Expiry Date = " + returned['expiryDate'])
+		frappe.msgprint("Expiry Time = " + returned['expiryTime'])
+	elif door_lock_provider == 'DOWS':
+		returned = dows_verify()
+		frappe.msgprint("Room = R-" + returned['room'].lstrip("0"))
+		frappe.msgprint("Expiry Date = " + returned['departure'])
 
 def tesa_check_in(cmd, room, activationDate, activationTime, expiryDate, expiryTime,
 				  pcId="", technology="P", encoder="1",  cardOperation="EF", grant=None, keypad=None, operator=None,
