@@ -211,8 +211,14 @@ def dows_checkin(building, room_id, expiry_date):
 		"departure": expiry_date + " 12:00:00",
 	}
 	if api_checkin_url is not None:
+		s = requests.Session()
 		headers = {"Content-Type": "application/json"}
-		r = requests.post(api_checkin_url, json=params, headers=headers)
+		req = requests.Request('POST', api_checkin_url, json=params, headers=headers)
+		prepped = s.prepare_request(req)
+		del prepped.headers['Connection']
+		del prepped.headers['Accept-Encoding']
+		del prepped.headers['Accept']
+		r = s.send(prepped)
 		if r:
 			returned = json.loads(r.text)
 			r.close()
@@ -224,8 +230,15 @@ def dows_checkin(building, room_id, expiry_date):
 def dows_verify():
 	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/verify'
 	if api_checkin_url is not None:
-		headers = {"Content-Type": "application/json"}
-		r = requests.get(api_checkin_url, headers= headers)
+		s = requests.Session()
+		req = requests.Request('GET', api_checkin_url)
+		prepped = s.prepare_request(req)
+
+		del prepped.headers['Connection']
+		del prepped.headers['Accept-Encoding']
+		del prepped.headers['Accept']
+
+		r = s.send(prepped)
 		if r:
 			returned = json.loads(r.text)
 			r.close()
