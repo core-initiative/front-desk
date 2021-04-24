@@ -97,8 +97,8 @@ def erase_card(flag, card_name):
 		room = doc.room_id
 
 		if flag == 'with':
-			card_number_returned = dows_erase(room)
-			if card_number_returned == doc.card_number:
+			message_erase = dows_erase(room)
+			if message_erase is not None:
 				doc.is_active = 0
 				doc.save()
 				return doc.is_active
@@ -226,7 +226,7 @@ def dows_checkin(building, room_id, expiry_date):
 			r.close()
 			return returned['cardNo']
 		else:
-			frappe.msgprint("Card Reader failed to return meaningful message.")
+			frappe.msgprint("Error. Fail to Connect to CardEncoder. Please wait a moment and try again.")
 
 
 def dows_verify():
