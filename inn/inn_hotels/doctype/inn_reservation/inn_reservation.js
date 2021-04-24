@@ -19,6 +19,7 @@ frappe.ui.form.on('Inn Reservation', {
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal === 1) {
 			console.log("notsaved");
+			frm.set_value('status', 'Reserved');
 			frm.set_df_property('init_actual_room_rate', 'hidden', 0);
 			frm.set_df_property('arrival', 'hidden', 1);
 			frm.set_df_property('departure', 'hidden', 1);
