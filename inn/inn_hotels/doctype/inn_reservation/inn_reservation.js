@@ -700,7 +700,7 @@ function autofill(frm) {
 	let expected_arrival = new Date(frm.doc.expected_arrival);
 	let expected_departure = new Date(frm.doc.expected_departure);
 	expected_arrival.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-	expected_departure.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+	expected_departure.setHours(12, 0, 0);
 	if (frm.doc.guest_name === undefined || frm.doc.guest_name == null || frm.doc.guest_name === '') {
 		frm.set_value('guest_name', frm.doc.customer_id);
 	}
