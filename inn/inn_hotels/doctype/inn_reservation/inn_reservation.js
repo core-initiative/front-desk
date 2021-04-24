@@ -373,7 +373,7 @@ frappe.ui.form.on('Inn Reservation', {
 					let date_arrival = new Date(frm.doc.arrival);
 					let date_departure = new Date(frm.doc.departure);
 					let default_departure = new Date(frm.doc.expected_departure);
-					default_departure.setHours(date_arrival.getHours(), date_arrival.getMinutes(), date_arrival.getSeconds());
+					default_departure.setHours(12,00,00);
 
 					if (frm.doc.departure < r.message) {
 						frm.set_value('departure', default_departure);
@@ -401,8 +401,8 @@ frappe.ui.form.on('Inn Reservation', {
 										method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_name_within_date_range',
 										args: {
 											room_id: frm.doc.actual_room_id,
-											start: frm.doc.arrival,
-											end: frm.doc.departure,
+											start: formatDate(frm.doc.arrival),
+											end: formatDate(frm.doc.departure),
 										},
 										callback: (resp) => {
 											console.log("resp = " + resp.message);
