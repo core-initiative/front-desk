@@ -373,7 +373,7 @@ frappe.ui.form.on('Inn Reservation', {
 					let date_arrival = new Date(frm.doc.arrival);
 					let date_departure = new Date(frm.doc.departure);
 					let default_departure = new Date(frm.doc.expected_departure);
-					default_departure.setHours(12,00,00);
+					default_departure.setHours(12,0,0);
 
 					if (frm.doc.departure < r.message) {
 						frm.set_value('departure', default_departure);
