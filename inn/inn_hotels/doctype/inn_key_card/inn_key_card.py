@@ -95,11 +95,13 @@ def erase_card(flag, card_name):
 	elif door_lock_provider == 'DOWS':
 		doc = frappe.get_doc('Inn Key Card', card_name)
 		room = doc.room_id
-		expiryDate = datetime.strftime(datetime.today() - timedelta(1), '%Y/%m/%d %H:%M:%S')
 
 		if flag == 'with':
-			card_number_returned = dows_erase()
-			# tunggu
+			card_number_returned = dows_erase(room)
+			if card_number_returned == doc.card_number:
+				doc.is_active = 0
+				doc.save()
+				return doc.is_active
 		elif flag == 'without':
 			doc.expired_date = datetime.today() - timedelta(1)
 			doc.is_active = 0
@@ -244,8 +246,23 @@ def dows_verify():
 			r.close()
 			return returned
 
-def dows_erase():
-	pass
+def dows_erase(room_id):
+	api_checkin_url = frappe.db.get_single_value('Inn Hotels Setting', 'card_api_url') + '/erase/' + room_id.replace('R-', '').zfill(4)
+	if api_checkin_url is not None:
+		s = requests.Session()
+		req = requests.Request('DELETE', api_checkin_url)
+		prepped = s.prepare_request(req)
+
+		del prepped.headers['Connection']
+		del prepped.headers['Accept-Encoding']
+		del prepped.headers['Accept']
+
+		r = s.send(prepped)
+		if r:
+			returned = json.loads(r.text)
+			r.close()
+			return returned['cardNo']
+
 
 @frappe.whitelist()
 def test_api(option):
