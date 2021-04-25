@@ -29,7 +29,8 @@ def is_exist_card_number(card_number):
 		return False
 
 @frappe.whitelist()
-def get_new_card_data(years_to_expire):
+def get_new_card_data():
+	years_to_expire = frappe.db.get_single_value('Inn Hotels Setting', 'years_to_expire')
 	# Generate new unique card_number
 	while True:
 		new_card = generate_card_number()
@@ -44,7 +45,7 @@ def generate_bulk_cards(amount):
 	list = []
 	for x in range(0, int(amount)):
 		new_doc = frappe.new_doc('Inn Membership Card')
-		new_card, expiry = get_new_card_data(2)
+		new_card, expiry = get_new_card_data()
 		new_doc.card_number = new_card
 		new_doc.expiry_date = expiry
 		new_doc.insert()
@@ -58,3 +59,8 @@ def check_card(query):
 		return 'Membership found with type ' + card.type + ' and expiry date of ' + card.expiry_date.strftime('%d-%m-%Y')
 	else:
 		return 'Card with number ' + query + ' not found in System.'
+
+
+@frappe.whitelist()
+def get_years_to_expire():
+	return frappe.db.get_single_value('Inn Hotels Setting', 'years_to_expire')

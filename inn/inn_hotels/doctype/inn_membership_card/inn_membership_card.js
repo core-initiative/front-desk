@@ -7,14 +7,6 @@ frappe.ui.form.on('Inn Membership Card', {
 	},
 	refresh: function(frm) {
 		generate_card(frm);
-	},
-	test: function () {
-		frappe.call({
-			method:'inn.inn_hotels.doctype.inn_membership_card.inn_membership_card.get_new_card_number',
-			callback: (r) => {
-				console.log(r.message);
-			}
-		})
 	}
 });
 
@@ -23,9 +15,6 @@ function generate_card(frm) {
 	if (frm.doc.__islocal == 1) {
 		frappe.call({
 			method:'inn.inn_hotels.doctype.inn_membership_card.inn_membership_card.get_new_card_data',
-			args: {
-				years_to_expire: 2
-			},
 			callback: (r) => {
 				frm.set_value('card_number', r.message[0]);
 				frm.set_value('expiry_date', r.message[1]);
