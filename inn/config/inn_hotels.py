@@ -31,6 +31,11 @@ def get_data():
 					"type": "doctype",
 					"name": "Inn Void Folio Transaction",
 					"description": _("List of Request to Void an Inn Folio Transaction for Inn Hotels")
+				},
+				{
+					"type": "doctype",
+					"name": "Inn Membership Card",
+					"description": _("Manage Membership of Hotel")
 				}
 			]
 		},
