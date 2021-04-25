@@ -1222,6 +1222,7 @@ function calculate_nights(arrival, departure) {
 	let diff = date_departure.getTime() - date_arrival.getTime();
 	return  diff / (1000*3600*24);
 }
+
 // Function to show pop up Dialog for checking validity of membership cards
 function check_membership_cards() {
 	let fields = [
