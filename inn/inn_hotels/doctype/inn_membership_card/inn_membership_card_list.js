@@ -1,6 +1,6 @@
 frappe.listview_settings['Inn Membership Card'] = {
     onload: function (listview) {
-        listview.page.add_menu_item(__('Generate'), function() {
+        listview.page.add_menu_item(__('Create Multiple'), function() {
             generate_card();
         });
     }
@@ -16,7 +16,7 @@ function generate_card() {
         },
     ];
     var d = new frappe.ui.Dialog({
-        title: __('Generate Bulk Cards'),
+        title: __('Create Multiple Membership Cards'),
         fields: fields,
     });
     d.set_primary_action(__('Generate'), ()=> {
@@ -27,7 +27,8 @@ function generate_card() {
            } ,
             callback: (r) => {
                if (r.message) {
-                   frappe.msgprint('New Membership Cards Generated. ' + r.message + '<br />. Please Reload the Page to update the list');
+                   frappe.set_route("List", "Inn Membership Card",{"":""});
+                   frappe.msgprint( d.get_values().card_amount + ' of  New Membership Cards Generated.');
                }
             }
         });
