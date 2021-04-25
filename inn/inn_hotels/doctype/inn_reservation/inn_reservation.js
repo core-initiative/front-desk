@@ -18,6 +18,9 @@ frappe.ui.form.on('Inn Reservation', {
 		console.log("is error = " + is_error);
 		// Hide some variables that not needed to be filled first time Reservation Created
 		if (frm.doc.__islocal === 1) {
+			frm.add_custom_button(__('Check Membership Card'), function () {
+				check_membership_cards();
+			});
 			console.log("notsaved");
 			frm.set_value('status', 'Reserved');
 			frm.set_df_property('init_actual_room_rate', 'hidden', 0);
@@ -1218,4 +1221,34 @@ function calculate_nights(arrival, departure) {
 	let date_departure = new Date(departure);
 	let diff = date_departure.getTime() - date_arrival.getTime();
 	return  diff / (1000*3600*24);
+}
+// Function to show pop up Dialog for checking validity of membership cards
+function check_membership_cards() {
+	let fields = [
+		{
+			'label': __('Card Number'),
+			'fieldname': 'card_number',
+			'fieldtype': 'Data',
+			'reqd': 1
+		},
+	];
+	var d = new frappe.ui.Dialog({
+		title: __('Check Membership Card'),
+		fields: fields,
+	});
+	d.set_primary_action(__('Check'), ()=> {
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_membership_card.inn_membership_card.check_card',
+			args: {
+				query: d.get_values().card_number
+			},
+			callback: (r) => {
+				if (r.message) {
+					frappe.msgprint(r.message);
+				}
+			}
+		});
+		d.hide();
+	});
+	d.show();
 }
