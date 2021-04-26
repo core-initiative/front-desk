@@ -18,6 +18,7 @@ function generate_card(frm) {
 			callback: (r) => {
 				frm.set_value('card_number', r.message[0]);
 				frm.set_value('expiry_date', r.message[1]);
+				frm.set_value('location_created', r.message[2]);
 			}
 		});
 	}

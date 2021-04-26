@@ -38,16 +38,18 @@ def get_new_card_data():
 			break
 	# Generate expiry date
 	expiry = datetime.date.today() + relativedelta(years=int(years_to_expire))
-	return new_card, expiry
+	location_created = frappe.get_doc('Global Defaults').default_company
+	return new_card, expiry, location_created
 
 @frappe.whitelist()
 def generate_bulk_cards(amount):
 	list = []
 	for x in range(0, int(amount)):
 		new_doc = frappe.new_doc('Inn Membership Card')
-		new_card, expiry = get_new_card_data()
+		new_card, expiry, location_created = get_new_card_data()
 		new_doc.card_number = new_card
 		new_doc.expiry_date = expiry
+		new_doc.location_created = location_created
 		new_doc.insert()
 		list.append(new_doc.name)
 	return list
