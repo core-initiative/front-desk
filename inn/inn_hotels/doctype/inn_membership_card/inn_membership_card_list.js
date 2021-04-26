@@ -1,7 +1,9 @@
 frappe.listview_settings['Inn Membership Card'] = {
     onload: function (listview) {
         listview.page.add_menu_item(__('Create Multiple'), function() {
-            generate_card();
+            if (frappe.user.has_role('Administrator')) {
+                generate_card();
+            }
         });
         listview.page.add_menu_item(__('Check Membership Card'), function() {
             check_membership_cards();
