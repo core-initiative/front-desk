@@ -152,7 +152,7 @@ def tesa_checkin(cmd, room_id, expiry_date):
 		"activationDate": datetime.today().strftime("%d/%m/%Y"),
 		"activationTime": "12:00",
 		"expiryDate": expiry_date,
-		"expiryTime": "12:00",
+		"expiryTime": "14:00",
 		"returnCardId": "1"
 	}
 
@@ -210,7 +210,7 @@ def dows_checkin(building, room_id, expiry_date):
 		"room": room_id.replace('R-', '').zfill(4),
 		"door": "00",
 		"arrival": datetime.today().strftime("%Y-%m-%d") + " 12:00:00",
-		"departure": expiry_date + " 12:00:00",
+		"departure": expiry_date + " 14:00:00",
 	}
 	if api_checkin_url is not None:
 		s = requests.Session()
