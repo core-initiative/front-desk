@@ -42,13 +42,14 @@ def get_new_card_data():
 	return new_card, expiry, location_created
 
 @frappe.whitelist()
-def generate_bulk_cards(amount):
+def generate_bulk_cards(amount, card_type):
 	list = []
 	for x in range(0, int(amount)):
 		new_doc = frappe.new_doc('Inn Membership Card')
 		new_card, expiry, location_created = get_new_card_data()
 		new_doc.card_number = new_card
 		new_doc.expiry_date = expiry
+		new_doc.type = card_type
 		new_doc.location_created = location_created
 		new_doc.insert()
 		list.append(new_doc.name)

@@ -32,7 +32,7 @@ function generate_card() {
                     'label': __('Type'),
                     'fieldname': 'card_type',
                     'fieldtype': 'Select',
-                    'options': [{'label': __('Platinum'), 'value': 'Platinum'}],
+                    'options': [{'label': __('Platinum'), 'value': 'Platinum'}, {'label': __('Ultimate'), 'value': 'Ultimate'}],
                     'reqd':1
                },
            ];
@@ -44,7 +44,8 @@ function generate_card() {
                frappe.call({
                   method: 'inn.inn_hotels.doctype.inn_membership_card.inn_membership_card.generate_bulk_cards',
                   args: {
-                      amount: d.get_values().card_amount
+                      amount: d.get_values().card_amount,
+                      card_type: d.get_values().card_type
                   } ,
                    callback: (r) => {
                       if (r.message) {
