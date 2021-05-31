@@ -1220,7 +1220,11 @@ function calculate_nights(arrival, departure) {
 	let date_arrival = new Date(arrival);
 	let date_departure = new Date(departure);
 	let diff = date_departure.getTime() - date_arrival.getTime();
-	return  Math.ceil(diff / (1000*3600*24));
+	let days = diff / (1000*3600*24);
+	if (days < 1) {
+		days = 1;
+	}
+	return  days;
 }
 
 // Function to show pop up Dialog for checking validity of membership cards
