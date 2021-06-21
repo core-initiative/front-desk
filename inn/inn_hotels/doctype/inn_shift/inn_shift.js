@@ -42,6 +42,7 @@ frappe.ui.form.on('Inn Shift', {
 		}
 		else {
 			if (frm.doc.status === 'Open') {
+				frm.set_df_property('opening', 'read_only', 1);
 				populate_payment_refund(frm, frm.doc.name);
 			}
 			else {
@@ -84,6 +85,32 @@ frappe.ui.form.on('Inn Shift', {
 			}
 		}
 	},
+	opening: function (frm) {
+		frappe.call({
+			method: "inn.inn_hotels.doctype.inn_shift.inn_shift.get_max_opening_cash",
+			callback: (r) => {
+				if (r.message) {
+					// Max Opening Cash == 0 means no Max
+					if (parseInt(r.message) == 0) {
+						frm.set_value('total_cash_count', calculate_total_cash_count(frm));
+					}
+					// Opening is over the max opening allowed
+					else if ( frm.doc.opening > parseFloat(r.message)) {
+						frappe.msgprint("Maximum Opening Cash Allowed is below " + format_currency(r.message, 'IDR') );
+						frm.set_value('opening', 0);
+					}
+					// Opening is not over the max opening allowed
+					else {
+						frm.set_value('total_cash_count', calculate_total_cash_count(frm));
+					}
+				}
+				else {
+					frappe.msgprint("Error getting Max Opening Cash Value in Inn Hotels Setting. Please define it First.")
+				}
+			}
+		});
+
+	},
 	reset_cash_count: function (frm) {
 		let cash_count = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000];
 		frm.set_value('cc_detail', []);
@@ -94,7 +121,7 @@ frappe.ui.form.on('Inn Shift', {
 			item.amount = 0;
 		}
 		frm.set_value('total_cash_qty', 0);
-		frm.set_value('total_cash_count', 0);
+		frm.set_value('total_cash_count', (0 + frm.doc.opening));
 		frm.refresh_field('cc_detail');
 	},
 	close_shift_button: function (frm) {
@@ -125,20 +152,14 @@ frappe.ui.form.on('Inn CC Detail',{
 		child.amount = child.nominal*child.qty;
 		frm.refresh_field('cc_detail');
 
-		let cc_detail_list = frm.doc.cc_detail;
-		total_cash_count = 0;
-		total_cash_qty = 0;
-		for (var i = 0; i < cc_detail_list.length; i++) {
-			total_cash_count += cc_detail_list[i].amount;
-			total_cash_qty += parseInt(cc_detail_list[i].qty, 10);
-		}
-		frm.set_value('total_cash_count', total_cash_count);
-		frm.set_value('total_cash_qty', total_cash_qty);
+		frm.set_value('total_cash_count', calculate_total_cash_count(frm));
+		frm.set_value('total_cash_qty', calculate_total_cash_qty(frm));
 	}
 });
 
 function set_all_read_only() {
 	cur_frm.set_df_property('close_shift_button', 'hidden', 1);
+	cur_frm.set_df_property('customer_id', 'read_only', 1);
 	cur_frm.get_field("cc_detail").grid.only_sortable();
 	cur_frm.get_field("payment_detail").grid.only_sortable();
 	cur_frm.get_field("refund_detail").grid.only_sortable();
@@ -220,10 +241,33 @@ function populate_payment_refund(frm, shift_id) {
 						console.log(r_refund.message);
 						frm.refresh_field('refund_detail');
 					}
-					frm.set_value('balance', total_payment - total_refund);
-					frm.set_value('cash_balance', total_cash_payment - total_refund);
+					frm.set_value('balance', frm.doc.opening + total_payment - total_refund);
+					frm.set_value('cash_balance', frm.doc.opening + total_cash_payment - total_refund);
 				}
 			});
 		}
 	});
+}
+
+function calculate_total_cash_count(frm) {
+	let cc_detail_list = frm.doc.cc_detail;
+	if (!!frm.doc.opening) {
+		total_cash_count = frm.doc.opening;
+	}
+	else {
+		total_cash_count = 0;
+	}
+	for (var i = 0; i < cc_detail_list.length; i++) {
+		total_cash_count += cc_detail_list[i].amount;
+	}
+	return total_cash_count;
+}
+
+function calculate_total_cash_qty(frm) {
+	let cc_detail_list = frm.doc.cc_detail;
+	total_cash_qty = 0;
+	for (var i = 0; i < cc_detail_list.length; i++) {
+		total_cash_qty += parseInt(cc_detail_list[i].qty, 10);
+	}
+	return total_cash_qty;
 }
