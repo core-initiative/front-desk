@@ -487,3 +487,7 @@ def close_shift(shift_id):
 		return True
 	else:
 		return False
+
+@frappe.whitelist()
+def get_max_opening_cash():
+	return frappe.db.get_single_value('Inn Hotels Setting', 'max_opening')
