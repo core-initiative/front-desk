@@ -412,7 +412,7 @@
    "report_hide": 0,
    "reqd": 0,
    "search_index": 0,
-   "set_only_once": 0,
+   "set_only_once": 1,
    "translatable": 0,
    "unique": 0
   },
@@ -1187,7 +1187,7 @@
  "issingle": 0,
  "istable": 0,
  "max_attachments": 0,
- "modified": "2021-06-21 10:34:59.409228",
+ "modified": "2021-06-23 17:43:01.346907",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Shift",
