@@ -1219,11 +1219,14 @@ function calculate_nights(arrival, departure) {
 	console.log("calculate_nights called");
 	let date_arrival = new Date(arrival);
 	let date_departure = new Date(departure);
+	let normalized_arrival = date_arrival.setHours(0,0,0,0);
+	let normalize_departure = date_departure.setHours(0,0,0,0);
 	let diff = date_departure.getTime() - date_arrival.getTime();
-	let days = diff / (1000*3600*24);
+	let days = diff / 86400000;
 	if (days < 1) {
 		days = 1;
 	}
+	console.log("total nights calculated = " + days);
 	return  days;
 }
 
