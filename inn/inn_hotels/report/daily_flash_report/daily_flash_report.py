@@ -224,7 +224,7 @@ def get_data(filters):
 		keys = ['4210.001', 
 			'4110.001', '4120.001', '4120.002', 
 			'4140.001', '4140.002', 
-			'4150.001', '4150.002', '4150.003', '4150.004',
+			'4150.001', '4150.002', '4150.003', '4150.004', '4150.006',
 			'2141.000', '2110.004']
 
 		for key in keys:
@@ -236,7 +236,7 @@ def get_data(filters):
 			if account == '4210.001' or \
 				account == '4110.001' or account == '4120.001' or account == '4120.002' or \
 				account == '4140.001' or account == '4140.002' or \
-				account == '4150.001' or account == '4150.002' or account == '4150.003' or account == '4150.004' or \
+				account == '4150.001' or account == '4150.002' or account == '4150.003' or account == '4150.004' or account == '4150.006' or \
 				account == '2141.000' or account == '2110.004':
 					
 				revenue[account]['year_to_date'] = revenue[account]['year_to_date'] + ge.credit - ge.debit
@@ -361,9 +361,11 @@ def get_data(filters):
 			elif key == '4150.002':
 				title = 'Banquet Dinner'
 			elif key == '4150.003':
-				title = 'Banquet Coffe Break'
+				title = 'Banquet Coffee Break'
 			elif key == '4150.004':
 				title = 'Banquet Meeting'
+			elif key == '4150.006':
+				title = 'Banquet Wedding'
 			elif key == '2141.000':
 				data.append({
 					'statistic': 'Total Revenue', 
