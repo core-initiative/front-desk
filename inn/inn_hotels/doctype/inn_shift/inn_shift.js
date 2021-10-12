@@ -99,10 +99,6 @@ frappe.ui.form.on('Inn Shift', {
 						frappe.msgprint("Maximum Opening Cash Allowed is below " + format_currency(r.message, 'IDR') );
 						frm.set_value('opening', 0);
 					}
-					// Opening is not over the max opening allowed
-					else {
-						frm.set_value('total_cash_count', calculate_total_cash_count(frm));
-					}
 				}
 				else {
 					frappe.msgprint("Error getting Max Opening Cash Value in Inn Hotels Setting. Please define it First.")
@@ -121,7 +117,7 @@ frappe.ui.form.on('Inn Shift', {
 			item.amount = 0;
 		}
 		frm.set_value('total_cash_qty', 0);
-		frm.set_value('total_cash_count', (0 + frm.doc.opening));
+		frm.set_value('total_cash_count', 0);
 		frm.refresh_field('cc_detail');
 	},
 	close_shift_button: function (frm) {
@@ -251,12 +247,7 @@ function populate_payment_refund(frm, shift_id) {
 
 function calculate_total_cash_count(frm) {
 	let cc_detail_list = frm.doc.cc_detail;
-	if (!!frm.doc.opening) {
-		total_cash_count = frm.doc.opening;
-	}
-	else {
-		total_cash_count = 0;
-	}
+	total_cash_count = 0;
 	for (var i = 0; i < cc_detail_list.length; i++) {
 		total_cash_count += cc_detail_list[i].amount;
 	}
