@@ -32,6 +32,7 @@ def update_close_by_reservation(reservation_id):
 	# Update except status finish, because when Checking Out, Close is handled by close_folio function
 	if reservation.status != 'Finish':
 		for item in folio_list:
+			print("update_close_by_reservation folio: " + item.name)
 			doc_folio = frappe.get_doc('Inn Folio', item.name)
 			doc_folio.close = reservation.departure.strftime('%Y-%m-%d')
 			doc_folio.save()
