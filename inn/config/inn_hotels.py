@@ -79,6 +79,11 @@ def get_data():
 				},
 				{
 					"type": "doctype",
+					"name": "Inn Room Type Availability Page",
+					"description": _("Room Type Availability for Inn Hotels")
+				},
+				{
+					"type": "doctype",
 					"name": "Inn Floor Plan",
 					"description": _("Floor Plan for Inn Hotels")
 				},
