@@ -8,3 +8,8 @@ from frappe.model.document import Document
 
 class InnRoomType(Document):
 	pass
+
+@frappe.whitelist()
+def get_all_room_type():
+	list = frappe.get_all('Inn Room Type', fields=['name'])
+	return list
