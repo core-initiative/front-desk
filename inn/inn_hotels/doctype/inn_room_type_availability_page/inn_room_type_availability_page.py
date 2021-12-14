@@ -10,6 +10,9 @@ class InnRoomTypeAvailabilityPage(Document):
 	pass
 @frappe.whitelist()
 def get_room_type_availability(room_type, date):
+	print("INI DATE")
+	print(date)
+
 	default_availability = frappe.db.sql(
 		'SELECT count(`name`) '
 		'FROM `tabInn Room` '
@@ -24,8 +27,9 @@ def get_room_type_availability(room_type, date):
 		'on `tabInn Room Booking`.room_id = `tabInn Room`.name '
 		'WHERE room_type = %s '
 		'AND %s >= start '
-		'AND %s < end',
-		(room_type, date, date))
+		'AND %s < end '
+		'AND `tabInn Room Booking`.status in (%s, %s) ',
+		(room_type, date, date, 'Booked', 'Stayed'))
 
 
 	if len(default_availability) > 0:

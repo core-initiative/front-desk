@@ -93,7 +93,7 @@ function search(doc) {
 						})
 					}
 
-					function get_room_type_availability(start, fun) {
+					function get_room_type_availability(date, fun) {
 
 						frappe.call({
 							method: 'inn.inn_hotels.doctype.inn_room_type_availability_page.inn_room_type_availability_page.get_room_type_availability',
@@ -102,6 +102,7 @@ function search(doc) {
 								date: formatDate(date)
 							},
 							callback: (resp)=>{
+								console.log(resp.message)
 								var td = document.createElement('td');
 								td.className = 'grid-static-col';
 								td.innerHTML = parseInt(resp.message[0])-parseInt(resp.message[1]);
