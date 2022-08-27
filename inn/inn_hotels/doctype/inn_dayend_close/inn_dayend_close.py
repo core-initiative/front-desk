@@ -29,6 +29,7 @@ def process_dayend_close(doc_id):
 		need_resolve_list = check_void_request(item.name)
 		if len(need_resolve_list) > 0:
 			need_resolve_flag = True
+			break
 
 	if need_resolve_flag:
 		return "There are transaction requested to be voided not yet responded. Please resolve the request first."
@@ -195,11 +196,11 @@ def process_dayend_close(doc_id):
 				bev_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Beverages').credit_account
 				create_journal_entry(bev_title, bev_remark, bev_debit_account, bev_credit_account, restaurant_beverage)
 			if restaurant_other > 0:
-				print("entry restaurant other")
-				other_title = 'Restaurant Other of ' + order.name
-				other_remark = 'Restaurant Other Charges from Restaurant Order: ' + order.name
-				other_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Other').debit_account
-				other_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Other').credit_account
+				print("entry Other Restaurant")
+				other_title = 'Other Restaurant of ' + order.name
+				other_remark = 'Other Restaurant Charges from Restaurant Order: ' + order.name
+				other_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Other Restaurant').debit_account
+				other_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Other Restaurant').credit_account
 				create_journal_entry(other_title, other_remark, other_debit_account, other_credit_account, restaurant_other)
 
 			# Create Journal Entry for Round Off Charges
