@@ -10,6 +10,7 @@ from frappe.model.document import Document
 class InnPaymentwithSettlement(Document):
 	pass
 
+@frappe.whitelist()
 def get_all_mode_of_payment_settlement():
 	payment_list = frappe.get_all('Inn Settlement Settings', fields=['*'])
 	if payment_list is not None:

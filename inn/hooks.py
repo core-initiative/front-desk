@@ -132,9 +132,9 @@ scheduler_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "inn.event.get_events"
 # }
 
-jenv = {
+jinja = {
 	"methods": [
-		"get_total_deposit:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_total_deposit",
-		"get_date:inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date"
+		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_total_deposit",
+		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date"
 	]
 }
