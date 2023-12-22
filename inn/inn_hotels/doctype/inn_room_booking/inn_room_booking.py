@@ -18,8 +18,10 @@ def update_by_reservation(reservation_id):
 	return_message = ''
 	reservation_doc = frappe.get_doc('Inn Reservation', reservation_id)
 
-	# Update Folio Close if Reservation get Updated
-	update_close_by_reservation(reservation_id)
+	# handle error when creating reservation
+	if reservation_doc.status != "Reserved":
+		# Update Folio Close if Reservation get Updated
+		update_close_by_reservation(reservation_id)
 
 	if reservation_doc.status == 'Cancel':
 		# If Reservation Canceled, set the Room Booking Status to Canceled
