@@ -9,6 +9,7 @@ import datetime
 from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
 from inn.inn_hotels.doctype.inn_folio.inn_folio import check_void_request
+from inn.inn_hotels.doctype.inn_dayend_close.inn_dayend_close_helper import _fill_party_account
 
 class InnDayendClose(Document):
 	pass
@@ -70,16 +71,14 @@ def process_dayend_close(doc_id):
 					doc_jea_debit.account = trx.debit_account
 					doc_jea_debit.debit = trx.amount
 					doc_jea_debit.debit_in_account_currency = trx.amount
-					doc_jea_debit.party_type = 'Customer'
-					doc_jea_debit.party = customer_name
+					doc_jea_debit.party_type, doc_jea_debit.party = _fill_party_account(doc_jea_debit.account, customer_name)
 					doc_jea_debit.user_remark = remark
 
 					doc_jea_credit = frappe.new_doc('Journal Entry Account')
 					doc_jea_credit.account = trx.credit_account
 					doc_jea_credit.credit = trx.amount
 					doc_jea_credit.credit_in_account_currency = trx.amount
-					doc_jea_credit.party_type = 'Customer'
-					doc_jea_credit.party = customer_name
+					doc_jea_credit.party_type, doc_jea_credit.party = _fill_party_account(doc_jea_credit.account, customer_name)
 					doc_jea_credit.user_remark = remark
 
 					doc_je.append('accounts', doc_jea_debit)
@@ -325,16 +324,14 @@ def create_journal_entry(title, remark, debit_account, credit_account, amount):
 	doc_jea_debit.account = debit_account
 	doc_jea_debit.debit = amount
 	doc_jea_debit.debit_in_account_currency = amount
-	doc_jea_debit.party_type = 'Customer'
-	doc_jea_debit.party = customer_name
+	doc_jea_debit.party_type, doc_jea_debit.party = _fill_party_account(doc_jea_debit.account, customer_name)
 	doc_jea_debit.user_remark = remark
 
 	doc_jea_credit = frappe.new_doc('Journal Entry Account')
 	doc_jea_credit.account = credit_account
 	doc_jea_credit.credit = amount
 	doc_jea_credit.credit_in_account_currency = amount
-	doc_jea_credit.party_type = 'Customer'
-	doc_jea_credit.party = customer_name
+	doc_jea_credit.party_type, doc_jea_credit.party = _fill_party_account(doc_jea_credit.account, customer_name)
 	doc_jea_credit.user_remark = remark
 
 	doc_je.append('accounts', doc_jea_debit)
