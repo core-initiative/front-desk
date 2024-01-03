@@ -30,7 +30,7 @@ frappe.ui.form.on('Inn Folio Transaction', {
 		}
 		if (frm.doc.parent) {
 			frm.add_custom_button(__('Show Folio'), function () {
-				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Folio/' + frm.doc.parent);
+				let url = frappe.urllib.get_full_url('/app/inn-folio/' + frm.doc.parent);
 				if (is_check_in == 'true') {
 					url = url + '?is_check_in=true';
 				}
@@ -44,7 +44,7 @@ frappe.ui.form.on('Inn Folio Transaction', {
 					},
 					callback: (r) => {
 						if (r.message) {
-							let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + r.message);
+							let url = frappe.urllib.get_full_url('/app/inn-reservation/' + r.message);
 							if (is_check_in == 'true') {
 								url = url + '?is_check_in=true';
 							}
