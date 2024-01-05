@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-01-05 14:19:59.839932",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "customer_name",
+  "customer_type",
+  "supplier_name",
+  "naming_series"
+ ],
+ "fields": [
+  {
+   "bold": 1,
+   "fieldname": "customer_name",
+   "fieldtype": "Link",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer Name",
+   "no_copy": 1,
+   "options": "Customer",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "customer_name.customer_type",
+   "fieldname": "customer_type",
+   "fieldtype": "Data",
+   "label": "Customer Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Supplier Name",
+   "no_copy": 1,
+   "options": "Supplier",
+   "print_hide": 1,
+   "read_only": 1,
+   "set_only_once": 1,
+   "unique": 1
+  },
+  {
+   "default": "INN-CST-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "no_copy": 1,
+   "options": "INN-CST-",
+   "print_hide": 1,
+   "read_only": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-01-05 14:55:32.127365",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Inn Customer",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
