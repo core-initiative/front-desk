@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "field:customer_name",
  "creation": "2024-01-05 14:19:59.839932",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -60,11 +60,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-09 13:57:17.272747",
+ "modified": "2024-01-09 15:26:06.582072",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Customer",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -80,6 +80,7 @@
    "write": 1
   }
  ],
+ "search_fields": "customer_name",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
