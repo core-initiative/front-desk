@@ -60,7 +60,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-01-05 14:55:32.127365",
+ "modified": "2024-01-09 13:57:17.272747",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Customer",
@@ -82,5 +82,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "customer_name"
 }
