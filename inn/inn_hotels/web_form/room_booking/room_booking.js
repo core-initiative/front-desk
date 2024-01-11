@@ -48,13 +48,15 @@ frappe.ready(function() {
 	})
 
 	frappe.web_form.on("room_type_custom", (field, value) => {
-		frappe.web_form.set_value(["price"], options_value[value])
+		frappe.web_form.set_value(["price"], options_value[value] * frappe.web_form.get_value("number_of_rooms"))
 	})
 })
 
 var options_value = {}
 
 function get_available_room_and_rate() {
+	frappe.web_form.set_value("price", undefined)
+	frappe.web_form.set_value("room_type_custom", undefined)
 	frappe.call({
 		method: "inn.inn_hotels.web_form.room_booking.room_booking.get_available_room_and_rate",
 		args: {

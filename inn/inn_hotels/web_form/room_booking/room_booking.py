@@ -78,20 +78,23 @@ def get_available_room_and_rate(start_date, end_date, num_room):
 	for curr_date in daterange(start_date, end_date):
 		used_availability = frappe.db.sql(
 			"select count(*), room_type, bed_type, allow_smoke from `tabInn Room` as ir "
-			"join `tabInn Room Booking` as irb on irb.room_id = ir.name where status != 'Finished'"
+			"join `tabInn Room Booking` as irb on irb.room_id = ir.name where status not in ('Finished', 'Canceled') "
 			"and irb.start <= %(date)s and irb.end > %(date)s group by bed_type, room_type, allow_smoke"
 		, values={"date":curr_date}, as_dict=0)
 
 		# reduce room number because being used in this date
+		unusable_room = {}
 		for ii in used_availability:
 			room_key = tup_key_gen(ii)
-			if room_key in available_room:
-				available_room[room_key] -= ii[0]
+			unusable_room[room_key] = ii[0]
 
 		# check if jumlah tipe kamar yang tersedia memenuhi jumlah kamar yang diminta
 		tidak_memenuhi = []
 		for ii in available_room:
-			if available_room[ii] < int(num_room):
+			kamar_sisa = available_room[ii]
+			if ii in unusable_room:
+				kamar_sisa -= unusable_room[ii]
+			if kamar_sisa < int(num_room):
 				tidak_memenuhi.append(ii)
 
 		for ii in tidak_memenuhi:

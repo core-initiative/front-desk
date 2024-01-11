@@ -64,6 +64,7 @@ class InnGuestBooking(Document):
 					doc_irb.end = list_room[key][idx] + timedelta(days=1)
 
 			doc_irb.save()
+			list_room_booking.append(doc_irb)
 
 		# connect Inn Room Booking with Inn Guest Booking Room
 		for ii in list_room_booking:
@@ -90,7 +91,7 @@ class InnGuestBooking(Document):
 			today_string = today_date.strftime("%Y-%m-%d")
 			for room in prev_day_room:
 				# kalo kamar kemarin masih bisa dipake hari ini
-				if not frappe.db.exists("Inn Room Booking", {"room_id": room, "start":["<=", today_string], "end": [">", today_string]}):
+				if not frappe.db.exists("Inn Room Booking", {"room_id": room, "start":["<=", today_string], "end": [">", today_string], "status": ["not in", ['Finished', 'Canceled'] ]}):
 					today_room.append(room)
 			
 			# region butuh kamar (pada day 2, kamar yang dipake day 1 udah ada yang booking). Kalo bisa pake terus ini bakal di skip
@@ -102,8 +103,8 @@ class InnGuestBooking(Document):
 					break
 				# kalo kamar ini udah masuk ke sebagai yang dipake
 				if room in today_room:
-					pass
-				if not frappe.db.exists("Inn Room Booking", {"room_id": room, "start":["<=", today_string], "end": [">", today_string]}):
+					continue
+				if not frappe.db.exists("Inn Room Booking", {"room_id": room, "start":["<=", today_string], "end": [">", today_string], "status": ["not in", ['Finished', 'Canceled'] ]}):
 					today_room.append(room)
 					room_num_diff += 1
 			# endregion
