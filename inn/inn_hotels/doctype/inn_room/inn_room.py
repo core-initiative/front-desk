@@ -24,7 +24,7 @@ def calculate_total_amenities_cost(doc, method):
 	total_cost = 0.0
 	for item in amenities_list:
 		item_price = frappe.db.get_value('Item Price',
-										 {'item_code': item.item, 'item_name': item.item_name, 'buying': 1},
+										 {'item_code': item.item, 'item_name': item.item, 'buying': 1},
 										 ['price_list_rate'])
 		total_cost += float(item_price) * float(item.qty)
 
