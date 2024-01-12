@@ -9,18 +9,19 @@
   "customer_detail_section",
   "customer_name",
   "additional_request",
+  "allow_smoking",
   "column_break_yxbv",
   "phone_number",
   "section_break_qcni",
   "amended_from",
   "start",
-  "number_of_rooms",
+  "total_night",
   "column_break_apyf",
   "end",
+  "number_of_rooms",
   "section_break_omzv",
   "room_type",
   "bed_type",
-  "allow_smoking",
   "incl_breakfast",
   "column_break_nxpv",
   "room_rate",
@@ -53,14 +54,16 @@
    "fieldname": "start",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Start",
+   "label": "Expected Arrival",
+   "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "end",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "End",
+   "label": "Expected Departure",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -68,14 +71,16 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Room Type",
-   "options": "Inn Room Type"
+   "options": "Inn Room Type",
+   "read_only": 1
   },
   {
    "fieldname": "bed_type",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Bed Type",
-   "options": "Inn Bed Type"
+   "options": "Inn Bed Type",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_apyf",
@@ -91,6 +96,7 @@
    "fieldtype": "Int",
    "label": "Number of Rooms",
    "non_negative": 1,
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -128,7 +134,8 @@
    "fieldname": "room_rate",
    "fieldtype": "Link",
    "label": "Room Rate",
-   "options": "Inn Room Rate"
+   "options": "Inn Room Rate",
+   "read_only": 1
   },
   {
    "fieldname": "room_type_custom",
@@ -157,13 +164,15 @@
    "default": "0",
    "fieldname": "allow_smoking",
    "fieldtype": "Check",
-   "label": "Smoking room"
+   "label": "Smoking room",
+   "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "incl_breakfast",
    "fieldtype": "Check",
-   "label": "Include Breakfast"
+   "label": "Include Breakfast",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_nxpv",
@@ -182,12 +191,19 @@
    "fieldtype": "Table",
    "label": "Inn Room Booking",
    "options": "Inn Guest Booking Room"
+  },
+  {
+   "fieldname": "total_night",
+   "fieldtype": "Int",
+   "label": "Total Night",
+   "non_negative": 1,
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-11 11:12:27.108687",
+ "modified": "2024-01-12 12:40:29.260038",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Guest Booking",

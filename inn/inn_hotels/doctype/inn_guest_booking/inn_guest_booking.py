@@ -118,3 +118,48 @@ class InnGuestBooking(Document):
 			prev_day_room = today_room
 		return list_room_date
 	
+@frappe.whitelist()
+def convert_to_reservation(doc_id, customer_name):
+	# create reservation
+
+	doc_igb = frappe.get_doc("Inn Guest Booking", doc_id)
+	doc_igb.submit()
+
+	reservation_created  = []
+
+	for doc_gbr in doc_igb.inn_room_booking:
+		reservation_doc = frappe.new_doc("Inn Reservation")
+		reservation_doc.customer_id = customer_name
+		reservation_doc.status = "Reserved"
+		reservation_doc.type = "INDIVIDUAL" if doc_igb.number_of_rooms > 1 else "GROUP"
+		reservation_doc.channel = "Guest Booking"
+		reservation_doc.expected_arrival = doc_gbr.start_date
+		reservation_doc.expected_departure = doc_gbr.end_date
+
+		reservation_doc.guest_name = doc_igb.customer_name
+		reservation_doc.room_type = doc_igb.room_type
+		reservation_doc.bed_type = doc_igb.bed_type
+		reservation_doc.room_id = doc_gbr.room_number
+		reservation_doc.room_rate = doc_igb.room_rate
+
+		reservation_doc.init_actual_room_rate = doc_igb.price
+		reservation_doc.insert()
+		reservation_created.append(reservation_doc.name)
+	
+		# edit inn room booking
+		room_booking_doc = frappe.get_doc('Inn Room Booking', doc_gbr.inn_room_booking)
+		room_booking_doc.reference_type = 'Inn Reservation'
+		room_booking_doc.reference_name =  reservation_doc.name
+		
+		room_booking_doc.start = reservation_doc.expected_arrival
+		room_booking_doc.end = reservation_doc.expected_departure
+		room_booking_doc.room_id = reservation_doc.room_id
+		room_booking_doc.save()
+
+	return {"reservation_id": reservation_created}
+
+
+@frappe.whitelist()
+def delete_booking_room_from_child(doc_id):
+	irb_name = frappe.db.get_value("Inn Guest Booking Room", doc_id, "inn_room_booking")
+	frappe.db.delete("Inn Room Booking", {"name": irb_name})

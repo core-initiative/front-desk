@@ -48,13 +48,26 @@ frappe.ready(function() {
 	})
 
 	frappe.web_form.on("room_type_custom", (field, value) => {
-		frappe.web_form.set_value(["price"], options_value[value] * frappe.web_form.get_value("number_of_rooms"))
+		frappe.web_form.set_value(["price"], options_value[value] * frappe.web_form.get_value("number_of_rooms") * frappe.web_form.get_value("total_night"))
 	})
 })
+
+
+function calculate_nights(arrival, departure) {
+	let date_arrival = new Date(arrival);
+	let date_departure = new Date(departure);
+	let diff = date_departure.getTime() - date_arrival.getTime();
+	let days = diff / 86400000;
+	if (days < 1) {
+		days = 1;
+	}
+	return  days;
+}
 
 var options_value = {}
 
 function get_available_room_and_rate() {
+	frappe.web_form.set_value("total_night", calculate_nights(frappe.web_form.get_value(["start"]), frappe.web_form.get_value(["end"])));
 	frappe.web_form.set_value("price", undefined)
 	frappe.web_form.set_value("room_type_custom", undefined)
 	frappe.call({
