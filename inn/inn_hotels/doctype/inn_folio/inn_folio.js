@@ -103,7 +103,7 @@ frappe.ui.form.on('Inn Folio', {
 			// Show Reservation Button
 			if (frm.doc.reservation_id !== undefined) {
 				frm.add_custom_button(__('Show Reservation'), function () {
-				let url = frappe.urllib.get_full_url('/desk#Form/Inn%20Reservation/' + frm.doc.reservation_id);
+				let url = frappe.urllib.get_full_url('/app/inn-reservation/' + frm.doc.reservation_id);
 				if (is_check_in === 'true') {
 					url = url + '?is_check_in=true'
 				}

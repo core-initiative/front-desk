@@ -695,6 +695,18 @@ function is_form_good_to_in_house(frm) {
 	return is_error;
 }
 
+function formatDatetoStringArrival(datetime) {
+	"12-06-2023 23:22:54"
+	var date =  datetime.getFullYear() + "-"
+				+ ('0' + (datetime.getMonth()+1)).slice(-2) + '-'
+				+ ('0' + datetime.getDate()).slice(-2) 
+				
+	var time = ('0' + datetime.getHours()).slice(-2) + ':'
+				+ ('0' + (datetime.getMinutes())).slice(-2) + ':'
+				+ ('0' + (datetime.getSeconds())).slice(-2);
+	return date + " " + time
+}
+
 // Function to autofilled some of the Fields in Checkin In Process
 function autofill(frm) {
 	frm.set_df_property('init_actual_room_rate', 'hidden', 1);
@@ -709,10 +721,10 @@ function autofill(frm) {
 		frm.set_value('guest_name', frm.doc.customer_id);
 	}
 	if (frm.doc.arrival === undefined || frm.doc.arrival == null || frm.doc.arrival === '') {
-		frm.set_value('arrival', expected_arrival);
+		frm.set_value('arrival', formatDatetoStringArrival(expected_arrival));
 	}
 	if (frm.doc.departure === undefined || frm.doc.departure == null || frm.doc.departure === '') {
-		frm.set_value('departure', expected_departure);
+		frm.set_value('departure', formatDatetoStringArrival(expected_departure));
 	}
 	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
 		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);

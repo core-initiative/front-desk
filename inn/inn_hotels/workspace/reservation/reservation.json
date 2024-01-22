@@ -1,0 +1,163 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"mQhBeS--Rl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reservation</span>\",\"col\":12}},{\"id\":\"BxqoGNVQ4q\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Inn House\",\"col\":3}},{\"id\":\"NjOnJ7GpSF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Check Out\",\"col\":3}},{\"id\":\"lf4XkzibVt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"x8GJwV8hzM\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction\",\"col\":4}},{\"id\":\"-GtWnq-goz\",\"type\":\"card\",\"data\":{\"card_name\":\"City Ledger\",\"col\":4}},{\"id\":\"8XQ43ifBk4\",\"type\":\"card\",\"data\":{\"card_name\":\"Night Audit\",\"col\":4}}]",
+ "creation": "2023-12-15 13:51:19.164024",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "sidebar-expand",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Reservation",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Transaction",
+   "link_count": 5,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reservation",
+   "link_count": 0,
+   "link_to": "Inn Reservation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Folio",
+   "link_count": 0,
+   "link_to": "Inn Folio",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift ",
+   "link_count": 0,
+   "link_to": "Inn Shift",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Void Transaction",
+   "link_count": 0,
+   "link_to": "Inn Void Folio Transaction",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Membership Card",
+   "link_count": 0,
+   "link_to": "Inn Membership Card",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "City Ledger",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "AR City Ledger",
+   "link_count": 0,
+   "link_to": "AR City Ledger",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "City Ledger Invoice",
+   "link_count": 0,
+   "link_to": "AR City Ledger",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Night Audit",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Room Charge Posting",
+   "link_count": 0,
+   "link_to": "Inn Room Charge Posting",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Dayend Close",
+   "link_count": 0,
+   "link_to": "Inn Dayend Close",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Audit Log",
+   "link_count": 0,
+   "link_to": "Inn Audit Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2023-12-15 14:08:20.184702",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Reservation",
+ "number_cards": [
+  {
+   "label": "Inn House",
+   "number_card_name": "Inn House"
+  },
+  {
+   "label": "Check Out",
+   "number_card_name": "Check Out"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "Home",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 23.0,
+ "shortcuts": [],
+ "title": "Reservation"
+}

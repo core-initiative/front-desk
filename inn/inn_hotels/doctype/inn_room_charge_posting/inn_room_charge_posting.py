@@ -205,13 +205,13 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 				adjusted_room_rate_tax_amount = fdc_folio_trx_tax.amount
 				for i in range(0, abs(difference)):
 					adjusted_room_rate_tax_amount = adjusted_room_rate_tax_amount + 1.0
+				fdc_folio_trx_tax.amount = adjusted_room_rate_tax_amount
+				fdc_folio_trx_tax.save()
 
 			room_charge_folio_trx.amount = adjusted_room_charge_amount
 			room_charge_folio_trx.save()
 			breakfast_charge_folio_trx.amount = adjusted_breakfast_charge_amount
 			breakfast_charge_folio_trx.save()
-			fdc_folio_trx_tax.amount = adjusted_room_rate_tax_amount
-			fdc_folio_trx_tax.save()
 
 		# Resave Bundle to save Detail
 		ftb_doc.save()
