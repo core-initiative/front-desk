@@ -1,0 +1,231 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{customer_name}-RES-{start}-{######}",
+ "creation": "2024-01-08 15:16:14.348680",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "customer_detail_section",
+  "customer_name",
+  "additional_request",
+  "allow_smoking",
+  "column_break_yxbv",
+  "phone_number",
+  "section_break_qcni",
+  "amended_from",
+  "start",
+  "total_night",
+  "column_break_apyf",
+  "end",
+  "number_of_rooms",
+  "section_break_omzv",
+  "room_type",
+  "bed_type",
+  "incl_breakfast",
+  "column_break_nxpv",
+  "room_rate",
+  "price",
+  "section_break_nazc",
+  "inn_room_booking",
+  "hidden_data_section",
+  "room_type_custom",
+  "bed_type_text",
+  "column_break_mvgr"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_qcni",
+   "fieldtype": "Section Break",
+   "label": "Stay Duration"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Inn Guest Booking",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "start",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expected Arrival",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "end",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expected Departure",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "room_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room Type",
+   "options": "Inn Room Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bed_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bed Type",
+   "options": "Inn Bed Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_apyf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_omzv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "number_of_rooms",
+   "fieldtype": "Int",
+   "label": "Number of Rooms",
+   "non_negative": 1,
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_detail_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Detail"
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "additional_request",
+   "fieldtype": "Data",
+   "label": "Additional Room Request"
+  },
+  {
+   "fetch_from": "room_rate.final_total_rate_amount",
+   "fetch_if_empty": 1,
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "non_negative": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "room_rate",
+   "fieldtype": "Link",
+   "label": "Room Rate",
+   "options": "Inn Room Rate",
+   "read_only": 1
+  },
+  {
+   "fieldname": "room_type_custom",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Room Type Text",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "hidden_data_section",
+   "fieldtype": "Section Break",
+   "label": "Hidden Data"
+  },
+  {
+   "fieldname": "bed_type_text",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Bed Type Text",
+   "print_hide": 1
+  },
+  {
+   "fieldname": "column_break_mvgr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_smoking",
+   "fieldtype": "Check",
+   "label": "Smoking room",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "incl_breakfast",
+   "fieldtype": "Check",
+   "label": "Include Breakfast",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_nxpv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_yxbv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_nazc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "inn_room_booking",
+   "fieldtype": "Table",
+   "label": "Inn Room Booking",
+   "options": "Inn Guest Booking Room"
+  },
+  {
+   "fieldname": "total_night",
+   "fieldtype": "Int",
+   "label": "Total Night",
+   "non_negative": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2024-01-12 12:40:29.260038",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Inn Guest Booking",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
