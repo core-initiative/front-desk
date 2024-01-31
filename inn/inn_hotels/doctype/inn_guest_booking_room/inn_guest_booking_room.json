@@ -6,10 +6,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "inn_room_booking",
+  "room_number",
   "start_date",
   "end_date",
-  "room_number"
+  "inn_room_booking"
  ],
  "fields": [
   {
@@ -47,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-11 10:53:15.448346",
+ "modified": "2024-01-30 10:44:06.917556",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Guest Booking Room",
