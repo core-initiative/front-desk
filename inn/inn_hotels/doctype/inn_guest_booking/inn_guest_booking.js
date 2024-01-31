@@ -3,58 +3,64 @@
 
 frappe.ui.form.on("Inn Guest Booking", {
         refresh(frm) {
-                frm.add_custom_button(__("Create Reservation"), function () {
-                        if (frm.doc.number_of_rooms < frm.doc.inn_room_booking.length) {
-                                frappe.confirm(
-                                        __(
-                                                "Customer will be needed to move during the stay, Are you sure? This booking can't be changed anymore"
-                                        ),
-                                        customer_input_dialog(frm)
-                                );
-                        } else {
-                                frappe.confirm(
-                                        __("This booking can't be changed anymore, Are you sure?"),
-                                        customer_input_dialog(frm)
-                                );
-                        }
-                });
+                if (frm.doc.docstatus != 1) {
+                        frm.add_custom_button(__("Create Reservation"), function () {
+                                if (frm.doc.number_of_rooms < frm.doc.inn_room_booking.length) {
+                                        frappe.confirm(
+                                                __(
+                                                        "Customer will be needed to move during the stay, Are you sure? This booking can't be changed anymore"
+                                                ),
+                                                () => {
+                                                        customer_input_dialog(frm)
+                                                }
+                                        );
+                                } else {
+                                        frappe.confirm(
+                                                __("This booking can't be changed anymore, Are you sure?"),
+                                                () => {
+                                                        customer_input_dialog(frm)
+                                                }
+                                        );
+                                }
+                        });
+                }
         },
-        start: function(frm){
+        start: function (frm) {
                 reset_value(frm, "start")
-                if (frm.doc.end <= frm.doc.start){
+                if (frm.doc.end <= frm.doc.start) {
                         frm.set_value("end", null)
                         frappe.msgprint("Expected Departure must be greater than Expected Arrival")
                 } else {
                         // change query to room_type
                 }
         },
-        end: function(frm){
+        end: function (frm) {
                 //not used. user cant change booking. change do happen in reservation
                 reset_value(frm, "end")
-                 if (frm.doc.end <= frm.doc.start){
+                if (frm.doc.end <= frm.doc.start) {
                         frm.set_value("end", null)
                         frappe.msgprint("Expected Departure must be greater than Expected Arrival")
                 } else {
                         // change query to room_type
                 }
         },
-        number_of_rooms: function(frm) {
+        number_of_rooms: function (frm) {
                 //not used. user cant change booking. change do happen in reservation
                 reset_value(frm, "number_of_rooms")
                 // change query to room_type
         },
-        allow_smoking: function(frm) {
+        allow_smoking: function (frm) {
                 //not used. user cant change booking. change do happen in reservation
                 reset_value(frm, "allow_smoking")
                 // change query to room_type
         },
-        room_type: function(frm) {
+        room_type: function (frm) {
                 //not used. user cant change booking. change do happen in reservation
                 reset_value(frm, "room_type")
                 // change query to bed_type yang available
                 // change query to rate
         },
-        room_rate: function(frm){
+        room_rate: function (frm) {
                 //not used. user cant change booking. change do happen in reservation
                 // frappe call return to total_price and include breakfast
         }
@@ -62,62 +68,16 @@ frappe.ui.form.on("Inn Guest Booking", {
 });
 
 frappe.ui.form.on('Inn Guest Booking Room', {
-	inn_room_booking_remove: function(frm, cdt, cdn) {
-		frappe.call({
-			method: "inn.inn_hotels.doctype.inn_guest_booking.inn_guest_booking.delete_booking_room_from_child",
-			args: {
-				doc_id: cdn
-			},
-		})
-	}
+        inn_room_booking_remove: function (frm, cdt, cdn) {
+                frappe.call({
+                        method: "inn.inn_hotels.doctype.inn_guest_booking.inn_guest_booking.delete_booking_room_from_child",
+                        args: {
+                                doc_id: cdn
+                        },
+                })
+        }
 });
 
-
-// function change_room_type_filter(frm){
-//         let field = cur_frm.fields_dict["room_type"];
-//         let query = 'inn.inn_hotels.doctype.inn_guest_booking.filter.get_room_type_filter'
-//         field.get_query = function () {
-//                 return {
-//                         query: query,
-//                         filters: {
-//                                 "start": cur_frm.doc.start,
-//                                 "end": cur_frm.doc.end,
-//                                 "number_of_rooms": cur_frm.doc.number_of_rooms,
-//                                 "allow_smoking": cur_frm.doc.allow_smoking,
-//                         }
-//                 }
-//         }
-// }
-
-// function change_bed_type_filter(frm){
-//         let field = cur_frm.fields_dict["bed_type"];
-//         let query = 'inn.inn_hotels.doctype.inn_guest_booking.filter.get_bed_type_filter'
-//         field.get_query = function () {
-//                 return {
-//                         query: query,
-//                         filters: {
-//                                 "start": cur_frm.doc.start,
-//                                 "end": cur_frm.doc.end,
-//                                 "number_of_rooms": cur_frm.doc.number_of_rooms,
-//                                 "allow_smoking": cur_frm.doc.allow_smoking,
-//                                 "room_type": cur_frm.doc.room_type
-//                         }
-//                 }
-//         }
-// }
-
-// function change_rate_filter(frm) {
-//         let field = cur_frm.fields_dict["room_rate"];
-//         let query = 'inn.inn_hotels.doctype.inn_guest_booking.filter.get_room_rate_filter'
-//         field.get_query = function () {
-//                 return {
-//                         query: query,
-//                         filters: {
-//                                 "room_type": cur_frm.doc.room_type
-//                         }
-//                 }
-//         }
-// }
 
 function reset_value(frm, field) {
         switch (field) {
@@ -155,16 +115,42 @@ function convert_to_reservation(frm, cust_name) {
                         doc_id: frm.doc.name,
                         customer_name: cust_name,
                 },
-                callback: (response) => {
-                        console.log(response);
+                callback: async (response) => {
 
-                        for (ii in response.message.reservation_id) {
-                                frappe.call({
+                        var reservation_list = []
+                        var error_folio = false
+
+                        for (let ii in response.message.reservation_id) {
+                                await frappe.call({
                                         method: "inn.inn_hotels.doctype.inn_folio.inn_folio.create_folio",
                                         args: {
-                                                reservation_id: ii,
+                                                reservation_id: response.message.reservation_id[ii],
                                         },
+                                        success: () => {
+                                                reservation_list.push(response.message.reservation_id[ii])
+                                        },
+                                        error: () => {
+                                                error_folio = true
+                                        }
                                 });
+                        }
+
+                        console.log(error_folio)
+
+                        if (error_folio) {
+                                frappe.msgprint({
+                                        title: __('Error'),
+                                        indicator: 'red',
+                                        message: __('There are some error! Check file logs for more detail')
+                                });
+                        } else {
+                                frappe.msgprint({
+                                        title: __('Success'),
+                                        indicator: 'green',
+                                        message: __('Reservation created successfully')
+                                });
+                                await new Promise(r => setTimeout(r, 2000));
+                                frm.reload_doc();
                         }
                 },
         });
@@ -192,6 +178,7 @@ function customer_input_dialog(frm) {
                 primary_action_label: "Submit",
                 primary_action(values) {
                         convert_to_reservation(frm, values.customer_name);
+                        dialog.hide()
                 },
         });
         dialog.show();

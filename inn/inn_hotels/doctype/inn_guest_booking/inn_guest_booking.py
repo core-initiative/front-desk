@@ -11,14 +11,17 @@ class InnGuestBooking(Document):
 	pass
 
 	def before_insert(self, *args, **kwargs):
-		data = self.room_type_custom.split(", ")
-		self.room_type = data[0].split(" ")[1]
-		self.bed_type = data[1].split(" ")[1]
-		self.allow_smoking = False if data[2] == "non-smoking room" else True
+		if self.room_type_custom is None:
+			pass
+		else:
+			data = self.room_type_custom.split(", ")
+			self.room_type = data[0].split(" ")[1]
+			self.bed_type = data[1].split(" ")[1]
+			self.allow_smoking = False if data[2] == "non-smoking room" else True
 
-		prices = data[3].split(" ")
-		self.incl_breakfast = False if prices[0] == "non-breakfast" else True
-		self.price = "".join(prices[3].split(","))
+			prices = data[3].split(" ")
+			self.incl_breakfast = False if prices[0] == "non-breakfast" else True
+			self.price = "".join(prices[3].split(","))
 		self.room_rate = frappe.db.get_value("Inn Room Rate", {"customer_group": "Guest Booking Group", "room_type": self.room_type, "final_total_rate_amount": self.price}, ["name"])
 	
 	def after_insert(self, *args, **kwrags):
@@ -45,7 +48,7 @@ class InnGuestBooking(Document):
 			if len(list_room[key]) == 1:
 				doc_irb.start = list_room[key][0]
 				doc_irb.end = list_room[key][0] + timedelta(days=1)
-				doc_irb.save()
+				doc_irb.save(ignore_permissions=True)
 				list_room_booking.append(doc_irb)
 				continue
 
@@ -63,7 +66,7 @@ class InnGuestBooking(Document):
 					doc_irb.start = list_room[key][idx]
 					doc_irb.end = list_room[key][idx] + timedelta(days=1)
 
-			doc_irb.save()
+			doc_irb.save(ignore_permissions=True)
 			list_room_booking.append(doc_irb)
 
 		# connect Inn Room Booking with Inn Guest Booking Room
@@ -73,7 +76,7 @@ class InnGuestBooking(Document):
 			doc_igbr.parenttype = "Inn Guest Booking"
 			doc_igbr.parent = self.name
 			doc_igbr.parentfield = "inn_room_booking"
-			doc_igbr.save()
+			doc_igbr.save(ignore_permissions=True)
 
 	def list_available_room(self, *args, **kwargs):
 		start_date = datetime.strptime(self.start, "%Y-%m-%d")
@@ -83,7 +86,7 @@ class InnGuestBooking(Document):
 		prev_day_room = []
 
 		# semua kamar, kalo butuh kamar ekstra. query disini biar cuma 1x
-		all_room = frappe.db.get_list("Inn Room", {"bed_type": self.bed_type, "room_type": self.room_type}, pluck="name")
+		all_room = frappe.db.get_list(ignore_permissions=True, doctype="Inn Room", filters={"bed_type": self.bed_type, "room_type": self.room_type}, pluck="name")
 
 		# TODO optimisasi pemilihan ruangan: pilih ruangan yang bikin paling dikit jumlah booking nya
 		for today_date in daterange(start_date, end_date):
@@ -131,7 +134,7 @@ def convert_to_reservation(doc_id, customer_name):
 		reservation_doc = frappe.new_doc("Inn Reservation")
 		reservation_doc.customer_id = customer_name
 		reservation_doc.status = "Reserved"
-		reservation_doc.type = "INDIVIDUAL" if doc_igb.number_of_rooms > 1 else "GROUP"
+		reservation_doc.type = "GROUP" if doc_igb.number_of_rooms > 1 else "INDIVIDUAL"
 		reservation_doc.channel = "Guest Booking"
 		reservation_doc.expected_arrival = doc_gbr.start_date
 		reservation_doc.expected_departure = doc_gbr.end_date
@@ -163,3 +166,24 @@ def convert_to_reservation(doc_id, customer_name):
 def delete_booking_room_from_child(doc_id):
 	irb_name = frappe.db.get_value("Inn Guest Booking Room", doc_id, "inn_room_booking")
 	frappe.db.delete("Inn Room Booking", {"name": irb_name})
+
+
+@frappe.whitelist(allow_guest=True)
+def create_guest_booking(start, end, room_type, bed_type, allow_smoking, incl_breakfast, price, customer_name, phone_number, email, additional_request, number_of_rooms):
+	doc_igb = frappe.new_doc("Inn Guest Booking")
+	doc_igb.start = start
+	doc_igb.end = end
+	doc_igb.room_type = room_type
+	doc_igb.bed_type = bed_type
+	doc_igb.allow_smoking = True if allow_smoking == "True" else False
+	doc_igb.incl_breakfast = True if incl_breakfast == "True" else False
+	doc_igb.price = int(price)
+	
+	doc_igb.customer_name = customer_name
+	doc_igb.phone_number = phone_number
+	doc_igb.email = email
+	doc_igb.additional_request = additional_request
+	doc_igb.number_of_rooms = int(number_of_rooms)
+	doc_igb.save(ignore_permissions=True)
+
+	return doc_igb
