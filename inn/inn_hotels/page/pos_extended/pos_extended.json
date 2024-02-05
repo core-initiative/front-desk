@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2024-01-31 12:21:34.357359",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2024-01-31 12:21:54.868306",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "pos-extended",
+ "owner": "Administrator",
+ "page_name": "pos-extended",
+ "roles": [
+  {
+   "role": "Administrator"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Point of Sales Extended"
+}
