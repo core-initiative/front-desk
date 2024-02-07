@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from . import __version__ as app_version
-
 app_name = "inn"
 app_title = "Inn Hotels"
 app_publisher = "Core Initiative"
@@ -15,11 +11,11 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/inn/css/inn.css"
+app_include_css = "inn.bundle.css"
 # app_include_js = "/assets/inn/js/inn.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/inn/css/inn.css"
+web_include_css = "inn.bundle.css"
 # web_include_js = "/assets/inn/js/inn.js"
 
 # include js in page
