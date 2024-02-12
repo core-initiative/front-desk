@@ -33,5 +33,13 @@ def save_pos_usage(invoice_name, table, action):
 
 @frappe.whitelist()
 def get_table_number(invoice_name):
-    print(invoice_name)
     return frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table"])
+
+
+@frappe.whitelist()
+def clean_table_number(invoice_name):
+    table_name = frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name}, fieldname=["table"])
+    doc_table = frappe.get_doc("Inn Point Of Sale Table", table_name)
+    doc_table.status = "Empty"
+    doc_table.save()
+    return
