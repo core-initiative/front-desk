@@ -25,3 +25,50 @@
         }
     }
 }
+
+.table-number {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-top: auto;
+}
+
+.pointer-no-select {
+    cursor: pointer;
+    user-select: none;
+}
+
+.primary-action-pos {
+    @extend .pointer-no-select;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-sm);
+    margin-top: var(--margin-sm);
+    border-radius: var(--border-radius-md);
+    font-size: var(--text-lg);
+    font-weight: 700;
+}
+
+.print-button-order {
+    background-color: var(--gray-300);
+    width: 100%;
+    color: white;
+}
+
+
+.print-order-section{
+    display: flex;
+
+    > .caption-order-btn {
+        @extend .primary-action-pos;
+        @extend .print-button-order;
+        margin-right: var(--margin-sm);
+     }
+
+    > .table-order-btn {
+        @extend .primary-action-pos;
+        @extend .print-button-order;
+        margin-left: var(--margin-sm);
+    }
+}
