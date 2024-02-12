@@ -143,7 +143,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 
 						print_captain_order: () => this.print_captain_order(),
 						print_table_order: () => this.print_table_order(),
-						print_bill: () => this.print_bill(),
 					}
 				})
 			}
@@ -156,16 +155,15 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				console.log("captain order")
 			}
 
-			print_bill() {
-
-
-				// let w = window.open(frappe.urllib.get_full_url("/printview?"
-				// 	+ "doctype=" + encodeURIComponent("Inn Restaurant Ongoing Order")
-				// 	+ "&name=" + encodeURIComponent(frm.doc.name)
-				// 	+ "&format=" + encodeURIComponent("Captain Order")
-				// 	+ "&trigger_print=1"
-				// 	+ "&no_letterhead=0"
-				// ));
+			print_bill(draft) {
+				console.log(draft)
+				frappe.utils.print(
+					draft.doctype,
+					draft.name,
+					"POS Extended Bill",
+					draft.letter_head,
+					draft.language || frappe.boot.lang
+				);
 			}
 
 			init_order_summary() {
@@ -205,7 +203,8 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 								() => this.item_selector.toggle_component(true),
 								() => frappe.dom.unfreeze(),
 							]);
-						}
+						},
+						print_bill: (doc) => this.print_bill(doc),
 					}
 				})
 			}

@@ -14,6 +14,26 @@ frappe.require(["point-of-sale.bundle.js"], function () {
             this.$upper_section.html(upper_section_dom);
         }
 
+        bind_events() {
+            super.bind_events();
+
+            this.$summary_container.on('click', '.show-btn', () => {
+                console.log(this.doc)
+                this.events.print_bill(this.doc)
+            });
+        }
+
+        get_condition_btn_map(after_submission) {
+            if (after_submission)
+                return [{ condition: true, visible_btns: ['Print Receipt', 'Email Receipt', 'New Order'] }];
+
+            return [
+                { condition: this.doc.docstatus === 0, visible_btns: ['Show Bill', 'Edit Order', 'Delete Order'] },
+                { condition: !this.doc.is_return && this.doc.docstatus === 1, visible_btns: ['Print Receipt', 'Email Receipt', 'Return'] },
+                { condition: this.doc.is_return && this.doc.docstatus === 1, visible_btns: ['Print Receipt', 'Email Receipt'] }
+            ];
+        }
+
         print_receipt() {
             const frm = this.events.get_frm();
             frappe.utils.print(
