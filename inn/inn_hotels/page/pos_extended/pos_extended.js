@@ -220,8 +220,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 					doc.customer_email = message.email_id || '';
 				});
 
-				doc["table_number"] = "17";
-
 				const upper_section_dom = this.get_upper_section_html(doc);
 				this.$upper_section.html(upper_section_dom);
 			}
@@ -234,10 +232,23 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				status === 'Draft' && (indicator_color = 'red');
 				status === 'Return' && (indicator_color = 'grey');
 
+				var table_number = undefined
+
+				frappe.call({
+					method: "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number",
+					args: {
+						invoice_name: doc.name
+					},
+					async: false,
+					callback: function (r) {
+						table_number = r.message
+					}
+				})
+
 				return `<div class="left-section">
 							<div class="customer-name">${doc.customer}</div>
 							<div class="customer-email">${doc.customer_email}</div>
-							<div class="table-number">${__('Table Number')}: ${doc.table_number}</div>
+							<div class="table-number">${__('Table')}: ${table_number}</div>
 							<div class="cashier">${__('Sold by')}: ${doc.owner}</div>
 						</div>
 						<div class="right-section">

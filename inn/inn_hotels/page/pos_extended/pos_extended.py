@@ -30,3 +30,8 @@ def save_pos_usage(invoice_name, table, action):
     doc.insert()
     print("checkpoint 2")
     return
+
+@frappe.whitelist()
+def get_table_number(invoice_name):
+    print(invoice_name)
+    return frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table"])
