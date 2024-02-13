@@ -63,12 +63,10 @@
     > .caption-order-btn {
         @extend .primary-action-pos;
         @extend .print-button-order;
-        margin-right: var(--margin-sm);
      }
 
     > .table-order-btn {
         @extend .primary-action-pos;
         @extend .print-button-order;
-        margin-left: var(--margin-sm);
     }
 }

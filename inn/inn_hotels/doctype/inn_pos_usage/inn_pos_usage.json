@@ -7,7 +7,9 @@
  "field_order": [
   "table",
   "pos_invoice",
-  "print_status"
+  "print_status",
+  "processed_item",
+  "new_item"
  ],
  "fields": [
   {
@@ -33,11 +35,23 @@
    "hidden": 1,
    "label": "Print Status",
    "reqd": 1
+  },
+  {
+   "fieldname": "processed_item",
+   "fieldtype": "Table",
+   "label": "Processed Item",
+   "options": "POS Invoice Item"
+  },
+  {
+   "fieldname": "new_item",
+   "fieldtype": "Table",
+   "label": "New Item",
+   "options": "POS Invoice Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-12 12:37:51.074354",
+ "modified": "2024-02-12 17:03:08.715863",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn POS Usage",

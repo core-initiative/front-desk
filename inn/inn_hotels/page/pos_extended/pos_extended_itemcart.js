@@ -36,12 +36,34 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                     },
                     onchange: function () {
                         me["table_number"] = this.get_value()
+                        me.events.get_frm().dirty()
                     }
                 },
                 parent: this.$table_section.find('.table-field'),
                 render_input: true,
             });
             this.table_field.toggle_label(false);
+        }
+
+        load_invoice() {
+            super.load_invoice()
+
+            const frm = this.events.get_frm()
+            const me = this
+            let table_number = undefined
+
+            frappe.call({
+                method: "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number",
+                args: {
+                    invoice_name: frm.doc.name
+                },
+                async: false,
+                callback: function (r) {
+                    table_number = r.message
+                    me.$table_section.find("input").val(table_number)
+                    me.table_number = table_number
+                }
+            })
         }
 
         make_cart_totals_section() {
@@ -67,7 +89,6 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
             <div class="print-order-section">
                 <div class="caption-order-btn" data-button-value="captain-order">${__('Captain Order')}</div>
                 <div class="table-order-btn" data-button-value="table-order">${__('Table Order')}</div>
-                <div class="table-order-btn" data-button-value="table-order">${__('Print Bill')}</div>
             </div>
             <div class="checkout-btn">${__('Checkout')}</div>
             <div class="edit-cart-btn">${__('Edit Cart')}</div>`
