@@ -151,16 +151,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				const me = this
 				let success = false
 
-
-				if (this.frm.doc.__islocal || this.frm.is_dirty()) {
-					frappe.show_alert({
-						message: __("You must save order as draft first."),
-						indicator: 'red'
-					});
-					frappe.utils.play_sound("error");
-					return;
-				}
-
 				await frappe.call({
 					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
 					args: {
@@ -170,8 +160,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 					},
 					async: false,
 					callback: r => {
-						console.log('table order result')
-						console.log(r)
 						success = true
 					}
 
@@ -191,15 +179,33 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				const me = this
 				let success = false
 
+				if (!this.$components_wrapper.is(":visible")) return;
 
-				if (this.frm.doc.__islocal || this.frm.is_dirty()) {
+				if (this.frm.doc.items.length == 0) {
 					frappe.show_alert({
-						message: __("You must save order as draft first."),
+						message: __("You must add atleast one item to save it as draft."),
 						indicator: 'red'
 					});
 					frappe.utils.play_sound("error");
 					return;
 				}
+
+				if (!("table_number" in this.cart)) {
+					frappe.show_alert({
+						message: __("You must assign table to this order."),
+						indicator: 'red'
+					});
+					frappe.utils.play_sound("error");
+					return;
+				}
+
+				await this.frm.save(undefined, undefined, undefined, () => {
+					frappe.show_alert({
+						message: __("There was an error saving the document."),
+						indicator: 'red'
+					});
+					frappe.utils.play_sound("error");
+				});
 
 				await frappe.call({
 					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
@@ -211,8 +217,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 					async: false,
 					callback: r => {
 						success = true
-						console.log('captain order result')
-						console.log(r)
 					}
 				})
 				if (success) {
