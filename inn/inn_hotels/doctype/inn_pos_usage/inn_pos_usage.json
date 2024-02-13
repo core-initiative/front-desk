@@ -40,18 +40,18 @@
    "fieldname": "processed_item",
    "fieldtype": "Table",
    "label": "Processed Item",
-   "options": "POS Invoice Item"
+   "options": "Inn POS Usage Item"
   },
   {
    "fieldname": "new_item",
    "fieldtype": "Table",
    "label": "New Item",
-   "options": "POS Invoice Item"
+   "options": "Inn POS Usage Item"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-12 17:03:08.715863",
+ "modified": "2024-02-13 12:38:30.114825",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn POS Usage",

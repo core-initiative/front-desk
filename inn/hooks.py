@@ -133,7 +133,6 @@ jinja = {
 		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_total_deposit",
 		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date",
         
-		# "inn.inn_hotels.doctype.inn_pos_usage.inn_pos_usage.get_captain_order"
-		# "inn.inn_hotels.doctype.inn_pos_usage.inn_pos_usage.get_table_order"
+		"inn.inn_hotels.doctype.inn_pos_usage.inn_pos_usage.print_list_order"
 	]
 }

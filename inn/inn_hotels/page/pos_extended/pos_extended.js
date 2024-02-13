@@ -148,11 +148,47 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			}
 
 			print_table_order() {
-				console.log("table order")
+				const me = this
+				frappe.call({
+					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
+					args: {
+						invoice_name: this.frm.doc.name,
+						table: this.cart.table_number,
+						action: "table_order"
+					},
+					async: false,
+					callback: function (r) {
+						frappe.utils.print(
+							me.doc.doctype,
+							me.doc.name,
+							frm.pos_print_format,
+							me.doc.letter_head,
+							me.doc.language || frappe.boot.lang
+						);
+					}
+				})
 			}
 
 			print_captain_order() {
-				console.log("captain order")
+				const me = this
+				frappe.call({
+					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
+					args: {
+						invoice_name: this.frm.doc.name,
+						table: this.cart.table_number,
+						action: "captain_order"
+					},
+					async: false,
+					callback: function (r) {
+						frappe.utils.print(
+							me.doc.doctype,
+							me.doc.name,
+							frm.pos_print_format,
+							me.doc.letter_head,
+							me.doc.language || frappe.boot.lang
+						);
+					}
+				})
 			}
 
 			print_bill(draft) {

@@ -10,9 +10,15 @@ class InnPOSUsage(Document):
 
 
 @frappe.whitelist()
-def get_captain_order():
-	pass
+def print_list_order(pos_invoice):
+	order_dict = frappe.get_value('POS Invoice', filters={'pos_invoice': pos_invoice}, fields=['new_item', "table"])
+	return order_dict
 
 @frappe.whitelist()
-def get_table_order():
-	pass
+def get_table_order(pos_invoice):
+	order_dict = frappe.get_value('POS Invoice', filters={'pos_invoice': pos_invoice}, fields=['new_item'])
+	order_list = []
+	for item in order_dict:
+		order_list.append(item.item)
+	
+	return order_list

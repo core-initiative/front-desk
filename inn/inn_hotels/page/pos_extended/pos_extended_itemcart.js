@@ -98,11 +98,8 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
         }
 
         highlight_checkout_btn(toggle) {
+            super.highlight_checkout_btn(toggle)
             if (toggle) {
-                this.$add_discount_elem.css('display', 'flex');
-                this.$cart_container.find('.checkout-btn').css({
-                    'background-color': 'var(--blue-500)'
-                });
                 this.$cart_container.find('.caption-order-btn').css({
                     'background-color': 'var(--gray-800)'
                 });
@@ -110,10 +107,6 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                     'background-color': 'var(--gray-800)'
                 });
             } else {
-                this.$add_discount_elem.css('display', 'none');
-                this.$cart_container.find('.checkout-btn').css({
-                    'background-color': 'var(--blue-200)'
-                });
                 this.$cart_container.find('.caption-order-btn').css({
                     'background-color': 'var(--gray-300)'
                 });
