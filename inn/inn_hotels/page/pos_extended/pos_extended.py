@@ -35,11 +35,24 @@ def save_pos_usage(invoice_name, table, action):
         items = doc.new_item
         doc.new_item = {}
 
-        for item in items:
-            doc.processed_item.append(item)
-        
-        doc.save() 
+        new_item = {x.name : x for x in items}
+        tracked_item = {x.name: x for x in doc.processed_item}
 
+        for i in new_item:
+            if i in tracked_item:
+                tracked_item[i].quantity += new_item[i].quantity
+            else:
+                tracked_item[i] = new_item[i]
+                tracked_item[i].parentfield = "processed_item"
+            
+            tracked_item[i].save()
+
+        doc.processed_item = [val for _, val in doc.processed_item]
+        print(tracked_item)
+        print(doc.processed_item)
+        print(doc.new_item)
+        doc.print_status = PRINT_STATUS_DRAFT
+        
     if action == "save_draft" and doc.print_status == PRINT_STATUS_DRAFT:
         doc.print_status = PRINT_STATUS_DRAFT
     elif action == "print_captain" and doc.print_status == PRINT_STATUS_DRAFT:
@@ -52,19 +65,20 @@ def save_pos_usage(invoice_name, table, action):
     if action in ["save_draft", "print_captain"]:
         # add untracked child
         all_item = frappe.db.get_values(doctype="POS Invoice Item", filters={"parenttype":"POS Invoice", "parent":invoice_name}, fieldname=["item_name", "qty"])
-        tracked_item_quantity = [item.quantity for item in doc.processed_item]
-        tracked_item_name = [item.item_name for item in doc.processed_item]
-        
-        new_item_name = [item.item_name for item in doc.new_item]
 
+        if not 'tracked_item' in locals():
+            tracked_item = {x.name: x for x in doc.processed_item}
+        
+        new_item_name = {item.name: item for item in doc.new_item}
         doc.save()
+
+
         add_item = False
         for item in all_item:
             item_name = ""
             quantity = 0
-            if item[0] in tracked_item_name:
-                index = tracked_item_name.index(item[0])
-                diff = item[1] - tracked_item_quantity[index]
+            if item[0] in tracked_item:
+                diff = item[1] - tracked_item[item[0]].quantity
                 if diff > 0:
                     add_item = True
                     item_name = item[0]
@@ -77,9 +91,8 @@ def save_pos_usage(invoice_name, table, action):
 
             if add_item:
                 if item_name in new_item_name:
-                    old_new_item = frappe.get_last_doc(doctype="Inn POS Usage Item", filters={"parenttype":"Inn POS Usage", "parent":doc.name, "item_name": item_name})
-                    old_new_item.quantity = quantity
-                    old_new_item.save()
+                    new_item_name[item_name].quantity = quantity
+                    new_item_name[item_name].save()
 
                 else:
                     new_item = frappe.new_doc("Inn POS Usage Item")
@@ -89,17 +102,17 @@ def save_pos_usage(invoice_name, table, action):
                     new_item.parenttype = doc.doctype
                     new_item.parentfield = "new_item"
                     new_item.insert()
-                
-
                 add_item = False
-
+                
 
     elif action == "print_table":
         # no change. print table will use same data as print_captain
+        doc.save()
+
         pass
     
 
-    return
+    return {"message": "success"}
 
 @frappe.whitelist()
 def get_table_number(invoice_name):

@@ -147,48 +147,83 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				})
 			}
 
-			print_table_order() {
+			async print_table_order() {
 				const me = this
-				frappe.call({
+				let success = false
+
+
+				if (this.frm.doc.__islocal) {
+					frappe.show_alert({
+						message: __("You must save order as draft first."),
+						indicator: 'red'
+					});
+					frappe.utils.play_sound("error");
+					return;
+				}
+
+				await frappe.call({
 					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
 					args: {
 						invoice_name: this.frm.doc.name,
 						table: this.cart.table_number,
-						action: "table_order"
+						action: "print_table"
 					},
 					async: false,
-					callback: function (r) {
-						frappe.utils.print(
-							me.doc.doctype,
-							me.doc.name,
-							frm.pos_print_format,
-							me.doc.letter_head,
-							me.doc.language || frappe.boot.lang
-						);
+					callback: r => {
+						console.log('table order result')
+						console.log(r)
+						success = true
 					}
+
 				})
+				if (success) {
+					frappe.utils.print(
+						me.frm.doc.doctype,
+						me.frm.doc.name,
+						"POS Extended Table Order",
+						me.frm.doc.letter_head,
+						me.frm.doc.language || frappe.boot.lang
+					);
+				}
 			}
 
-			print_captain_order() {
+			async print_captain_order() {
 				const me = this
-				frappe.call({
+				let success = false
+
+
+				if (this.frm.doc.__islocal) {
+					frappe.show_alert({
+						message: __("You must save order as draft first."),
+						indicator: 'red'
+					});
+					frappe.utils.play_sound("error");
+					return;
+				}
+
+				await frappe.call({
 					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
 					args: {
 						invoice_name: this.frm.doc.name,
 						table: this.cart.table_number,
-						action: "captain_order"
+						action: "print_captain"
 					},
 					async: false,
-					callback: function (r) {
-						frappe.utils.print(
-							me.doc.doctype,
-							me.doc.name,
-							frm.pos_print_format,
-							me.doc.letter_head,
-							me.doc.language || frappe.boot.lang
-						);
+					callback: r => {
+						success = true
+						console.log('captain order result')
+						console.log(r)
 					}
 				})
+				if (success) {
+					frappe.utils.print(
+						me.frm.doc.doctype,
+						me.frm.doc.name,
+						"POS Extended Captain Order",
+						me.frm.doc.letter_head,
+						me.frm.doc.language || frappe.boot.lang
+					);
+				}
 			}
 
 			print_bill(draft) {
