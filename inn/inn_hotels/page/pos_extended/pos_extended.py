@@ -4,6 +4,7 @@ import frappe
 PRINT_STATUS_DRAFT = 0
 PRINT_STATUS_CAPTAIN = 1
 PRINT_STATUS_TABLE = 2
+ORDER_FINISHED = 3
 
 NEW_ORDER = 1
 
@@ -116,10 +117,13 @@ def get_table_number(invoice_name):
     return frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table"])
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def clean_table_number(invoice_name):
-    table_name = frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name}, fieldname=["table"])
-    doc_table = frappe.get_doc("Inn Point Of Sale Table", table_name)
+    table_name = frappe.get_last_doc(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name})
+    table_name.print_status = ORDER_FINISHED
+    table_name.save()
+
+    doc_table = frappe.get_doc("Inn Point Of Sale Table", table_name.table)
     doc_table.status = "Empty"
     doc_table.save()
     return
