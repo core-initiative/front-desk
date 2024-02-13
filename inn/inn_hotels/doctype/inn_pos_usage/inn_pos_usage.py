@@ -9,7 +9,7 @@ class InnPOSUsage(Document):
 	pass
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def print_list_order(pos_invoice):
 	order_dict = frappe.get_last_doc('Inn POS Usage', filters={'pos_invoice': pos_invoice})
 	res = {

@@ -112,12 +112,12 @@ def save_pos_usage(invoice_name, table, action):
 
     return {"message": "success"}
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_table_number(invoice_name):
     return frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table"])
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def clean_table_number(invoice_name):
     table_name = frappe.get_last_doc(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name})
     table_name.print_status = ORDER_FINISHED
