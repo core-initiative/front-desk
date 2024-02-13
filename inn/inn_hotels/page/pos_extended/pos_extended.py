@@ -35,8 +35,8 @@ def save_pos_usage(invoice_name, table, action):
         items = doc.new_item
         doc.new_item = {}
 
-        new_item = {x.name : x for x in items}
-        tracked_item = {x.name: x for x in doc.processed_item}
+        new_item = {x.item_name : x for x in items}
+        tracked_item = {x.item_name: x for x in doc.processed_item}
 
         for i in new_item:
             if i in tracked_item:
@@ -47,12 +47,9 @@ def save_pos_usage(invoice_name, table, action):
             
             tracked_item[i].save()
 
-        doc.processed_item = [val for _, val in doc.processed_item]
-        print(tracked_item)
-        print(doc.processed_item)
-        print(doc.new_item)
         doc.print_status = PRINT_STATUS_DRAFT
-        
+        doc.processed_item = {tracked_item[x] for x in tracked_item}
+
     if action == "save_draft" and doc.print_status == PRINT_STATUS_DRAFT:
         doc.print_status = PRINT_STATUS_DRAFT
     elif action == "print_captain" and doc.print_status == PRINT_STATUS_DRAFT:
@@ -64,12 +61,12 @@ def save_pos_usage(invoice_name, table, action):
     
     if action in ["save_draft", "print_captain"]:
         # add untracked child
-        all_item = frappe.db.get_values(doctype="POS Invoice Item", filters={"parenttype":"POS Invoice", "parent":invoice_name}, fieldname=["item_name", "qty"])
+        all_item = frappe.db.get_values(doctype="POS Invoice Item", filters={"parenttype":"POS Invoice", "parent":invoice_name}, fieldname=["item_name", "qty"], as_dict=True)
 
         if not 'tracked_item' in locals():
-            tracked_item = {x.name: x for x in doc.processed_item}
+            tracked_item = {x.item_name: x for x in doc.processed_item}
         
-        new_item_name = {item.name: item for item in doc.new_item}
+        new_item_name = {item.item_name: item for item in doc.new_item}
         doc.save()
 
 
@@ -77,17 +74,17 @@ def save_pos_usage(invoice_name, table, action):
         for item in all_item:
             item_name = ""
             quantity = 0
-            if item[0] in tracked_item:
-                diff = item[1] - tracked_item[item[0]].quantity
+            if item.item_name in tracked_item:
+                diff = item.qty - tracked_item[item.item_name].quantity
                 if diff > 0:
                     add_item = True
-                    item_name = item[0]
+                    item_name = item.item_name
                     quantity = diff
 
             else:
                 add_item = True               
-                item_name = item[0]
-                quantity = item[1]
+                item_name = item.item_name
+                quantity = item.qty
 
             if add_item:
                 if item_name in new_item_name:

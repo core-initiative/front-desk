@@ -152,7 +152,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				let success = false
 
 
-				if (this.frm.doc.__islocal) {
+				if (this.frm.doc.__islocal || this.frm.is_dirty()) {
 					frappe.show_alert({
 						message: __("You must save order as draft first."),
 						indicator: 'red'
@@ -192,7 +192,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				let success = false
 
 
-				if (this.frm.doc.__islocal) {
+				if (this.frm.doc.__islocal || this.frm.is_dirty()) {
 					frappe.show_alert({
 						message: __("You must save order as draft first."),
 						indicator: 'red'
