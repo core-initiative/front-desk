@@ -1,0 +1,72 @@
+@import "./style.bundle";
+
+.pos-card {
+    background-color: var(--fg-color);
+    box-shadow: var(--shadow-base);
+    border-radius: var(--border-radius-md);
+}
+
+.table-section {
+    @extend .pos-card;
+    display: flex;
+    flex-direction: column;
+    padding: var(--padding-md) var(--padding-lg);
+    overflow: visible;
+    margin-top: var(--margin-md);
+
+    > .table-details {
+        display: flex;
+        flex-direction:column ;
+        background-color: var(--fg-color);
+
+        > .header {
+            display: flex;
+            margin-bottom: var(--margin-md);
+        }
+    }
+}
+
+.table-number {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-top: auto;
+}
+
+.pointer-no-select {
+    cursor: pointer;
+    user-select: none;
+}
+
+.primary-action-pos {
+    @extend .pointer-no-select;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--padding-sm);
+    margin-top: var(--margin-sm);
+    border-radius: var(--border-radius-md);
+    font-size: var(--text-lg);
+    font-weight: 700;
+}
+
+.print-button-order {
+    background-color: var(--gray-300);
+    width: 100%;
+    color: white;
+}
+
+
+.print-order-section{
+    display: flex;
+
+    > .caption-order-btn {
+        @extend .primary-action-pos;
+        @extend .print-button-order;
+     }
+
+    > .table-order-btn {
+        @extend .primary-action-pos;
+        @extend .print-button-order;
+    }
+}
