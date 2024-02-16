@@ -197,7 +197,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-12-15 16:10:52.604128",
+ "modified": "2024-02-16 13:26:50.425136",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Operations",
@@ -207,7 +207,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 24.0,
+ "sequence_id": 4.0,
  "shortcuts": [],
  "title": "Operations"
 }
