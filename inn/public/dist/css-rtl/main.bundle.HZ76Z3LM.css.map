@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../../../../../../../../../../../tmp/tmp-76447-b74EcX2q0G5v/inn/inn/public/css/main.bundle.css"],
+  "sourcesContent": ["nav ul {\n  margin: 0;\n  padding: 0;\n  list-style: none;\n}\nnav a {\n  display: block;\n  padding: 6px 15px;\n  text-decoration: none;\n}"],
+  "mappings": "AAAA,0BAGE,gBAEF,MACE,cANF,iBAQE",
+  "names": []
+}
