@@ -19,7 +19,7 @@ web_include_css = "inn.bundle.css"
 # web_include_js = "/assets/inn/js/inn.js"
 
 # include js in page
-# page_js = {"page" : "public/js/file.js"}
+# page_js = {"point-of-sale" : "public/js/inn-pos.bundle.js"}
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
@@ -137,3 +137,6 @@ jinja = {
         "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number"
 	]
 }
+
+
+required_apps = ["erpnext"]

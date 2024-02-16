@@ -4,15 +4,25 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2024-01-31 12:21:54.868306",
+ "modified": "2024-02-16 11:02:23.797924",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "pos-extended",
  "owner": "Administrator",
  "page_name": "pos-extended",
+ "restrict_to_domain": "Retail",
  "roles": [
   {
-   "role": "Administrator"
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Sales Manager"
   }
  ],
  "script": null,

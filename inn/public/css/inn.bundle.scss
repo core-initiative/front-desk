@@ -59,6 +59,7 @@
 
 .print-order-section{
     display: flex;
+    column-gap: 1em;
 
     > .caption-order-btn {
         @extend .primary-action-pos;
