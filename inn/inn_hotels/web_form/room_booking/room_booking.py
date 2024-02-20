@@ -60,6 +60,12 @@ def get_rate(available_room) -> list:
 def convert_json(obj):
 	return [x.toJSON() for x in obj]
 
+
+@frappe.whitelist(allow_guest=True)
+def get_image_carousel():
+	file = frappe.db.get_list("File", filters={"Folder":"Home/Carousel"}, fields=["file_url"], ignore_permissions=True)
+	return file
+
 @frappe.whitelist(allow_guest=True)
 def get_available_room_and_rate(start_date, end_date, num_room):
 
