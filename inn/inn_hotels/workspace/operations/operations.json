@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"i7DzVS_nkY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operation Management</span>\",\"col\":12}},{\"id\":\"Gi2GP3MT6X\",\"type\":\"card\",\"data\":{\"card_name\":\"Housekeeping\",\"col\":4}},{\"id\":\"_L-N8SbO58\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4}},{\"id\":\"4QGFFgwgVI\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction Config\",\"col\":4}}]",
+ "content": "[{\"id\":\"i7DzVS_nkY\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Operation Management</span>\",\"col\":12}},{\"id\":\"EpO3dCM01u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>House Keeping Room Status</b></span>\",\"col\":12}},{\"id\":\"OZB3uvBCDs\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Ready\",\"col\":3}},{\"id\":\"eVIAAPoNTT\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Clean\",\"col\":3}},{\"id\":\"fRbcanV6Aa\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Dirty\",\"col\":3}},{\"id\":\"s3jTK677fD\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Not Available\",\"col\":3}},{\"id\":\"mP4DTk4p76\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"Gi2GP3MT6X\",\"type\":\"card\",\"data\":{\"card_name\":\"Housekeeping\",\"col\":4}},{\"id\":\"_L-N8SbO58\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4}},{\"id\":\"4QGFFgwgVI\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction Config\",\"col\":4}}]",
  "creation": "2023-12-15 14:57:37.238569",
  "custom_blocks": [],
  "docstatus": 0,
@@ -197,11 +197,28 @@
    "type": "Link"
   }
  ],
- "modified": "2024-02-16 13:26:50.425136",
+ "modified": "2024-02-22 11:21:15.729238",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Operations",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Not Available",
+   "number_card_name": "Inn Room Not Available"
+  },
+  {
+   "label": "Ready",
+   "number_card_name": "Inn Room Ready"
+  },
+  {
+   "label": "Dirty",
+   "number_card_name": "Inn Room Dirty"
+  },
+  {
+   "label": "Clean",
+   "number_card_name": "Inn Room Clean"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "Home",
  "public": 1,
