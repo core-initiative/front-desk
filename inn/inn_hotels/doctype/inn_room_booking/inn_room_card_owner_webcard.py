@@ -228,7 +228,7 @@ def calculate_average_rate(start_date=None, end_date=None):
     if start_date == None and end_date == None:
         return {
             "value": 0,
-            "fieldtype": "Int"
+            "fieldtype": "Currency"
         }
     total_rate, total_sold = calculate_total_rate_and_sold(start_date, end_date)
     return total_rate / total_sold
@@ -238,7 +238,7 @@ def calculate_total_rate(start_date=None, end_date=None):
     if start_date == None and end_date == None:
         return {
             "value": 0,
-            "fieldtype": "Int"
+            "fieldtype": "Currency"
         }
     total_rate, _ = calculate_total_rate_and_sold(start_date, end_date)
     return total_rate

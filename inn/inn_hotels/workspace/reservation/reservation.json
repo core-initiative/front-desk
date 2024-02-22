@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"mQhBeS--Rl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reservation</span>\",\"col\":12}},{\"id\":\"BxqoGNVQ4q\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Inn House\",\"col\":3}},{\"id\":\"wZnRYcYnXv\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Arrival\",\"col\":3}},{\"id\":\"wtb_GqbdIZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Departure\",\"col\":3}},{\"id\":\"NjOnJ7GpSF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Check Out\",\"col\":3}},{\"id\":\"nrjSQoFUDF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Sold</b></span>\",\"col\":12}},{\"id\":\"Ik_PvcF5sO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":4}},{\"id\":\"WsrVm9DRLn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available\",\"col\":4}},{\"id\":\"4UtfBl96nC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Out of Order\",\"col\":4}},{\"id\":\"sKu5ru_37L\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"ARR\",\"col\":6}},{\"id\":\"mxvXiLXtkU\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":6}},{\"id\":\"lf4XkzibVt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"x8GJwV8hzM\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction\",\"col\":4}},{\"id\":\"-GtWnq-goz\",\"type\":\"card\",\"data\":{\"card_name\":\"City Ledger\",\"col\":4}},{\"id\":\"8XQ43ifBk4\",\"type\":\"card\",\"data\":{\"card_name\":\"Night Audit\",\"col\":4}}]",
+ "content": "[{\"id\":\"mQhBeS--Rl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reservation</span>\",\"col\":12}},{\"id\":\"BxqoGNVQ4q\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Inn House\",\"col\":3}},{\"id\":\"wZnRYcYnXv\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Arrival\",\"col\":3}},{\"id\":\"wtb_GqbdIZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Departure\",\"col\":3}},{\"id\":\"NjOnJ7GpSF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Check Out\",\"col\":3}},{\"id\":\"nrjSQoFUDF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Sold</b></span>\",\"col\":12}},{\"id\":\"Ik_PvcF5sO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":4}},{\"id\":\"WsrVm9DRLn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available\",\"col\":4}},{\"id\":\"4UtfBl96nC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Out of Order\",\"col\":4}},{\"id\":\"eAOak1AJ_L\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Revenue Summary</b></span>\",\"col\":12}},{\"id\":\"sKu5ru_37L\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"ARR\",\"col\":6}},{\"id\":\"mxvXiLXtkU\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":6}},{\"id\":\"lf4XkzibVt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"x8GJwV8hzM\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction\",\"col\":4}},{\"id\":\"-GtWnq-goz\",\"type\":\"card\",\"data\":{\"card_name\":\"City Ledger\",\"col\":4}},{\"id\":\"8XQ43ifBk4\",\"type\":\"card\",\"data\":{\"card_name\":\"Night Audit\",\"col\":4}}]",
  "creation": "2023-12-15 13:51:19.164024",
  "custom_blocks": [],
  "docstatus": 0,
@@ -138,7 +138,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-02-22 14:25:28.090010",
+ "modified": "2024-02-22 19:09:03.891400",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Reservation",
@@ -146,6 +146,10 @@
   {
    "label": "Arrival",
    "number_card_name": "Arrival"
+  },
+  {
+   "label": "Total Sold",
+   "number_card_name": "Inn Hotel Total Room Sold"
   },
   {
    "label": "Available",
@@ -162,10 +166,6 @@
   {
    "label": "ARR",
    "number_card_name": "Inn Hotel AAR Room Sold"
-  },
-  {
-   "label": "Total Sold",
-   "number_card_name": "Inn Hotel Total Room Rate Sold"
   },
   {
    "label": "Departure",
