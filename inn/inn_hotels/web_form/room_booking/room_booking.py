@@ -35,6 +35,10 @@ def tup_key_gen(row):
 def get_rate(available_room) -> list:
 
 	default_group_guest = "Guest Booking Group"
+	setting_group_guest = frappe.db.get_value(doctype="Inn Hotels Setting", fieldname="guest_booking_group")
+	if setting_group_guest != None:
+		default_group_guest = setting_group_guest
+
 	result = []
 
 	# prevent multiple query with same filter
