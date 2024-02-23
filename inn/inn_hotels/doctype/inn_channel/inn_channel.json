@@ -7,8 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "channel_name",
-  "profit_sharing_percentage",
-  "is_payment_included"
+  "is_payment_included",
+  "profit_sharing",
+  "profit_sharing_amount",
+  "sharing_type"
  ],
  "fields": [
   {
@@ -27,15 +29,29 @@
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "0",
-   "fieldname": "profit_sharing_percentage",
-   "fieldtype": "Percent",
-   "label": "Profit Sharing Percentage",
-   "reqd": 1
+   "fieldname": "profit_sharing",
+   "fieldtype": "Check",
+   "label": "Profit Sharing"
+  },
+  {
+   "default": "Percentage",
+   "fieldname": "sharing_type",
+   "fieldtype": "Select",
+   "label": "Sharing Type",
+   "options": "Percentage\nFlat"
+  },
+  {
+   "default": "0",
+   "description": "example. 10 if in percentage (10%) or 100000 if in flat (Rp 100.000)",
+   "fieldname": "profit_sharing_amount",
+   "fieldtype": "Int",
+   "label": "Profit Sharing Amount"
   }
  ],
  "links": [],
- "modified": "2024-02-22 19:18:53.586035",
+ "modified": "2024-02-23 14:55:05.516236",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Channel",
@@ -66,7 +82,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

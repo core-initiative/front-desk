@@ -39,6 +39,8 @@
   "guest_booking_group",
   "inn_customer_section",
   "inn_customer_group_as_supplier",
+  "profit_sharing_reservation_section",
+  "profit_sharing_account",
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
@@ -277,11 +279,23 @@
    "label": "Inn Customer Group as Supplier",
    "options": "Supplier Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "profit_sharing_reservation_section",
+   "fieldtype": "Section Break",
+   "label": "Profit Sharing Reservation"
+  },
+  {
+   "fieldname": "profit_sharing_account",
+   "fieldtype": "Link",
+   "label": "Profit Sharing Account",
+   "options": "Account",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-23 13:03:44.910435",
+ "modified": "2024-02-23 14:14:34.512825",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
