@@ -8,7 +8,7 @@ from frappe.model.document import Document
 class InnCustomer(Document):
 	pass
 
-	def after_insert(self, *args, **kwargs):
+	def before_insert(self, *args, **kwargs):
 
 		doc_supp_group = frappe.db.get_single_value(doctype="Inn Hotels Setting", fieldname="inn_customer_group_as_supplier")
 		if doc_supp_group == None:
@@ -21,7 +21,6 @@ class InnCustomer(Document):
 		doc_sup.save()
 
 		self.supplier_name = doc_sup.name
-		self.save()
 
 	def after_delete(self, *args, **kwargs):
 		frappe.db.delete("Customer", {"customer_name": self.customer_name})

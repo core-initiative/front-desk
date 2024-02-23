@@ -1,14 +1,14 @@
 {
  "actions": [],
- "autoname": "naming_series:customer_name",
+ "autoname": "field:customer",
  "creation": "2024-01-05 14:19:59.839932",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "customer",
   "customer_name",
   "customer_type",
-  "supplier_name",
-  "naming_series"
+  "supplier_name"
  ],
  "fields": [
   {
@@ -41,26 +41,20 @@
    "unique": 1
   },
   {
-   "default": "INN-CST-",
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "hidden": 1,
-   "label": "Series",
-   "no_copy": 1,
-   "options": "INN-CST-",
-   "print_hide": 1,
-   "read_only": 1,
-   "reqd": 1,
-   "set_only_once": 1
+   "fetch_from": "customer_name.customer_name",
+   "fieldname": "customer",
+   "fieldtype": "Data",
+   "label": "Customer",
+   "unique": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-23 13:49:27.579293",
+ "modified": "2024-02-23 15:09:03.577159",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Customer",
- "naming_rule": "By \"Naming Series\" field",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

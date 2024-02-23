@@ -956,7 +956,7 @@ function get_room_rate(start_date) {
 
 	if (room_type !== undefined) {
 		frappe.db.get_value("Customer", cur_frm.doc.customer_id, "customer_group", (customer) => {
-			let customer_group_list = ['All Customer Groups', "Guest Booking Group"];
+			let customer_group_list = ['All Customer Groups'];
 			customer_group_list.push(customer.customer_group);
 			console.log("filters: ");
 			console.log("room_type = " + room_type);
