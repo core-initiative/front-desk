@@ -37,6 +37,8 @@
   "max_opening",
   "inn_guest_booking_section",
   "guest_booking_group",
+  "inn_customer_section",
+  "inn_customer_group_as_supplier",
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
@@ -263,11 +265,23 @@
    "label": "Guest Booking Group",
    "options": "Customer Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "inn_customer_section",
+   "fieldtype": "Section Break",
+   "label": "Inn Customer"
+  },
+  {
+   "fieldname": "inn_customer_group_as_supplier",
+   "fieldtype": "Link",
+   "label": "Inn Customer Group as Supplier",
+   "options": "Supplier Group",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-22 10:32:23.221769",
+ "modified": "2024-02-23 13:03:44.910435",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",

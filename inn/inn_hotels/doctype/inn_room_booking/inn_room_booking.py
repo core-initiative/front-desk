@@ -12,9 +12,6 @@ class InnRoomBooking(Document):
 	def on_update(self):
 		if frappe.db.exists("Inn Guest Booking Room", {"inn_room_booking": self.name}, cache=True):
 			gbr = frappe.get_doc("Inn Guest Booking Room", {"inn_room_booking": self.name}, cache=True)
-			gbr.room_number = self.room_id
-			gbr.start_date = self.start
-			gbr.end_date = self.end
 			gbr.save()
 
 	pass
