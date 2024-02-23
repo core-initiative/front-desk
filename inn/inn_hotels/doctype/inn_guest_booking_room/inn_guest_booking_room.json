@@ -22,7 +22,6 @@
   },
   {
    "fetch_from": "inn_room_booking.start",
-   "fetch_if_empty": 1,
    "fieldname": "start_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -31,7 +30,6 @@
   },
   {
    "fetch_from": "inn_room_booking.end",
-   "fetch_if_empty": 1,
    "fieldname": "end_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -49,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-02-22 10:49:07.109120",
+ "modified": "2024-02-23 10:31:44.205537",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Guest Booking Room",
