@@ -35,12 +35,16 @@
   "years_to_expire",
   "inn_shift_settings",
   "max_opening",
+  "inn_room_section",
+  "number_of_floor",
   "inn_guest_booking_section",
   "guest_booking_group",
   "inn_customer_section",
   "inn_customer_group_as_supplier",
   "profit_sharing_reservation_section",
   "profit_sharing_account",
+  "profit_sharing_transaction_type",
+  "service_charge_account",
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
@@ -291,11 +295,37 @@
    "label": "Profit Sharing Account",
    "options": "Account",
    "reqd": 1
+  },
+  {
+   "fieldname": "service_charge_account",
+   "fieldtype": "Link",
+   "label": "Service Charge Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "profit_sharing_transaction_type",
+   "fieldtype": "Link",
+   "label": "Profit Sharing Transaction Type",
+   "options": "Inn Folio Transaction Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "inn_room_section",
+   "fieldtype": "Section Break",
+   "label": "Inn Room"
+  },
+  {
+   "fieldname": "number_of_floor",
+   "fieldtype": "Int",
+   "label": "Number of Floor",
+   "non_negative": 1,
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-23 14:14:34.512825",
+ "modified": "2024-02-27 09:29:10.285393",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
