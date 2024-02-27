@@ -7,7 +7,8 @@ from __future__ import unicode_literals
 import json
 import frappe
 from frappe.model.document import Document
-
+from datetime import date, timedelta
+from dateutil.parser import parse
 
 class InnRoom(Document):
 	pass
@@ -163,3 +164,22 @@ def update_single_room_status(room, mode):
 			return 'Room Status cannot be updated. Please try again.'
 		else:
 			return 'Room ' + room + ' Status updated successfully'
+		
+	elif mode == "out":
+		last_out = frappe.get_last_doc(doctype="Inn Room Booking", filters={"room_id": room}, order_by="creation desc")
+
+		if last_out == None or last_out.status in ["Finished", "Canceled"]:
+			# if there is none found or the last is already finished or canceled, then make a new one
+			room_booking = frappe.new_doc("Inn Room Booking")
+			room_booking.start = date.today()
+			room_booking.end = date.today() + timedelta(days=1)
+			room_booking.room_availability = "Out of Order"
+			room_booking.note = "Set out of order by mobile from user: " + frappe.session.user
+			room_booking.room_id = room
+			room_booking.insert()
+			return "Room " + room + " Status updated successfully"
+
+		last_out.status = "Finished"
+		last_out.save()
+
+		return "Room " + room + " Status updated successfully"
