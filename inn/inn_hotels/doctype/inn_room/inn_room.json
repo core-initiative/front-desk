@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "room_detail",
   "number",
   "room_type",
   "room_status",
@@ -45,7 +46,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Room Status",
-   "options": "Vacant Ready\nVacant Clean\nVacant Dirty\nOccupied Clean\nOccupied Dirty",
+   "options": "Vacant Ready\nVacant Clean\nVacant Dirty\nOccupied Clean\nOccupied Dirty\nOut of Order",
    "read_only": 1,
    "reqd": 1
   },
@@ -116,15 +117,18 @@
   {
    "default": "0",
    "fieldname": "floor",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Floor",
    "non_negative": 1,
-   "options": "0",
    "reqd": 1
+  },
+  {
+   "fieldname": "room_detail",
+   "fieldtype": "Section Break"
   }
  ],
  "links": [],
- "modified": "2024-02-27 10:13:57.591349",
+ "modified": "2024-02-27 11:47:28.884652",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Room",

@@ -110,17 +110,43 @@ frappe.ui.form.on('Inn Room', {
 				}
 			})
 		}
-	}
+	},
 });
 
-
+let form_control_field;
 
 async function set_option_floor_plan(frm) {
+	wrapper = $(".layout-main-section").find('div[data-fieldname="room_detail"]').find('.section-body').find('div[data-fieldname="column_break"').find("form")
+	if (!wrapper.find('[data-fieldname="floor_choice"]').length) {
+		await create_choice_field_floor(frm, wrapper)
+	}
+
+	if (!frm.__islocal) {
+		form_control_field.set_value(frm.doc.floor)
+	}
+}
+
+async function create_choice_field_floor(frm, wrapper) {
+	frm.set_df_property("floor", "hidden", true)
 	let opt_floor = [""]
-	await frappe.db.get_single_value("Inn Hotels Setting", "number_of_floor")
+
+	await frappe.db.get_single_value("Inn Hotels Setting", "number_of_floor",)
 		.then(num => {
 			opt_floor = ([...Array(num).keys()].map(x => ++x))
 			opt_floor.splice(0, 0, 0)
-			frm.set_df_property("floor", "options", opt_floor)
 		})
+
+	form_control_field = frappe.ui.form.make_control({
+		parent: wrapper,
+		df: {
+			label: "Floor",
+			fieldname: "floor_choice",
+			fieldtype: "Select",
+			options: opt_floor,
+			onchange: function () {
+				frm.set_value("floor", this.value)
+			}
+		},
+		render_input: true
+	})
 }
