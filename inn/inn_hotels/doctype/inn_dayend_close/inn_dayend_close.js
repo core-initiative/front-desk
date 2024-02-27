@@ -9,7 +9,6 @@ frappe.ui.form.on('Inn Dayend Close', {
 		frm.get_field("arrived_today").grid.only_sortable();
 		frm.get_field("departed_today").grid.only_sortable();
 		frm.get_field("closed_today").grid.only_sortable();
-		frm.get_field("resto_order_finished_today").grid.only_sortable();
 	},
 	refresh: function (frm) {
 		if (frm.doc.__islocal === 1) {
@@ -111,7 +110,8 @@ function populate_child(frm) {
 								else {
 									posting_still_open = false;
 								}
-								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[2].length > 0 || r.message[3].length > 0) {
+
+								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[2].length > 0) {
 									show_button = false;
 								}
 								else {
