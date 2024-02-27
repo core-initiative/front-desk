@@ -97,6 +97,9 @@ def update_room_status(rooms, mode):
 
 @frappe.whitelist()
 def update_single_room_status(room, mode):
+	if mode not in ["clean", "dirty", "out"]:
+		raise ValueError("inappropriate value of mode")
+
 	is_failed = False
 	is_housekeeping = False
 	is_housekeeping_assistant = False
