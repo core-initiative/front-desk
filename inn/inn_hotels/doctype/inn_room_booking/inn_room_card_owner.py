@@ -213,6 +213,8 @@ def calculate_total_rate_and_sold(start_date, end_date):
 @frappe.whitelist()
 def calculate_average_rate(start_date, end_date):
     total_rate, total_sold = calculate_total_rate_and_sold(start_date, end_date)
+    if total_sold == 0:
+        return 0
     return total_rate / total_sold
 
 @frappe.whitelist()
