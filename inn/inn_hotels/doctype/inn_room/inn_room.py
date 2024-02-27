@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import frappe
+from frappe.exceptions import DoesNotExistError
 from frappe.model.document import Document
 from datetime import date, timedelta
 from dateutil.parser import parse
@@ -166,7 +167,10 @@ def update_single_room_status(room, mode):
 			return 'Room ' + room + ' Status updated successfully'
 		
 	elif mode == "out":
-		last_out = frappe.get_last_doc(doctype="Inn Room Booking", filters={"room_id": room}, order_by="creation desc")
+		try:
+			last_out = frappe.get_last_doc(doctype="Inn Room Booking", filters={"room_id": room}, order_by="creation desc")
+		except DoesNotExistError as e:
+			last_out = None
 
 		if last_out == None or last_out.status in ["Finished", "Canceled"]:
 			# if there is none found or the last is already finished or canceled, then make a new one
