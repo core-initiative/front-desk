@@ -12,6 +12,9 @@ from frappe.model.document import Document
 class InnRoom(Document):
 	pass
 
+@frappe.whitelist()
+def get_max_floor():
+	return frappe.db.get_single_value("Inn Hotels Setting", "number_of_floor")
 
 @frappe.whitelist()
 def copy_amenities_template(amenities_type_id):
