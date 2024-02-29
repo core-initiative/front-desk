@@ -138,7 +138,7 @@
    "type": "Link"
   }
  ],
- "modified": "2023-12-15 14:08:20.184702",
+ "modified": "2024-02-16 13:26:49.991944",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Reservation",
@@ -157,7 +157,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 23.0,
+ "sequence_id": 2.0,
  "shortcuts": [],
  "title": "Reservation"
 }

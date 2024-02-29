@@ -35,6 +35,10 @@ def tup_key_gen(row):
 def get_rate(available_room) -> list:
 
 	default_group_guest = "Guest Booking Group"
+	setting_group_guest = frappe.db.get_value(doctype="Inn Hotels Setting", fieldname="guest_booking_group")
+	if setting_group_guest != None:
+		default_group_guest = setting_group_guest
+
 	result = []
 
 	# prevent multiple query with same filter
@@ -44,7 +48,7 @@ def get_rate(available_room) -> list:
 		
 
 	for room_type in room_types:
-		prices = frappe.db.get_list(doctype="Inn Room Rate", filters={"customer_group": default_group_guest, "room_type": room_type}, fields=["final_total_rate_amount", "final_breakfast_rate_amount"])
+		prices = frappe.db.get_list(ignore_permissions=True, doctype="Inn Room Rate", filters={"customer_group": default_group_guest, "room_type": room_type}, fields=["final_total_rate_amount", "final_breakfast_rate_amount"])
 		if len(prices) == 0:
 			continue
 
@@ -60,7 +64,13 @@ def get_rate(available_room) -> list:
 def convert_json(obj):
 	return [x.toJSON() for x in obj]
 
-@frappe.whitelist()
+
+@frappe.whitelist(allow_guest=True)
+def get_image_carousel():
+	file = frappe.db.get_list("File", filters={"Folder":"Home/Carousel"}, fields=["file_url"], ignore_permissions=True)
+	return file
+
+@frappe.whitelist(allow_guest=True)
 def get_available_room_and_rate(start_date, end_date, num_room):
 
 	# get number of room with same room type and bed type

@@ -4,14 +4,13 @@ let show_button = true;
 let posting_still_open = false;
 
 frappe.ui.form.on('Inn Dayend Close', {
-	onload: function(frm) {
+	onload: function (frm) {
 		set_audit_date(frm);
 		frm.get_field("arrived_today").grid.only_sortable();
 		frm.get_field("departed_today").grid.only_sortable();
 		frm.get_field("closed_today").grid.only_sortable();
-		frm.get_field("resto_order_finished_today").grid.only_sortable();
 	},
-	refresh: function(frm) {
+	refresh: function (frm) {
 		if (frm.doc.__islocal === 1) {
 			frappe.call({
 				method: 'inn.inn_hotels.doctype.inn_dayend_close.inn_dayend_close.is_there_open_dayend_close',
@@ -89,17 +88,18 @@ function populate_child(frm) {
 							});
 						}
 						frm.refresh_field('closed_today');
-						frm.set_value('resto_order_finished_today', []);
-						if (r.message[3].length > 0) {
-							$.each(r.message[3], function (i, d) {
-								var item = frm.add_child('resto_order_finished_today');
-								item.ongoing_order_id = d.ongoing_order_id;
-								item.restaurant = d.restaurant;
-								item.customer = d.customer;
-								item.description = d.description;
-							});
-						}
-						frm.refresh_field('resto_order_finished_today');
+
+						// frm.set_value('resto_order_finished_today', []);
+						// if (r.message[3].length > 0) {
+						// 	$.each(r.message[3], function (i, d) {
+						// 		var item = frm.add_child('resto_order_finished_today');
+						// 		item.ongoing_order_id = d.ongoing_order_id;
+						// 		item.restaurant = d.restaurant;
+						// 		item.customer = d.customer;
+						// 		item.description = d.description;
+						// 	});
+						// }
+						// frm.refresh_field('resto_order_finished_today');
 
 						frappe.call({
 							method: 'inn.inn_hotels.doctype.inn_room_charge_posting.inn_room_charge_posting.is_there_open_room_charge_posting',
@@ -110,7 +110,8 @@ function populate_child(frm) {
 								else {
 									posting_still_open = false;
 								}
-								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[2].length > 0 || r.message[3].length > 0) {
+
+								if (r.message[0].length > 0 || r.message[1].length > 0 || r.message[2].length > 0) {
 									show_button = false;
 								}
 								else {
@@ -120,7 +121,7 @@ function populate_child(frm) {
 								if (show_button && !posting_still_open) {
 									if (frm.doc.__islocal !== 1) {
 										frm.add_custom_button(__('Process Dayend Close'), function () {
-											frappe.confirm(__("You are about to Close the day, Are you sure?"), function() {
+											frappe.confirm(__("You are about to Close the day, Are you sure?"), function () {
 												frappe.call({
 													method: 'inn.inn_hotels.doctype.inn_dayend_close.inn_dayend_close.process_dayend_close',
 													args: {
@@ -140,7 +141,7 @@ function populate_child(frm) {
 										});
 									}
 								}
-								else{
+								else {
 									if (posting_still_open) {
 										frm.set_intro(__("There are still Room Charge Posting still Open, Close it First. " +
 											"Resolve the Reservation's and Folio's status before processing the Dayend Close"));

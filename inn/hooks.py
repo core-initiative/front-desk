@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from . import __version__ as app_version
-
 app_name = "inn"
 app_title = "Inn Hotels"
 app_publisher = "Core Initiative"
@@ -15,15 +11,15 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/inn/css/inn.css"
+app_include_css = "inn.bundle.css"
 # app_include_js = "/assets/inn/js/inn.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/inn/css/inn.css"
+web_include_css = "inn.bundle.css"
 # web_include_js = "/assets/inn/js/inn.js"
 
 # include js in page
-# page_js = {"page" : "public/js/file.js"}
+# page_js = {"point-of-sale" : "public/js/inn-pos.bundle.js"}
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
@@ -135,6 +131,12 @@ scheduler_events = {
 jinja = {
 	"methods": [
 		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_total_deposit",
-		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date"
+		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date",
+        
+		"inn.inn_hotels.doctype.inn_pos_usage.inn_pos_usage.print_list_order",
+        "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number"
 	]
 }
+
+
+required_apps = ["erpnext"]

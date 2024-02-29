@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-12 11:06:40.509746",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "table",
+  "pos_invoice",
+  "print_status",
+  "processed_item",
+  "new_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "table",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Table",
+   "options": "Inn Point Of Sale Table",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "POS Invoice",
+   "options": "POS Invoice",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "print_status",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Print Status",
+   "reqd": 1
+  },
+  {
+   "fieldname": "processed_item",
+   "fieldtype": "Table",
+   "label": "Processed Item",
+   "options": "Inn POS Usage Item"
+  },
+  {
+   "fieldname": "new_item",
+   "fieldtype": "Table",
+   "label": "New Item",
+   "options": "Inn POS Usage Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-02-13 12:38:30.114825",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "Inn POS Usage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

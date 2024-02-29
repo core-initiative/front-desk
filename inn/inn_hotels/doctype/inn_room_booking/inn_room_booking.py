@@ -6,10 +6,33 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_folio.inn_folio import update_close_by_reservation
-
+from datetime import date
+from dateutil.parser import parse
 
 class InnRoomBooking(Document):
-	pass
+
+	def on_update(self):
+		if frappe.db.exists("Inn Guest Booking Room", {"inn_room_booking": self.name}, cache=True):
+			gbr = frappe.get_doc("Inn Guest Booking Room", {"inn_room_booking": self.name}, cache=True)
+			# resave to fetch value from inn room booking to inn guest booking room
+			gbr.save()
+		
+		if self.room_availability in ["Out of Order", "Under Construction"]:
+			if not (self.start <= date.today() < self.end):
+				return
+			
+			if self.status == "Booked":
+				# set inn room status as out of order
+				# because from the flow, any room can be changed to "Out of Order" without any validation
+				# this changes wont check any pre-existing condition
+				room_status = "Out of Order"
+			elif self.status in ["Finished", "Canceled"]:
+				# set inn room status as vacant dirty
+				# what if there are multiple OOO & UC in one room in sequential? (different object)?
+				# this time, don't care it will still resolve room as Vacant Dirty
+				room_status = "Vacant Dirty"
+
+			frappe.db.set_value('Inn Room', self.room_id, 'room_status', room_status)
 
 
 @frappe.whitelist()

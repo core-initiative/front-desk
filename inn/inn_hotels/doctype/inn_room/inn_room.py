@@ -6,12 +6,17 @@ from __future__ import unicode_literals
 
 import json
 import frappe
+from frappe.exceptions import DoesNotExistError
 from frappe.model.document import Document
-
+from datetime import date, timedelta
+from dateutil.parser import parse
 
 class InnRoom(Document):
 	pass
 
+@frappe.whitelist()
+def get_max_floor():
+	return frappe.db.get_single_value("Inn Hotels Setting", "number_of_floor")
 
 @frappe.whitelist()
 def copy_amenities_template(amenities_type_id):
@@ -94,6 +99,9 @@ def update_room_status(rooms, mode):
 
 @frappe.whitelist()
 def update_single_room_status(room, mode):
+	if mode not in ["clean", "dirty", "out"]:
+		raise ValueError("inappropriate value of mode")
+
 	is_failed = False
 	is_housekeeping = False
 	is_housekeeping_assistant = False
@@ -157,3 +165,25 @@ def update_single_room_status(room, mode):
 			return 'Room Status cannot be updated. Please try again.'
 		else:
 			return 'Room ' + room + ' Status updated successfully'
+		
+	elif mode == "out":
+		try:
+			last_out = frappe.get_last_doc(doctype="Inn Room Booking", filters={"room_id": room}, order_by="creation desc")
+		except DoesNotExistError as e:
+			last_out = None
+
+		if last_out == None or last_out.status in ["Finished", "Canceled"]:
+			# if there is none found or the last is already finished or canceled, then make a new one
+			room_booking = frappe.new_doc("Inn Room Booking")
+			room_booking.start = date.today()
+			room_booking.end = date.today() + timedelta(days=1)
+			room_booking.room_availability = "Out of Order"
+			room_booking.note = "Set out of order by mobile from user: " + frappe.session.user
+			room_booking.room_id = room
+			room_booking.insert()
+			return "Room " + room + " Status updated successfully"
+
+		last_out.status = "Finished"
+		last_out.save()
+
+		return "Room " + room + " Status updated successfully"

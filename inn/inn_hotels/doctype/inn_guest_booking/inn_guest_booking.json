@@ -12,6 +12,7 @@
   "allow_smoking",
   "column_break_yxbv",
   "phone_number",
+  "email",
   "section_break_qcni",
   "amended_from",
   "start",
@@ -198,12 +199,17 @@
    "label": "Total Night",
    "non_negative": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-01-12 12:40:29.260038",
+ "modified": "2024-01-30 10:06:34.479847",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Guest Booking",

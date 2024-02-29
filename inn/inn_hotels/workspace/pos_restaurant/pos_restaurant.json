@@ -1,0 +1,133 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"-oBGq8i0lZ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">POS Restaurant</span>\",\"col\":12}},{\"id\":\"wt4AYPvx0o\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Finished Order\",\"col\":3}},{\"id\":\"JyZU85xYGO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Ongoing Order\",\"col\":3}},{\"id\":\"dDQdCEAO1G\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Consolidated Order\",\"col\":3}},{\"id\":\"lay1iV6oVG\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Returned Order\",\"col\":3}},{\"id\":\"f_NDu9U3Oz\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"d0-bIJ58oJ\",\"type\":\"card\",\"data\":{\"card_name\":\"Point of Sale\",\"col\":4}},{\"id\":\"Wt_5MLs3M9\",\"type\":\"card\",\"data\":{\"card_name\":\"Operation\",\"col\":4}}]",
+ "creation": "2024-02-16 13:26:44.700989",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "today",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "POS Restaurant",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Point of Sale",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "POS Restaurant",
+   "link_count": 0,
+   "link_to": "pos-extended",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Item Group",
+   "link_count": 0,
+   "link_to": "Item Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Menu Item",
+   "link_count": 0,
+   "link_to": "Item",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Item Price",
+   "link_count": 0,
+   "link_to": "Item Price",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Operation",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Recent Order",
+   "link_count": 0,
+   "link_to": "POS Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer Data",
+   "link_count": 0,
+   "link_to": "Inn Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Restaurant Table",
+   "link_count": 0,
+   "link_to": "Inn Point Of Sale Table",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2024-02-16 13:57:03.534206",
+ "modified_by": "Administrator",
+ "module": "Inn Hotels",
+ "name": "POS Restaurant",
+ "number_cards": [
+  {
+   "label": "Returned Order",
+   "number_card_name": "Returned Order"
+  },
+  {
+   "label": "Finished Order",
+   "number_card_name": "Total Order"
+  },
+  {
+   "label": "Ongoing Order",
+   "number_card_name": "Ongoing Order"
+  },
+  {
+   "label": "Consolidated Order",
+   "number_card_name": "Consolidated Order"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "Home",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 3.0,
+ "shortcuts": [],
+ "title": "POS Restaurant"
+}

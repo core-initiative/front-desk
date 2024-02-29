@@ -6,10 +6,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "inn_room_booking",
+  "room_number",
   "start_date",
   "end_date",
-  "room_number"
+  "inn_room_booking"
  ],
  "fields": [
   {
@@ -22,19 +22,19 @@
   },
   {
    "fetch_from": "inn_room_booking.start",
-   "fetch_if_empty": 1,
    "fieldname": "start_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Start Date"
+   "label": "Start Date",
+   "read_only": 1
   },
   {
    "fetch_from": "inn_room_booking.end",
-   "fetch_if_empty": 1,
    "fieldname": "end_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "End Date"
+   "label": "End Date",
+   "read_only": 1
   },
   {
    "fetch_from": "inn_room_booking.room_id",
@@ -47,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-01-11 10:53:15.448346",
+ "modified": "2024-02-23 10:31:44.205537",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Guest Booking Room",
