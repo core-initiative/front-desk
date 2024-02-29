@@ -134,7 +134,8 @@ jinja = {
 		"inn.inn_hotels.doctype.inn_reservation.inn_reservation.get_date",
         
 		"inn.inn_hotels.doctype.inn_pos_usage.inn_pos_usage.print_list_order",
-        "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number"
+        "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number",
+        "inn.inn_hotels.doctype.inn_pos_usage.inn_extended_bill.extended_bil_extra_data"
 	]
 }
 

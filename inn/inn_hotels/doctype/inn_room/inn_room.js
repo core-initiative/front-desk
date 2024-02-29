@@ -3,9 +3,7 @@
 
 frappe.ui.form.on('Inn Room', {
 	refresh: function (frm, cdt, cdn) {
-
 		set_option_floor_plan(frm)
-
 		if (frappe.user.has_role('Housekeeping') ||
 			frappe.user.has_role('Housekeeping Assistant') ||
 			frappe.user.has_role('Housekeeping Supervisor') ||
@@ -116,6 +114,7 @@ frappe.ui.form.on('Inn Room', {
 let form_control_field;
 
 async function set_option_floor_plan(frm) {
+	frm.set_df_property("floor", "hidden", true)
 	wrapper = $(".layout-main-section").find('div[data-fieldname="room_detail"]').find('.section-body').find('div[data-fieldname="column_break"').find("form")
 	if (!wrapper.find('[data-fieldname="floor_choice"]').length) {
 		await create_choice_field_floor(frm, wrapper)
@@ -127,7 +126,6 @@ async function set_option_floor_plan(frm) {
 }
 
 async function create_choice_field_floor(frm, wrapper) {
-	frm.set_df_property("floor", "hidden", true)
 	let opt_floor = [""]
 
 	await frappe.db.get_single_value("Inn Hotels Setting", "number_of_floor",)
