@@ -13,6 +13,7 @@ class InnPOSUsage(Document):
 def print_list_order(pos_invoice):
 	order_dict = frappe.get_last_doc('Inn POS Usage', filters={'pos_invoice': pos_invoice})
 	res = {
+		"name": order_dict.name,
 		"table": order_dict.table,
 		"items": order_dict.new_item
 	}
