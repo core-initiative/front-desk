@@ -45,6 +45,9 @@
   "profit_sharing_account",
   "profit_sharing_transaction_type",
   "service_charge_account",
+  "inn_pos_extended_section",
+  "tax_name_pos_receipt",
+  "pos_receipt_remarks",
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
@@ -321,11 +324,28 @@
    "label": "Number of Floor",
    "non_negative": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "inn_pos_extended_section",
+   "fieldtype": "Section Break",
+   "label": "Inn POS Extended"
+  },
+  {
+   "default": "Tax&Service (21%)",
+   "fieldname": "tax_name_pos_receipt",
+   "fieldtype": "Data",
+   "label": "Tax Name POS Receipt",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pos_receipt_remarks",
+   "fieldtype": "Small Text",
+   "label": "POS Receipt Remarks"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-27 09:29:10.285393",
+ "modified": "2024-02-29 11:35:51.569635",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
