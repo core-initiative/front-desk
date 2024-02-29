@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from dateutil.parser import parse
+from datetime import date, timedelta
 
 def count_all_room(start_date, end_date):
     default_availability = frappe.db.count("Inn Room")
@@ -28,10 +29,11 @@ def count_all_room(start_date, end_date):
 @frappe.whitelist()
 def count_sold_room(start_date = None, end_date=None):
     if start_date == None and end_date == None:
-        return {
-            "value": 0,
-            "fieldtype": "Int"
-        }
+        start_date = date.today().isoformat()
+        end_date = date.today() + timedelta(days=1) 
+        end_date = end_date.isoformat()
+
+
     try:
         start_date = parse(start_date, False).date()
     except ValueError:
@@ -70,15 +72,19 @@ def count_sold_room(start_date = None, end_date=None):
         days_sold = (room_end_date - room_start_date).days
         total_sold += days_sold
 
-    return total_sold
+    return {
+        "value": total_sold,
+        "fieldtype": "Int"
+    }
 
 @frappe.whitelist()
 def count_available_room(start_date=None, end_date=None):
     if start_date == None and end_date == None:
-        return {
-            "value": 0,
-            "fieldtype": "Int"
-        }
+        start_date = date.today().isoformat()
+        end_date = date.today() + timedelta(days=1) 
+        end_date = end_date.isoformat()
+
+
     default_availability = frappe.db.count("Inn Room")
     try:
         start_date = parse(start_date, False).date()
@@ -120,15 +126,19 @@ def count_available_room(start_date=None, end_date=None):
         days_sold = (room_end_date - room_start_date).days
         total_sold += days_sold
 
-    return all_room - total_sold
+    return {
+        "value": all_room - total_sold,
+        "fieldtype": "Int"
+    }
 
 @frappe.whitelist()
 def count_ooo_room(start_date=None, end_date=None):
     if start_date == None and end_date == None:
-        return {
-            "value": 0,
-            "fieldtype": "Int"
-        }
+        start_date = date.today().isoformat()
+        end_date = date.today() + timedelta(days=1) 
+        end_date = end_date.isoformat()
+
+
     try:
         start_date = parse(start_date, False)
     except ValueError:
@@ -167,7 +177,10 @@ def count_ooo_room(start_date=None, end_date=None):
         days_sold = (room_end_date - room_start_date).days
         total_sold += days_sold
 
-    return total_sold
+    return {
+        "value": total_sold,
+        "fieldtype": "Int"
+    }
 
 def calculate_total_rate_and_sold(start_date, end_date):
     try:
@@ -226,19 +239,28 @@ def calculate_total_rate_and_sold(start_date, end_date):
 @frappe.whitelist()
 def calculate_average_rate(start_date=None, end_date=None):
     if start_date == None and end_date == None:
-        return {
-            "value": 0,
-            "fieldtype": "Currency"
-        }
+        start_date = date.today().isoformat()
+        end_date = date.today() + timedelta(days=1) 
+        end_date = end_date.isoformat()
     total_rate, total_sold = calculate_total_rate_and_sold(start_date, end_date)
-    return total_rate / total_sold
+    if total_sold == 0:
+        value = 0
+    else:
+        value = total_rate / total_sold
+
+    return {
+        "value": value,
+        "fieldtype": "Currency"
+    }
 
 @frappe.whitelist()
 def calculate_total_rate(start_date=None, end_date=None):
     if start_date == None and end_date == None:
-        return {
-            "value": 0,
-            "fieldtype": "Currency"
-        }
+        start_date = date.today().isoformat()
+        end_date = date.today() + timedelta(days=1) 
+        end_date = end_date.isoformat()
     total_rate, _ = calculate_total_rate_and_sold(start_date, end_date)
-    return total_rate
+    return {
+        "value": total_rate,
+        "fieldtype": "Int"
+    }
