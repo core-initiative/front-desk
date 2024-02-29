@@ -47,6 +47,7 @@
   "service_charge_account",
   "inn_pos_extended_section",
   "tax_name_pos_receipt",
+  "pos_receipt_remarks",
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
@@ -335,11 +336,16 @@
    "fieldtype": "Data",
    "label": "Tax Name POS Receipt",
    "reqd": 1
+  },
+  {
+   "fieldname": "pos_receipt_remarks",
+   "fieldtype": "Small Text",
+   "label": "POS Receipt Remarks"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-29 11:12:10.958529",
+ "modified": "2024-02-29 11:35:51.569635",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",

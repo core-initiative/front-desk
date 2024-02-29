@@ -15,8 +15,9 @@ def extended_bil_extra_data(invoice):
     total_tax = 0
     for tax in invoice.taxes:
         total_tax += tax.tax_amount
-
     total_tax = utils.fmt_money(total_tax, 2, "Rp")
+
+    remarks = frappe.db.get_single_value("Inn Hotels Setting", "pos_receipt_remarks", True)
 
     return {
         "address": address.address_line1,
@@ -24,5 +25,6 @@ def extended_bil_extra_data(invoice):
         "tax": {
             "name": tax_name,
             "total": total_tax
-        }
+        },
+        "remarks": remarks
     }
