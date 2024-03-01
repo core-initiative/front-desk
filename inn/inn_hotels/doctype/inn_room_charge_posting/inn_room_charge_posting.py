@@ -12,7 +12,9 @@ from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type import get_accounts_from_id
 from inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction import get_idx
 from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
-from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges, recalculate_tax_breakdown, calculate_inn_tax_and_charges_exclude_commision
+from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges, calculate_inn_tax_and_charges_exclude_commision
+from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission
+
 
 class InnRoomChargePosting(Document):
 	pass
@@ -56,6 +58,14 @@ def populate_tobe_posted():
 
 @frappe.whitelist()
 def post_individual_room_charges(parent_id, tobe_posted_list):
+
+	# to exclude service charge from reduced because of commision / cashback
+	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["room_revenue_account", "breakfast_revenue_account", "profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
+	ROOM_REVENUE_ACCOUNT = room_post_settings.room_revenue_account 
+	BREAKFAST_REVENUE_ACCOUNT = room_post_settings.breakfast_revenue_account
+	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
+	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
+
 	return_value = ''
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
@@ -105,9 +115,51 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-1].breakdown_account
 		else:
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-2].breakdown_account
-		# Posting Room Charge Tax/Service
-		room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
+
+
+		#region commission flow 
+		channel = check_channel_commission(reservation)
+		is_channel_commision = True
+		if channel == None:
+			is_channel_commision = False
+		
+		if is_channel_commision:
+			reservation.comission = channel.room_cashback + channel.breakfast_cashback
+
+			room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges_exclude_commision(reservation.actual_room_rate - fdc_room_rate.final_breakfast_rate_amount, reservation.actual_room_rate_tax, channel.room_cashback)
+			accumulated_amount -= channel.room_cashback 
+
+			# add commission first
+
+			room_commision_doc = frappe.new_doc('Inn Folio Transaction')
+			room_commision_doc.flag = 'Credit'
+			room_commision_doc.is_void = 0
+			room_commision_doc.idx = get_idx(item["folio_id"])
+			
+			room_commision_doc.transaction_type = COMMISION_TRANSACTION_TYPE
+			room_commision_doc.amount = channel.room_cashback
+			room_commision_doc.credit_account = PROFIT_SHARING_ACCOUNT
+			room_commision_doc.debit_account = ROOM_REVENUE_ACCOUNT
+			room_commision_doc.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+			room_commision_doc.parent = item["folio_id"]
+			room_commision_doc.parenttype = 'Inn Folio'
+			room_commision_doc.parentfield = 'folio_transaction'
+			room_commision_doc.ftb_id = ftb_doc.name
+			room_commision_doc.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = room_commision_doc.transaction_type
+			ftbd_doc.transaction_id = room_commision_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
+		else:
+			# Posting Room Charge Tax/Service
+			room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
 																	  reservation.actual_room_rate_tax)
+		#endregion 
+
+		# Posting Room Charge Tax/Service
 		for index, room_tax_item_name in enumerate(room_tb_id):
 			room_tax_doc = frappe.new_doc('Inn Folio Transaction')
 			room_tax_doc.flag = 'Debit'
@@ -157,10 +209,42 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		ftbd_doc.transaction_type = breakfast_charge_folio_trx.transaction_type
 		ftbd_doc.transaction_id = breakfast_charge_folio_trx.name
 		ftb_doc.append('transaction_detail', ftbd_doc)
+		
+		
+		if is_channel_commision:
+			breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges_exclude_commision(fdc_room_rate.final_breakfast_rate_amount, reservation.actual_breakfast_rate_tax, channel.breakfast_cashback)
+			accumulated_amount -= channel.breakfast_cashback 
 
-		# Posting Breakfast Tax/Service
-		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
+			# add commission first
+
+			breakfast_commission = frappe.new_doc('Inn Folio Transaction')
+			breakfast_commission.flag = 'Credit'
+			breakfast_commission.is_void = 0
+			breakfast_commission.idx = get_idx(item["folio_id"])
+			
+			breakfast_commission.transaction_type = COMMISION_TRANSACTION_TYPE
+			breakfast_commission.amount = channel.breakfast_cashback
+			breakfast_commission.credit_account = PROFIT_SHARING_ACCOUNT
+			breakfast_commission.debit_account = BREAKFAST_REVENUE_ACCOUNT
+			breakfast_commission.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+			breakfast_commission.parent = item["folio_id"]
+			breakfast_commission.parenttype = 'Inn Folio'
+			breakfast_commission.parentfield = 'folio_transaction'
+			breakfast_commission.ftb_id = ftb_doc.name
+			breakfast_commission.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = breakfast_commission.transaction_type
+			ftbd_doc.transaction_id = breakfast_commission.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
+		else:
+			# Posting Breakfast Tax/Service
+			breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
 																				reservation.actual_breakfast_rate_tax)
+			
+			# Posting Breakfast Tax/Service
 		for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
 			breakfast_tax_doc = frappe.new_doc('Inn Folio Transaction')
 			breakfast_tax_doc.flag = 'Debit'
@@ -245,7 +329,11 @@ def post_room_charges(parent_id, tobe_posted_list):
 	fdc_folio_trx_tax_name = ''
 
 	# to exclude service charge from reduced because of commision / cashback
-	SERVICE_CHARGE_ACCOUNT, COMMISION_TRANSACTION_TYPE, PROFIT_SHARING_ACCOUNT = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", fields=["service_charge_amount", "profit_sharing_account, profit_sharing_transaction_type"])
+	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["room_revenue_account", "breakfast_revenue_account", "profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
+	ROOM_REVENUE_ACCOUNT = room_post_settings.room_revenue_account 
+	BREAKFAST_REVENUE_ACCOUNT = room_post_settings.breakfast_revenue_account
+	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
+	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 	
 	for item in list_json:
 		# Create Inn Folio Transaction Bundle
@@ -292,23 +380,46 @@ def post_room_charges(parent_id, tobe_posted_list):
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-2].breakdown_account
 
 
-		channel = __check_channel_commision(reservation)
+		channel = check_channel_commission(reservation)
 		is_channel_commision = True
 		if channel == None:
 			is_channel_commision = False
 		
-		# if is_channel_commision:
-		# 	room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges_exclude_commision(reservation, channel)
+		if is_channel_commision:
+			reservation.comission = channel.room_cashback + channel.breakfast_cashback
+
+			room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges_exclude_commision(reservation.actual_room_rate - fdc_room_rate.final_breakfast_rate_amount, reservation.actual_room_rate_tax, channel.room_cashback)
+			accumulated_amount -= channel.room_cashback 
 
 			# add commission first
 
-		# else:
+			room_commision_doc = frappe.new_doc('Inn Folio Transaction')
+			room_commision_doc.flag = 'Credit'
+			room_commision_doc.is_void = 0
+			room_commision_doc.idx = get_idx(item["folio_id"])
+			
+			room_commision_doc.transaction_type = COMMISION_TRANSACTION_TYPE
+			room_commision_doc.amount = channel.room_cashback
+			room_commision_doc.credit_account = PROFIT_SHARING_ACCOUNT
+			room_commision_doc.debit_account = ROOM_REVENUE_ACCOUNT
+			room_commision_doc.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+			room_commision_doc.parent = item["folio_id"]
+			room_commision_doc.parenttype = 'Inn Folio'
+			room_commision_doc.parentfield = 'folio_transaction'
+			room_commision_doc.ftb_id = ftb_doc.name
+			room_commision_doc.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = room_commision_doc.transaction_type
+			ftbd_doc.transaction_id = room_commision_doc.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
+		else:
 			# Posting Room Charge Tax/Service
-		room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
+			room_tb_id, room_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_room_rate,
 																	  reservation.actual_room_rate_tax)
 		
-
-
 		for index, room_tax_item_name in enumerate(room_tb_id):
 			room_tax_doc = frappe.new_doc('Inn Folio Transaction')
 			room_tax_doc.flag = 'Debit'
@@ -329,44 +440,6 @@ def post_room_charges(parent_id, tobe_posted_list):
 
 			if room_tax_doc.credit_account == fdc_room_rate_tax_account:
 				fdc_folio_trx_tax_name = room_tax_doc.name
-
-			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
-			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
-			ftbd_doc.transaction_type = room_tax_doc.transaction_type
-			ftbd_doc.transaction_id = room_tax_doc.name
-			ftb_doc.append('transaction_detail', ftbd_doc)
-
-
-			if is_channel_commision and room_tax_doc.credit_account == SERVICE_CHARGE_ACCOUNT:
-				# if channel need a commision (cashback) then after service charge is added. 
-				# deduct the room revenue so the tax will be reduced
-				accumulated_amount -= channel.cashback
-				room_tb_amount = recalculate_tax_breakdown(room_tb_amount, channel.cashback, index)
-
-				room_commision_doc = frappe.new_doc('Inn Folio Transaction')
-				room_commision_doc.flag = 'Credit'
-				room_commision_doc.is_void = 0
-				room_commision_doc.idx = get_idx(item.folio_id)
-				
-				room_commision_doc.transaction_type = COMMISION_TRANSACTION_TYPE
-				room_commision_doc.amount = channel.cashback
-				room_commision_doc.credit_account = PROFIT_SHARING_ACCOUNT
-				room_commision_doc.debit_account = room_charge_debit_account
-				room_commision_doc.remark = 'Profit sharing ' + room_tax_item_name + ' : ' + item.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
-				room_commision_doc.parent = item.folio_id
-				room_commision_doc.parenttype = 'Inn Folio'
-				room_commision_doc.parentfield = 'folio_transaction'
-				room_commision_doc.ftb_id = ftb_doc.name
-				room_commision_doc.insert()
-
-				# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
-				ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
-				ftbd_doc.transaction_type = room_tax_doc.transaction_type
-				ftbd_doc.transaction_id = room_tax_doc.name
-				ftb_doc.append('transaction_detail', ftbd_doc)
-				# channel commision is already noted
-				is_channel_commision = False
-
 
 		# Posting Breakfast Charge
 		breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
@@ -393,8 +466,37 @@ def post_room_charges(parent_id, tobe_posted_list):
 		ftbd_doc.transaction_id = breakfast_charge_folio_trx.name
 		ftb_doc.append('transaction_detail', ftbd_doc)
 
-		# Posting Breakfast Tax/Service
-		breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
+		if is_channel_commision:
+			breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges_exclude_commision(fdc_room_rate.final_breakfast_rate_amount, reservation.actual_breakfast_rate_tax, channel.breakfast_cashback)
+			accumulated_amount -= channel.breakfast_cashback 
+
+			# add commission first
+
+			breakfast_commission = frappe.new_doc('Inn Folio Transaction')
+			breakfast_commission.flag = 'Credit'
+			breakfast_commission.is_void = 0
+			breakfast_commission.idx = get_idx(item["folio_id"])
+			
+			breakfast_commission.transaction_type = COMMISION_TRANSACTION_TYPE
+			breakfast_commission.amount = channel.breakfast_cashback
+			breakfast_commission.credit_account = PROFIT_SHARING_ACCOUNT
+			breakfast_commission.debit_account = BREAKFAST_REVENUE_ACCOUNT
+			breakfast_commission.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+			breakfast_commission.parent = item["folio_id"]
+			breakfast_commission.parenttype = 'Inn Folio'
+			breakfast_commission.parentfield = 'folio_transaction'
+			breakfast_commission.ftb_id = ftb_doc.name
+			breakfast_commission.insert()
+
+			# Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+			ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+			ftbd_doc.transaction_type = breakfast_commission.transaction_type
+			ftbd_doc.transaction_id = breakfast_commission.name
+			ftb_doc.append('transaction_detail', ftbd_doc)
+
+		else:
+			# Posting Breakfast Tax/Service
+			breakfast_tb_id, breakfast_tb_amount, _ = calculate_inn_tax_and_charges(reservation.nett_actual_breakfast_rate,
 																				reservation.actual_breakfast_rate_tax)
 		for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
 			breakfast_tax_doc = frappe.new_doc('Inn Folio Transaction')
@@ -481,33 +583,3 @@ def calculate_already_posted_total(room_charge_posting_id):
 			total += item.actual_room_rate
 
 	frappe.db.set_value('Inn Room Charge Posting', doc.name, 'already_posted_total', total)
-
-
-def __check_channel_commision(reservation_doc) -> Document:
-	PROFIT_SHARING_ENABLED = 1
-	PROFIT_SHARING_DISABLED = 0
-
-	PROFIT_SHARING_TYPE_PERCENTAGE = "Percentage"
-	PROFIT_SHARING_TYPE_FLAT = "Flat"
-
-	channel_doc = frappe.get_doc("Inn Channel", reservation_doc.channel)
-	if channel_doc == None:
-		raise NameError("no channel with such name")
-	
-	if channel_doc.profit_sharing == PROFIT_SHARING_DISABLED:
-		return None
-	
-	if channel_doc.sharing_type != PROFIT_SHARING_TYPE_PERCENTAGE:
-		raise NotImplementedError("other than percentage profit sharing is not implemented yet")
-	elif channel_doc.sharing_type == PROFIT_SHARING_TYPE_PERCENTAGE:
-		total_room_charge = reservation_doc.actual_room_rate
-		cashback = total_room_charge * channel_doc.profit_sharing_amount
-		channel_doc.cashback = cashback
-	else:
-		raise NotImplementedError("other than percentage profit sharing is not implemented yet")
-
-
-	return channel_doc
-
-def create_room_folio_transaction_cashback(breakdown_amount, ) -> tuple[Document, Document]:
-	pass

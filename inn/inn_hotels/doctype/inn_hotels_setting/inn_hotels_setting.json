@@ -44,7 +44,8 @@
   "profit_sharing_reservation_section",
   "profit_sharing_account",
   "profit_sharing_transaction_type",
-  "service_charge_account",
+  "room_revenue_account",
+  "breakfast_revenue_account",
   "inn_pos_extended_section",
   "tax_name_pos_receipt",
   "pos_receipt_remarks",
@@ -290,26 +291,19 @@
   {
    "fieldname": "profit_sharing_reservation_section",
    "fieldtype": "Section Break",
-   "label": "Profit Sharing Reservation"
+   "label": "Comission Reservation"
   },
   {
    "fieldname": "profit_sharing_account",
    "fieldtype": "Link",
-   "label": "Profit Sharing Account",
-   "options": "Account",
-   "reqd": 1
-  },
-  {
-   "fieldname": "service_charge_account",
-   "fieldtype": "Link",
-   "label": "Service Charge Account",
+   "label": "Commission Account",
    "options": "Account",
    "reqd": 1
   },
   {
    "fieldname": "profit_sharing_transaction_type",
    "fieldtype": "Link",
-   "label": "Profit Sharing Transaction Type",
+   "label": "Commission Transaction Type",
    "options": "Inn Folio Transaction Type",
    "reqd": 1
   },
@@ -341,11 +335,25 @@
    "fieldname": "pos_receipt_remarks",
    "fieldtype": "Small Text",
    "label": "POS Receipt Remarks"
+  },
+  {
+   "fieldname": "room_revenue_account",
+   "fieldtype": "Link",
+   "label": "Room Revenue Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "breakfast_revenue_account",
+   "fieldtype": "Link",
+   "label": "Breakfast Revenue Account",
+   "options": "Account",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-02-29 11:35:51.569635",
+ "modified": "2024-03-01 11:01:35.497908",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
