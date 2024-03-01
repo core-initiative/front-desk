@@ -10,7 +10,8 @@
   "is_payment_included",
   "profit_sharing",
   "profit_sharing_amount",
-  "sharing_type"
+  "sharing_type",
+  "supplier"
  ],
  "fields": [
   {
@@ -33,13 +34,13 @@
    "default": "0",
    "fieldname": "profit_sharing",
    "fieldtype": "Check",
-   "label": "Profit Sharing"
+   "label": "Commission Included"
   },
   {
    "default": "Percentage",
    "fieldname": "sharing_type",
    "fieldtype": "Select",
-   "label": "Sharing Type",
+   "label": "Amount Type",
    "options": "Percentage\nFlat"
   },
   {
@@ -47,11 +48,17 @@
    "description": "example. 10 if in percentage (10%) or 100000 if in flat (Rp 100.000)",
    "fieldname": "profit_sharing_amount",
    "fieldtype": "Int",
-   "label": "Profit Sharing Amount"
+   "label": "Commision Amount"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Vendor / Supplier",
+   "options": "Supplier"
   }
  ],
  "links": [],
- "modified": "2024-02-23 14:55:05.516236",
+ "modified": "2024-03-01 07:53:21.279554",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Channel",

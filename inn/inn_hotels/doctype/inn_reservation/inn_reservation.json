@@ -46,7 +46,9 @@
   "sb4",
   "issue_card",
   "cb3",
-  "verify_card"
+  "verify_card",
+  "section_break_vrjc",
+  "comission"
  ],
  "fields": [
   {
@@ -297,10 +299,22 @@
    "fieldname": "verify_card",
    "fieldtype": "Button",
    "label": "Verify"
+  },
+  {
+   "fieldname": "section_break_vrjc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "comission",
+   "fieldtype": "Currency",
+   "hidden": 1,
+   "label": "Comission",
+   "precision": "2",
+   "print_hide": 1
   }
  ],
  "links": [],
- "modified": "2024-01-05 14:50:44.735948",
+ "modified": "2024-03-01 10:14:11.650843",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Reservation",

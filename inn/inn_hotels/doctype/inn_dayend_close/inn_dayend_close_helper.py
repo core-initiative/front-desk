@@ -1,7 +1,7 @@
 import frappe
 
 
-def _fill_party_account(doc_id: str, party_in: str) -> (str, str):
+def _fill_party_account(doc_id: str, party_in: str) -> tuple[str, str]:
     """Return party type is Customer or Supplier 
     by querying to Account database and check its account type if its 
     Receiveable (return Customer) or Payable (return Supplier)
@@ -25,11 +25,11 @@ def _fill_party_account(doc_id: str, party_in: str) -> (str, str):
         case "Payable":
             party_type = 'Supplier'
             party = party_in
-    print('--from _fill_party_account')
-    print('account: '+ doc_id)
-    print('account type: ' + doc_jea_type_account.account_type)
-    print("party type: " + party_type)
-    print("party: " + party)
-    print('--endfrom')
+    # print('--from _fill_party_account')
+    # print('account: '+ doc_id)
+    # print('account type: ' + doc_jea_type_account.account_type)
+    # print("party type: " + party_type)
+    # print("party: " + party)
+    # print('--endfrom')
 
     return party_type, party

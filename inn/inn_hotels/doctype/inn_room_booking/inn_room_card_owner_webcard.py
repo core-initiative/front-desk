@@ -262,5 +262,5 @@ def calculate_total_rate(start_date=None, end_date=None):
     total_rate, _ = calculate_total_rate_and_sold(start_date, end_date)
     return {
         "value": total_rate,
-        "fieldtype": "Int"
+        "fieldtype": "Currency"
     }

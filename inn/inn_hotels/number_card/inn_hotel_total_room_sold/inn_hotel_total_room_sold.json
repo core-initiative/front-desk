@@ -11,7 +11,7 @@
  "is_standard": 1,
  "label": "Inn Hotel Total Room Sold",
  "method": "inn.inn_hotels.doctype.inn_room_booking.inn_room_card_owner_webcard.count_sold_room",
- "modified": "2024-02-22 14:17:32.135413",
+ "modified": "2024-03-01 13:33:55.314256",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotel Total Room Sold",
