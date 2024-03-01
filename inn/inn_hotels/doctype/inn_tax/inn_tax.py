@@ -31,6 +31,33 @@ def autofill_inn_tax_value(doc, method):
 
 	doc.inn_tax_value = value
 
+def calculate_inn_tax_and_charges_exclude_commision(reservation, channel_cashback) -> tuple[list[Document], list[int], list[int]]:
+	
+	tax_breakdown_list = frappe.get_all("Inn Tax Breakdown", filters={"parent": reservation.nett_actual_room_rate}, order_by="idx asc", fields=["*"])
+	if len(tax_breakdown_list) == 0:
+		return [], [], []
+
+	nett_receiveable = reservation.actual_room_rate - channel_cashback.cashback
+	
+	tb_id = [""] * len(tax_breakdown_list)
+	tb_amount = [0] * len(tax_breakdown_list)
+	tb_total = [0] * len(tax_breakdown_list)
+
+	for index in range(len(tax_breakdown_list), 0, -1):
+		item = tax_breakdown_list[index]
+		tb_id[index] = item.name
+		if item.breakdown_type != "On Net Total":
+			raise NotImplementedError("Option breakdown other than On Net Total not supported yet")
+
+		if index == len(tax_breakdown_list):
+			tb_amount[index] = item.breakdown_rate/(100.0 + item.breakdown_rate) * nett_receiveable
+			tb_total[index] = nett_receiveable - tb_amount[index]
+		else:
+			tb_amount[index] = item.breakdown_rate/(100.0 + item.breakdown_rate) * tb_total[index+1]
+			tb_total[index] = tb_total[index+1] - tb_amount[index]
+
+	return tb_id, tb_amount, tb_total
+
 def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 	# UPDATE: FOR NOW, THE OPTION OF TAX BREAKDOWN IS LIMITED TO ON NET TOTAL
 
@@ -91,3 +118,7 @@ def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 		tb_total = base_total
 
 	return tb_id, tb_amount, tb_total
+
+
+def recalculate_tax_breakdown(tax_breakdown: list[int], commision: int, starting_index: int) -> list[int]:
+	pass

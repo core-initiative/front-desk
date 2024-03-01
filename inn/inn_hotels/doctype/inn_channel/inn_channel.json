@@ -10,7 +10,8 @@
   "is_payment_included",
   "profit_sharing",
   "profit_sharing_amount",
-  "sharing_type"
+  "sharing_type",
+  "supplier"
  ],
  "fields": [
   {
@@ -48,10 +49,16 @@
    "fieldname": "profit_sharing_amount",
    "fieldtype": "Int",
    "label": "Profit Sharing Amount"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
   }
  ],
  "links": [],
- "modified": "2024-02-23 14:55:05.516236",
+ "modified": "2024-02-26 16:33:42.010462",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Channel",
