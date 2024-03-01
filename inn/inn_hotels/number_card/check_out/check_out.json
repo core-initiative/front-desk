@@ -12,7 +12,8 @@
  "is_public": 1,
  "is_standard": 1,
  "label": "Check Out",
- "modified": "2023-12-15 14:46:58.324325",
+ "method": "inn.inn_hotels.doctype.inn_reservation.inn_reservation_card.get_card_number_check_out",
+ "modified": "2024-03-01 13:48:03.407477",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Check Out",
@@ -21,5 +22,5 @@
  "report_function": "Sum",
  "show_percentage_stats": 1,
  "stats_time_interval": "Daily",
- "type": "Document Type"
+ "type": "Custom"
 }
