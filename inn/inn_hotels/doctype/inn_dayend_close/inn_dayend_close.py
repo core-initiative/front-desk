@@ -24,8 +24,11 @@ def is_there_open_dayend_close():
 @frappe.whitelist()
 def process_dayend_close(doc_id):
 	need_resolve_flag = False
+
+	COMMISSION_TRANSACTION_TYPE = frappe.db.get_single_value("Inn Hotels Setting", fieldname="profit_sharing_transaction_type")
+
 	# Create Journal Entry Pairing for Every Eligible Inn Folio Transactions
-	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']], 'journal_entry_id_closed': ['=', '']})
+	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']], 'journal_entry_id_closed': ['=', '']}, fields=["name", "reservation_id"])
 	for item in folio_list:
 		need_resolve_list = check_void_request(item.name)
 		if len(need_resolve_list) > 0:
@@ -47,7 +50,7 @@ def process_dayend_close(doc_id):
 					actual_room.room_status = 'Occupied Dirty'
 					actual_room.save()
 
-			trx_list = doc_folio.get('folio_transaction')
+			trx_list : list[Document] = doc_folio.get('folio_transaction')
 			for trx in trx_list:
 				if trx.is_void == 0 and trx.journal_entry_id is None:
 					if trx.remark is None:
@@ -74,12 +77,22 @@ def process_dayend_close(doc_id):
 					doc_jea_debit.party_type, doc_jea_debit.party = _fill_party_account(doc_jea_debit.account, customer_name)
 					doc_jea_debit.user_remark = remark
 
+					if trx.transaction_type == COMMISSION_TRANSACTION_TYPE and doc_jea_debit.party_type == "Supplier":
+						channel_id = frappe.db.get_value("Inn Reservation", item.reservation_id, fieldname="channel")
+						channel_vendor = frappe.db.get_value("Inn Channel", channel_id, channel_id)
+						doc_jea_debit.party = channel_vendor
+
 					doc_jea_credit = frappe.new_doc('Journal Entry Account')
 					doc_jea_credit.account = trx.credit_account
 					doc_jea_credit.credit = trx.amount
 					doc_jea_credit.credit_in_account_currency = trx.amount
 					doc_jea_credit.party_type, doc_jea_credit.party = _fill_party_account(doc_jea_credit.account, customer_name)
 					doc_jea_credit.user_remark = remark
+					
+					if trx.transaction_type == COMMISSION_TRANSACTION_TYPE and doc_jea_credit.party_type == "Supplier":
+						channel_id = frappe.db.get_value("Inn Reservation", item.reservation_id, fieldname="channel")
+						channel_vendor = frappe.db.get_value(doctype="Inn Channel", filters={"name": channel_id}, fieldname="supplier")
+						doc_jea_credit.party = channel_vendor
 
 					doc_je.append('accounts', doc_jea_debit)
 					doc_je.append('accounts', doc_jea_credit)
@@ -125,8 +138,7 @@ def process_dayend_close(doc_id):
 							doc_jea_debit.account = trx.debit_account
 							doc_jea_debit.debit = trx.amount
 							doc_jea_debit.credit_in_account_currency = trx.amount #amount flipped to credit
-							doc_jea_debit.party_type = 'Customer'
-							doc_jea_debit.party = cust_name
+							doc_jea_debit.party_type, doc_jea_debit.party = _fill_party_account(doc_jea_debit.account, cust_name)
 							doc_jea_debit.user_remark = closed_folio_remark
 							doc_je.append('accounts', doc_jea_debit)
 						elif trx.flag == 'Credit':
@@ -134,8 +146,7 @@ def process_dayend_close(doc_id):
 							doc_jea_credit.account = trx.credit_account
 							doc_jea_credit.credit = trx.amount
 							doc_jea_credit.debit_in_account_currency = trx.amount #amount flipped to debit
-							doc_jea_credit.party_type = 'Customer'
-							doc_jea_credit.party = cust_name
+							doc_jea_credit.party_type, doc_jea_credit.party = _fill_party_account(doc_jea_credit.account, cust_name)
 							doc_jea_credit.user_remark = closed_folio_remark
 							doc_je.append('accounts', doc_jea_credit)
 

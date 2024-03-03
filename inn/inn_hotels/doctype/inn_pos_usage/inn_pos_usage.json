@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:FB-{DD}/{MM}/{YY}-{####}",
  "creation": "2024-02-12 11:06:40.509746",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -51,10 +52,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-13 12:38:30.114825",
+ "modified": "2024-02-28 14:17:01.329170",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn POS Usage",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

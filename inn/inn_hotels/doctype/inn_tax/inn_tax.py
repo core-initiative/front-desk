@@ -5,6 +5,8 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission
+
 
 class InnTax(Document):
 	pass
@@ -30,6 +32,36 @@ def autofill_inn_tax_value(doc, method):
 		value = "No Tax or Charge added."
 
 	doc.inn_tax_value = value
+
+def calculate_inn_tax_and_charges_exclude_commision(base_total, inn_tax_id, commission) -> tuple[list[Document], list[int], list[int]]:
+	'''
+	top down approach, from customer payable then reduced from commission, then calculate all tax
+	'''
+	
+	tax_breakdown_list = frappe.get_all("Inn Tax Breakdown", filters={"parent": inn_tax_id}, order_by="idx desc", fields=["*"])
+	if len(tax_breakdown_list) == 0:
+		return [], [], []
+
+	nett_receiveable = base_total - commission
+
+	tb_id = [""] * len(tax_breakdown_list)
+	tb_amount = [0] * len(tax_breakdown_list)
+	tb_total = [0] * len(tax_breakdown_list)
+
+	for index in range(len(tax_breakdown_list)-1, -1, -1):
+		item = tax_breakdown_list[index]
+		tb_id[index] = item.name
+		if item.breakdown_type != "On Net Total":
+			raise NotImplementedError("Option breakdown other than On Net Total not supported yet")
+
+		if index == len(tax_breakdown_list)-1:
+			tb_amount[index] = item.breakdown_rate/(100.0 + item.breakdown_rate) * nett_receiveable
+			tb_total[index] = nett_receiveable - tb_amount[index]
+		else:
+			tb_amount[index] = item.breakdown_rate/(100.0 + item.breakdown_rate) * tb_total[index+1]
+			tb_total[index] = tb_total[index+1] - tb_amount[index]
+
+	return tb_id, tb_amount, tb_total
 
 def calculate_inn_tax_and_charges(base_total, inn_tax_id):
 	# UPDATE: FOR NOW, THE OPTION OF TAX BREAKDOWN IS LIMITED TO ON NET TOTAL
