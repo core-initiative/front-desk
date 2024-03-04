@@ -97,10 +97,10 @@ def execute(filters=None):
     return columns, data
 
 def get_data(filters):
-    if filters.start_date == None:
-        filters.start_date = date.today().isoformat()
+    if filters.date == None:
+        filters.date = date.today().isoformat()
     
-    return get_data_detail(filters.start_date)
+    return get_data_detail(filters.date)
 
 def get_data_detail(start_date):
 
@@ -109,9 +109,12 @@ def get_data_detail(start_date):
         from `tabInn Reservation` as ir
         left join `tabInn Folio` as `if`
         on if.reservation_id = ir.name
+        where {FILTER_FIELD_DATE} = '{start_date}'
     """
 
-    reservation = frappe.db.sql(query=query, as_dict=1)
+    reservation = frappe.db.sql(query=query, as_dict=1, debug=True)
+    if len(reservation) == 0:
+        return []
 
     folio_name = tuple([x.folio for x in reservation])
     folio_detail = get_folio_detail(folio_name)
