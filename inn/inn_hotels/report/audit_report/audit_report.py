@@ -116,7 +116,23 @@ def get_data_detail(start_date):
     folio_name = tuple([x.folio for x in reservation])
     folio_detail = get_folio_detail(folio_name)
 
-    res = [[x.name, x.customer_id, x.room_type, x.actual_room_id, x.actual_room_rate, folio_detail[x.folio]["actual_room_nett"], folio_detail[x.folio]["breakfast_revenue"], x.channel, "", folio_detail[x.folio]["mode_of_payment"], folio_detail[x.folio]["total_amount"], folio_detail[x.folio]["payment_date"], x.bill_instructions] for x in reservation]
+
+    res = [
+        [x.name, 
+         x.customer_id, 
+         x.room_type, 
+         x.actual_room_id, 
+         x.actual_room_rate, 
+         folio_detail[x.folio]["actual_room_nett"], 
+         folio_detail[x.folio]["breakfast_revenue"], 
+         x.channel, 
+         "", 
+         folio_detail[x.folio]["mode_of_payment"], 
+         folio_detail[x.folio]["total_amount"], 
+         folio_detail[x.folio]["payment_date"], 
+         x.bill_instructions
+         ] 
+         for x in reservation]
     return res
 
 def get_folio_detail(folio_id: list):
@@ -143,6 +159,7 @@ def get_folio_detail(folio_id: list):
     } for folio in folio_id}
 
     for data in folio_detail:
+        # populate aggrate folio data detail, grouped by folio number
         if data.transaction_type == TRANSACTION_TYPE_ROOM_REVENUE:
             res[data.parent]["actual_room_nett"] += data.amount
         elif data.transaction_type == TRANSACTION_TYPE_PAYMENT or data.transaction_type == TRANSACTION_TYPE_ROOM_PAYMENT:
@@ -163,6 +180,7 @@ def get_folio_detail(folio_id: list):
 
     
 def fill_setting_data():
+    # get data setting
     global TRANSACTION_TYPE_COMISSION, TRANSACTION_TYPE_ROOM_REVENUE, TRANSACTION_TYPE_BREAKFAST_REVENUE,TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT, BREAKFAST_REVENUE_ACCOUNT, ROOM_REVENUE_ACCOUNT
     transaction_type = frappe.db.get_values_from_single(fields=["profit_sharing_transaction_type", "room_revenue_transaction_type", "breakfast_revenue_transaction_type", "customer_payment_transaction_type", "customer_room_payment_transaction_type", "breakfast_revenue_account", "room_revenue_account"], filters="", doctype="Inn Hotels Setting", as_dict=True)[0]
     if transaction_type.profit_sharing_transaction_type == None:
