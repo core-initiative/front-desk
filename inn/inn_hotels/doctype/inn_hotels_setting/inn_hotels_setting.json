@@ -45,7 +45,11 @@
   "profit_sharing_account",
   "profit_sharing_transaction_type",
   "room_revenue_account",
+  "room_revenue_transaction_type",
   "breakfast_revenue_account",
+  "breakfast_revenue_transaction_type",
+  "customer_payment_transaction_type",
+  "customer_room_payment_transaction_type",
   "inn_pos_extended_section",
   "tax_name_pos_receipt",
   "pos_receipt_remarks",
@@ -349,11 +353,39 @@
    "label": "Breakfast Revenue Account",
    "options": "Account",
    "reqd": 1
+  },
+  {
+   "fieldname": "room_revenue_transaction_type",
+   "fieldtype": "Link",
+   "label": "Room Revenue Transaction Type",
+   "options": "Inn Folio Transaction Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "breakfast_revenue_transaction_type",
+   "fieldtype": "Link",
+   "label": "Breakfast Revenue Transaction Type",
+   "options": "Inn Folio Transaction Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_payment_transaction_type",
+   "fieldtype": "Link",
+   "label": "Customer Checkout Payment Transaction Type",
+   "options": "Inn Folio Transaction Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_room_payment_transaction_type",
+   "fieldtype": "Link",
+   "label": "Customer Room Payment Transaction Type",
+   "options": "Inn Folio Transaction Type",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-03-01 11:01:35.497908",
+ "modified": "2024-03-04 13:44:21.907454",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
