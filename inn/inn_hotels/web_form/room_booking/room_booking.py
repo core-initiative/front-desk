@@ -20,6 +20,9 @@ class InnRoomBookingChoice:
 		self.price = prices["final_total_rate_amount"]
 		self.incl_breakfast = prices["final_breakfast_rate_amount"] > 0
 
+	def adjust_price_with_day_and_room(self, num_of_room: int, num_of_night: int):
+		self.price = self.price * num_of_night * num_of_room
+
 	def toJSON(self):
 		return {key : getattr(self, key, None) for key in self.__slots__}
 	
@@ -32,7 +35,7 @@ def tup_key_gen(row):
 	return (row[1], row[2], row[3])
 
 
-def get_rate(available_room) -> list:
+def get_rate(available_room, num_of_room: int, num_of_night: int) -> list:
 
 	default_group_guest = "Guest Booking Group"
 	setting_group_guest = frappe.db.get_value(doctype="Inn Hotels Setting", fieldname="guest_booking_group")
@@ -57,6 +60,7 @@ def get_rate(available_room) -> list:
 				if jj[0] == room_type:
 					elem = InnRoomBookingChoice(jj)
 					elem.add_rate(price)
+					elem.adjust_price_with_day_and_room(num_of_room, num_of_night)
 					result.append(elem)
 
 	return sorted(result, key = operator.itemgetter("room_type", "bed_type", "allow_smoke"))
@@ -85,6 +89,7 @@ def get_available_room_and_rate(start_date, end_date, num_room):
 
 	start_date = datetime.strptime(start_date, "%Y-%m-%d")
 	end_date = datetime.strptime(end_date, "%Y-%m-%d")
+	num_night = end_date - start_date
 	for curr_date in daterange(start_date, end_date):
 		used_availability = frappe.db.sql(
 			"select count(*), room_type, bed_type, allow_smoke from `tabInn Room` as ir "
@@ -99,18 +104,18 @@ def get_available_room_and_rate(start_date, end_date, num_room):
 			unusable_room[room_key] = ii[0]
 
 		# check if jumlah tipe kamar yang tersedia memenuhi jumlah kamar yang diminta
-		tidak_memenuhi = []
+		not_enough_quantity = []
 		for ii in available_room:
 			kamar_sisa = available_room[ii]
 			if ii in unusable_room:
 				kamar_sisa -= unusable_room[ii]
 			if kamar_sisa < int(num_room):
-				tidak_memenuhi.append(ii)
+				not_enough_quantity.append(ii)
 
-		for ii in tidak_memenuhi:
+		for ii in not_enough_quantity:
 			available_room.pop(ii)
 
-	result = get_rate(available_room)
+	result = get_rate(available_room, num_room, num_night.days)
 	result = convert_json(result)
 
 	return result
