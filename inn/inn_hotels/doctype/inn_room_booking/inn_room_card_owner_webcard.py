@@ -212,7 +212,7 @@ def calculate_total_rate_and_sold(start_date, end_date):
 
         if ii.room_rate not in cached_rate:
             room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={"name": ii.room_rate}, fieldname="final_total_rate_amount")
-            cached_rate[ii.room_rate] = room_rate.final_total_rate_amount
+            cached_rate[ii.room_rate] = room_rate
         
         total_rate += cached_rate[ii.room_rate] * days_sold
 
