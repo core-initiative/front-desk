@@ -169,13 +169,13 @@ def delete_booking_room_from_child(doc_id):
 
 
 @frappe.whitelist(allow_guest=True)
-def create_guest_booking(start, end, room_type, bed_type, allow_smoking, incl_breakfast, price, customer_name, phone_number, email, additional_request, number_of_rooms):
+def create_guest_booking(start, end, room_type, bed_type, allow_smoke, incl_breakfast, price, customer_name, phone_number, email, additional_request, number_of_rooms):
 	doc_igb = frappe.new_doc("Inn Guest Booking")
 	doc_igb.start = start
 	doc_igb.end = end
 	doc_igb.room_type = room_type
 	doc_igb.bed_type = bed_type
-	doc_igb.allow_smoking = True if allow_smoking == "True" else False
+	doc_igb.allow_smoking = True if allow_smoke == "True" else False
 	doc_igb.incl_breakfast = True if incl_breakfast == "True" else False
 	doc_igb.price = int(price)
 	
