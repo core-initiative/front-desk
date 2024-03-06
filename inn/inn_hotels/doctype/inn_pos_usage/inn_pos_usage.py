@@ -3,10 +3,16 @@
 
 import frappe
 from frappe.model.document import Document
-
+from frappe.model.naming import getseries
+from datetime import date
 
 class InnPOSUsage(Document):
 	pass
+
+	def autoname(self):
+		today = date.today()
+		prefix = f"FB-{today.day}/{today.month}/{today.year}-"
+		self.name = prefix + getseries(prefix, 4)
 
 
 @frappe.whitelist()

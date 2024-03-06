@@ -5,6 +5,10 @@ frappe.ui.form.on("Inn Customer", {
     refresh(frm) {
         fieldToggle(frm)
     },
+    after_save(frm) {
+        let path = "/app/inn-reservation/new"
+        window.location.href = window.location.protocol + "//" + window.location.host + path
+    }
 });
 
 function fieldToggle(frm) {

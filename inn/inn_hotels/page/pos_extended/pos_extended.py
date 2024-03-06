@@ -10,7 +10,7 @@ NEW_ORDER = 1
 
 @frappe.whitelist()
 def save_pos_usage(invoice_name, table, action):
-    if action not in ["save_draft", "print_captain", "print_table"]:
+    if action not in ["save_draft", "print_captain", "print_table", "save_submit"]:
         raise TypeError("argument error: action not found")
 
  
@@ -29,6 +29,7 @@ def save_pos_usage(invoice_name, table, action):
     else:
         doc = frappe.get_last_doc("Inn POS Usage", filters={"pos_invoice": invoice_name})
 
+    # mainly change state except when flow repeated, will move tracked item to processed item and add new item to tracked item
     if action in ["save_draft", "print_captain"] and doc.print_status == PRINT_STATUS_TABLE and not new:
         # case if customer want to add the order
         # then new item will be added to processed item
@@ -57,6 +58,9 @@ def save_pos_usage(invoice_name, table, action):
         doc.print_status = PRINT_STATUS_CAPTAIN
     elif action == "print_table" and doc.print_status == PRINT_STATUS_CAPTAIN:
         doc.print_status = PRINT_STATUS_TABLE
+    elif action == "save_submit":
+        doc.print_status = ORDER_FINISHED
+
     else:
         raise TypeError("print error: status not match")
     
@@ -103,7 +107,7 @@ def save_pos_usage(invoice_name, table, action):
                 add_item = False
                 
 
-    elif action == "print_table":
+    elif action in ["print_table", "save_submit"]:
         # no change. print table will use same data as print_captain
         doc.save()
 

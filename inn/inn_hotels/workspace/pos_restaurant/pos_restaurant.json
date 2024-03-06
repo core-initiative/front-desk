@@ -16,6 +16,44 @@
   {
    "hidden": 0,
    "is_query_report": 0,
+   "label": "Operation",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Recent Order",
+   "link_count": 0,
+   "link_to": "POS Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer Data",
+   "link_count": 0,
+   "link_to": "Inn Customer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Restaurant Table",
+   "link_count": 0,
+   "link_to": "Inn Point Of Sale Table",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Point of Sale",
    "link_count": 4,
    "onboard": 0,
@@ -60,47 +98,9 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Operation",
-   "link_count": 3,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Recent Order",
-   "link_count": 0,
-   "link_to": "POS Invoice",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Customer Data",
-   "link_count": 0,
-   "link_to": "Inn Customer",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Restaurant Table",
-   "link_count": 0,
-   "link_to": "Inn Point Of Sale Table",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
   }
  ],
- "modified": "2024-02-16 13:57:03.534206",
+ "modified": "2024-03-05 15:49:54.755860",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "POS Restaurant",

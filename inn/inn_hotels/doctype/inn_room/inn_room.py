@@ -120,9 +120,9 @@ def update_single_room_status(room, mode):
 			is_housekeeping_supervisor = False
 			is_administrator = False
 		elif role == 'Housekeeping Supervisor':
-			is_housekeeping_supervisor = True
-			is_housekeeping = False
 			is_housekeeping_assistant = False
+			is_housekeeping = False
+			is_housekeeping_supervisor = True
 			is_administrator = False
 		elif role == 'Administrator':
 			is_administrator = True
@@ -172,7 +172,7 @@ def update_single_room_status(room, mode):
 		except DoesNotExistError as e:
 			last_out = None
 
-		if last_out == None or last_out.status in ["Finished", "Canceled"]:
+		if last_out == None  or last_out.status in ["Finished", "Canceled"]:
 			# if there is none found or the last is already finished or canceled, then make a new one
 			room_booking = frappe.new_doc("Inn Room Booking")
 			room_booking.start = date.today()
@@ -182,6 +182,19 @@ def update_single_room_status(room, mode):
 			room_booking.room_id = room
 			room_booking.insert()
 			return "Room " + room + " Status updated successfully"
+		elif last_out.room_availability == "Stayed":
+			# if room is stayed, then room will be set to finish and room set to out of order
+			# frontdesk will give guest another room, not from mobile
+			last_out.status = "Finisehd"
+			last_out.save()
+
+			room_booking = frappe.new_doc("Inn Room Booking")
+			room_booking.start = date.today()
+			room_booking.end = date.today() + timedelta(days=1)
+			room_booking.room_availability = "Out of Order"
+			room_booking.note = "Set out of order by mobile from user: " + frappe.session.user
+			room_booking.room_id = room
+			room_booking.insert()
 
 		last_out.status = "Finished"
 		last_out.save()

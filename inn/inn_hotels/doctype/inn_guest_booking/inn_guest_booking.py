@@ -1,6 +1,7 @@
 # Copyright (c) 2024, Core Initiative and contributors
 # For license information, please see license.txt
 
+from dateutil.parser import parse
 import frappe
 from inn.helper import daterange
 from frappe.model.document import Document
@@ -179,6 +180,9 @@ def create_guest_booking(start, end, room_type, bed_type, allow_smoke, incl_brea
 	doc_igb.incl_breakfast = True if incl_breakfast == "True" else False
 	doc_igb.price = int(price)
 	
+	start = parse(start)
+	end = parse(end)
+	doc_igb.total_night = (end - start).days 
 	doc_igb.customer_name = customer_name
 	doc_igb.phone_number = phone_number
 	doc_igb.email = email
