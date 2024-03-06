@@ -81,6 +81,9 @@ doc_events = {
 	# 		"on_cancel": "method",
 	# 		"on_trash": "method"
 	# }
+    "POS Invoice": {
+      "before_submit": "inn.overrides.erpnext.accounts.pos_invoice.pos_invoice.before_submit"  
+	},
 	"Inn Tax": {
 		"validate": "inn.inn_hotels.doctype.inn_tax.inn_tax.autofill_inn_tax_value"
 	},

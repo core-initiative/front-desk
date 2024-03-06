@@ -44,7 +44,6 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
             });
             this.table_field.toggle_label(false);
         }
-
         load_invoice() {
             super.load_invoice()
 

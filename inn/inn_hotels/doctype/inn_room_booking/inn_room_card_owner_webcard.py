@@ -214,7 +214,7 @@ def calculate_total_rate_and_sold(start_date, end_date):
             room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={"name": ii.room_rate}, fieldname="final_total_rate_amount")
             cached_rate[ii.room_rate] = room_rate.final_total_rate_amount
         
-        total_rate = cached_rate[ii.room_rate] * days_sold
+        total_rate += cached_rate[ii.room_rate] * days_sold
 
 
     # calculate reservation start after start_date and reservations start before before_date
