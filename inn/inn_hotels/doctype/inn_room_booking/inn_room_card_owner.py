@@ -117,12 +117,12 @@ def count_available_room(start_date, end_date):
 @frappe.whitelist()
 def count_ooo_room(start_date, end_date):
     try:
-        start_date = parse(start_date, False)
+        start_date = parse(start_date, False).date()
     except ValueError:
         raise frappe.ValidationError("{start_date} is not a valid date string")
     
     try:
-        end_date = parse(end_date, False)
+        end_date = parse(end_date, False).date()
     except ValueError:
         raise frappe.ValidationError("{end_date} is not a valid date string")
 
