@@ -38,7 +38,7 @@ def calculate_inn_tax_and_charges_exclude_commision(base_total, inn_tax_id, comm
 	top down approach, from customer payable then reduced from commission, then calculate all tax
 	'''
 	
-	tax_breakdown_list = frappe.get_all("Inn Tax Breakdown", filters={"parent": inn_tax_id}, order_by="idx desc", fields=["*"])
+	tax_breakdown_list = frappe.get_all("Inn Tax Breakdown", filters={"parent": inn_tax_id}, order_by="idx asc", fields=["*"])
 	if len(tax_breakdown_list) == 0:
 		return [], [], []
 

@@ -112,7 +112,7 @@ def get_data_detail(start_date):
         where {FILTER_FIELD_DATE} = '{start_date}'
     """
 
-    reservation = frappe.db.sql(query=query, as_dict=1, debug=True)
+    reservation = frappe.db.sql(query=query, as_dict=1)
     if len(reservation) == 0:
         return []
 
@@ -130,8 +130,8 @@ def get_data_detail(start_date):
          folio_detail[x.folio]["breakfast_revenue"], 
          x.channel, 
          "", 
-         folio_detail[x.folio]["mode_of_payment"], 
-         folio_detail[x.folio]["total_amount"], 
+         folio_detail[x.folio]["mode_of_payment"][:-2], 
+         folio_detail[x.folio]["total_amount"],
          folio_detail[x.folio]["payment_date"], 
          x.bill_instructions
          ] 
@@ -171,11 +171,6 @@ def get_folio_detail(folio_id: list):
             res[data.parent]["payment_date"] += f"{data.creation}, "
         elif data.transaction_type == TRANSACTION_TYPE_BREAKFAST_REVENUE:
             res[data.parent]["breakfast_revenue"] += data.amount
-        elif data.transaction_type == TRANSACTION_TYPE_COMISSION:
-            if data.debit_account == BREAKFAST_REVENUE_ACCOUNT:
-                res[data.parent]["breakfast_revenue"] -= data.amount
-            elif data.debit_account == ROOM_REVENUE_ACCOUNT:
-                res[data.parent]["actual_room_nett"] -= data.amount
 
     return res
     

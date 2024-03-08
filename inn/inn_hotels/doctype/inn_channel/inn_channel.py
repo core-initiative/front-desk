@@ -10,6 +10,12 @@ class InnChannel(Document):
 	pass
 
 
+PROFIT_SHARING_ENABLED = 1
+PROFIT_SHARING_DISABLED = 0
+
+PROFIT_SHARING_TYPE_PERCENTAGE = "Percentage"
+PROFIT_SHARING_TYPE_FLAT = "Flat"
+
 def check_channel_commission(reservation_doc, room_rate = None) -> Document:
 	'''
 	:param reservation_doc to get channel_name and actual_room_rate
@@ -20,11 +26,6 @@ def check_channel_commission(reservation_doc, room_rate = None) -> Document:
 	if commission type is flat, it will return as is
 
 	'''
-	PROFIT_SHARING_ENABLED = 1
-	PROFIT_SHARING_DISABLED = 0
-
-	PROFIT_SHARING_TYPE_PERCENTAGE = "Percentage"
-	PROFIT_SHARING_TYPE_FLAT = "Flat"
 
 	channel_doc = frappe.get_doc("Inn Channel", reservation_doc.channel)
 	if channel_doc == None:
@@ -40,9 +41,12 @@ def check_channel_commission(reservation_doc, room_rate = None) -> Document:
 
 	elif channel_doc.sharing_type == PROFIT_SHARING_TYPE_PERCENTAGE:
 		if room_rate == None:
-			room_rate = frappe.get_doc("Inn Room Rate", reservation_doc.actual_room_rate)
+			room_rate = frappe.get_doc("Inn Room Rate", reservation_doc.room_rate)
 
-		room_cashback = (reservation_doc.actual_room_rate - room_rate.final_breakfast_rate_amount) * channel_doc.profit_sharing_amount / 100
+		room_price = reservation_doc.actual_room_rate
+		if room_price == 0:
+			room_price = reservation_doc.init_actual_room_rate
+		room_cashback = (room_price - room_rate.final_breakfast_rate_amount) * channel_doc.profit_sharing_amount / 100
 		channel_doc.room_cashback = room_cashback
 		
 		breakfast_cashback = room_rate.final_breakfast_rate_amount * channel_doc.profit_sharing_amount /100

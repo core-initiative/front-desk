@@ -9,6 +9,7 @@ import json
 import random
 import string
 from frappe.model.document import Document
+from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission, PROFIT_SHARING_ENABLED, PROFIT_SHARING_TYPE_PERCENTAGE
 from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio, get_balance_by_reservation
 
 class InnReservation(Document):
@@ -17,6 +18,13 @@ class InnReservation(Document):
 @frappe.whitelist()
 def check_in_reservation(reservation_id):
 	doc = frappe.get_doc('Inn Reservation', reservation_id)
+
+	channel = check_channel_commission(doc)
+	if channel.profit_sharing == PROFIT_SHARING_ENABLED:
+		if channel.sharing_type == PROFIT_SHARING_TYPE_PERCENTAGE:
+			doc.comission = channel.breakfast_cashback + channel.room_cashback
+			doc.save()
+
 	room_doc = frappe.get_doc('Inn Room', doc.actual_room_id)
 	if room_doc.room_status == 'Vacant Ready':
 		if (doc.status == 'Reserved'):

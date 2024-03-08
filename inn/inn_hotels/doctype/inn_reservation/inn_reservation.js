@@ -1253,10 +1253,11 @@ function calculate_rate_and_bill(frm) {
 		}
 	});
 	frappe.call({
-		method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown',
+		method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown_check_commission',
 		args: {
 			room_rate_id: frm.doc.room_rate,
 			actual_rate: frm.doc.actual_room_rate,
+			reservation_id: frm.doc.name
 		},
 		callback: (r) => {
 			if (r.message) {
