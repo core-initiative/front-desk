@@ -141,6 +141,7 @@ def process_dayend_close(doc_id):
 							doc_jea_debit.party_type, doc_jea_debit.party = _fill_party_account(doc_jea_debit.account, cust_name)
 							doc_jea_debit.user_remark = closed_folio_remark
 							doc_je.append('accounts', doc_jea_debit)
+							print(f"DEBIT {doc_jea_debit.debit} - {doc_jea_debit.credit_in_account_currency} {trx.remark}")
 						elif trx.flag == 'Credit':
 							doc_jea_credit = frappe.new_doc('Journal Entry Account')
 							doc_jea_credit.account = trx.credit_account
@@ -149,6 +150,7 @@ def process_dayend_close(doc_id):
 							doc_jea_credit.party_type, doc_jea_credit.party = _fill_party_account(doc_jea_credit.account, cust_name)
 							doc_jea_credit.user_remark = closed_folio_remark
 							doc_je.append('accounts', doc_jea_credit)
+							print(f"CREDIT {doc_jea_credit.credit} - {doc_jea_credit.debit_in_account_currency} {trx.remark}")
 
 					doc_je.save()
 					doc_je.submit()

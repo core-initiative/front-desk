@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import datetime
 import frappe
 from frappe.model.document import Document
-from inn.inn_hotels.doctype.inn_room_rate.inn_room_rate import get_actual_room_rate_breakdown
+from inn.inn_hotels.doctype.inn_room_rate.inn_room_rate import get_actual_room_rate_breakdown_check_commission
 
 
 class InnMoveRoom(Document):
@@ -40,8 +40,8 @@ def create_move_room_by_reservation(reservation_id, mv_room_type, mv_bed_type, m
 	# Update reservation
 	reservation_doc.actual_room_id = mv_room_id
 	if int(mv_change_rate) == 1:
-		room_rate_tax, room_rate, breakfast_tax, breakfast_rate = get_actual_room_rate_breakdown(mv_room_rate,
-																								 mv_actual_room_rate)
+		room_rate_tax, room_rate, breakfast_tax, breakfast_rate = get_actual_room_rate_breakdown_check_commission(mv_room_rate,
+																								 mv_actual_room_rate, reservation_id)
 		reservation_doc.room_rate = mv_room_rate
 		reservation_doc.actual_room_rate = float(mv_actual_room_rate)
 		reservation_doc.actual_room_rate_tax = room_rate_tax

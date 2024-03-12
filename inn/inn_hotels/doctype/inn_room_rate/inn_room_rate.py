@@ -6,7 +6,8 @@ from __future__ import unicode_literals
 import frappe
 import math
 from frappe.model.document import Document
-from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
+from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission, PROFIT_SHARING_ENABLED, PROFIT_SHARING_TYPE_PERCENTAGE
+from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges, calculate_inn_tax_and_charges_exclude_commision
 
 
 class InnRoomRate(Document):
@@ -75,6 +76,27 @@ def get_actual_room_rate_before_from_actual_rate(room_rate_id, actual_rate):
 def get_base_room_rate(room_rate_id):
 	doc = frappe.get_doc('Inn Room Rate', room_rate_id)
 	return doc.rate_after_tax
+ 
+@frappe.whitelist()
+def get_actual_room_rate_breakdown_check_commission(room_rate_id, actual_rate, reservation_id):
+	reservation_doc = frappe.get_doc("Inn Reservation", reservation_id)
+	channel = check_channel_commission(reservation_doc)
+	if channel.profit_sharing == PROFIT_SHARING_ENABLED:
+		if channel.sharing_type != PROFIT_SHARING_TYPE_PERCENTAGE:
+			raise NotImplementedError("comission type other than percentage is not supported yet")
+
+		room_rate_doc = frappe.get_doc('Inn Room Rate', room_rate_id)
+
+		_, _, room_price = calculate_inn_tax_and_charges_exclude_commision(reservation_doc.init_actual_room_rate - room_rate_doc.final_breakfast_rate_amount, room_rate_doc.room_rate_tax, channel.room_cashback)
+		_, _, breakfast_price = calculate_inn_tax_and_charges_exclude_commision(room_rate_doc.final_breakfast_rate_amount, room_rate_doc.room_rate_tax, channel.breakfast_cashback)
+		room_rate_tax = room_rate_doc.room_rate_tax
+		room_rate = room_price[0]
+		breakfast_tax = room_rate_doc.breakfast_tax
+		breakfast_rate = breakfast_price[0]
+
+		return room_rate_tax, room_rate, breakfast_tax, breakfast_rate
+
+	return get_actual_room_rate_breakdown(room_rate_id, actual_rate)
 
 @frappe.whitelist()
 def get_actual_room_rate_breakdown(room_rate_id, actual_rate):
