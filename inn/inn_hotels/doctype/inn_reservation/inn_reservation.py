@@ -10,7 +10,7 @@ import random
 import string
 from frappe.model.document import Document
 from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission, PROFIT_SHARING_ENABLED, PROFIT_SHARING_TYPE_PERCENTAGE
-from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio, get_balance_by_reservation
+from inn.inn_hotels.doctype.inn_folio.inn_folio import close_folio, get_balance_by_reservation, create_folio
 
 class InnReservation(Document):
 	pass
@@ -239,7 +239,13 @@ def calculate_room_bill(arrival, departure, actual_rate):
 
 @frappe.whitelist()
 def get_folio_url(reservation_id):
-	return frappe.utils.get_url_to_form('Inn Folio', frappe.db.get_value('Inn Folio', {'reservation_id': reservation_id}, ['name']))
+	
+	folio_name = frappe.db.get_value('Inn Folio', {'reservation_id': reservation_id}, ['name'])
+	if folio_name == None:
+		create_folio(reservation_id)
+		folio_name = frappe.db.get_value('Inn Folio', {'reservation_id': reservation_id}, ['name'])
+
+	return frappe.utils.get_url_to_form('Inn Folio', folio_name)
 
 @frappe.whitelist()
 def allowed_to_in_house(reservation_id):

@@ -274,7 +274,8 @@ frappe.ui.form.on('Inn Reservation', {
 			method: 'inn.inn_hotels.doctype.inn_folio.inn_folio.create_folio',
 			args: {
 				reservation_id: frm.doc.name
-			}
+			},
+			async: false
 		});
 		frappe.call({
 			method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation',
