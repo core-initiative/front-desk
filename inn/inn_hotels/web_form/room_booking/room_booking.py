@@ -17,7 +17,7 @@ class InnRoomBookingChoice:
 		self.allow_smoke = row[2]
 
 	def add_rate(self, prices):
-		self.price = prices["final_total_rate_amount"]
+		self.price = float(prices["final_total_rate_amount"])
 		self.incl_breakfast = prices["final_breakfast_rate_amount"] > 0
 
 	def adjust_price_with_day_and_room(self, num_of_room: int, num_of_night: int):
@@ -76,6 +76,8 @@ def get_image_carousel():
 
 @frappe.whitelist(allow_guest=True)
 def get_available_room_and_rate(start_date, end_date, num_room):
+	if type(num_room) == str:
+		num_room = int(num_room)
 
 	# get number of room with same room type and bed type
 	default_availability = frappe.db.sql(
