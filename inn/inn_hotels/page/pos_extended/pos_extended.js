@@ -8,6 +8,43 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 		single_column: true
 	});
 
+	page.add_menu_item("Change POS Profile", () => dialog_pos_profile())
+
+	function dialog_pos_profile() {
+		me = this
+		let d = new frappe.ui.Dialog({
+			title: 'Change POS Profile',
+			fields: [
+				{
+					label: 'POS Opening Profile',
+					fieldname: 'pos_profile_selected',
+					fieldtype: 'Link',
+					options: "POS Opening Entry",
+					reqd: 1,
+					get_query() {
+						return {
+							filters: {
+								user: frappe.session.user,
+								docstatus: 1
+							}
+						}
+					}
+				}
+			],
+			size: 'large', // small, large, extra-large 
+			primary_action_label: 'Select',
+			primary_action(values) {
+				d.hide();
+
+				onScan.detachFrom(document);
+				wrapper.pos.wrapper.html("");
+				wrapper.pos.change_pos_profile(values.pos_profile_selected);
+			},
+		});
+
+
+		d.show();
+	}
 
 	var file = location.pathname.split("/").pop();
 
@@ -24,6 +61,34 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			constructor(wrapper) {
 				super(wrapper);
 			}
+
+			change_pos_profile(profile_opening_name) {
+				this.profile_opening_name = profile_opening_name
+				this.check_opening_entry()
+			}
+
+			check_opening_entry() {
+				this.fetch_opening_entry().then((r) => {
+					if (r.message.length) {
+
+						if (this.profile_opening_name == undefined) {
+							this.prepare_app_defaults(r.message[0]);
+							return;
+						}
+
+						for (let i = 0; i < r.message.length; i++) {
+							if (r.message[i].name == this.profile_opening_name) {
+								this.prepare_app_defaults(r.message[i]);
+								return;
+							}
+						}
+
+					} else {
+						this.create_opening_voucher();
+					}
+				});
+			}
+
 			init_payments() {
 				this.payment = new erpnext.PointOfSale.Payment({
 					wrapper: this.$components_wrapper,
