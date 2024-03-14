@@ -6,6 +6,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "booking_code_section",
+  "booking_code",
   "customer_detail_section",
   "customer_name",
   "additional_request",
@@ -204,6 +206,16 @@
    "fieldname": "email",
    "fieldtype": "Data",
    "label": "Email"
+  },
+  {
+   "fieldname": "booking_code_section",
+   "fieldtype": "Section Break",
+   "label": "Booking Code"
+  },
+  {
+   "fieldname": "booking_code",
+   "fieldtype": "Data",
+   "label": "Booking Code"
   }
  ],
  "index_web_pages_for_search": 1,
