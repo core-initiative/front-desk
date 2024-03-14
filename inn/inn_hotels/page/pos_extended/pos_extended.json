@@ -3,8 +3,8 @@
  "creation": "2024-01-31 12:21:34.357359",
  "docstatus": 0,
  "doctype": "Page",
- "idx": 3,
- "modified": "2024-03-12 22:08:49.156314",
+ "idx": 6,
+ "modified": "2024-03-14 11:18:19.865086",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "pos-extended",
@@ -23,6 +23,12 @@
   },
   {
    "role": "Sales Manager"
+  },
+  {
+   "role": "Restaurant User"
+  },
+  {
+   "role": "Restaurant Supervisor"
   }
  ],
  "script": null,
