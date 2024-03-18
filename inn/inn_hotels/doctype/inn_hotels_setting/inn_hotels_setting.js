@@ -42,7 +42,7 @@ frappe.ui.form.on('Inn Hotels Setting', {
 	},
 	role_generator: function (frm) {
 		frappe.call({
-			method: 'inn.helper.role.insert_role'
+			method: 'inn.inn_hotels.doctype.inn_hotels_setting.inn_hotels_setting.insert_role'
 		});
 	}
 });
