@@ -1,0 +1,111 @@
+{
+    "role": [
+        {
+            "group": "housekeeping",
+            "roles": [
+                {
+                    "name": "Housekeeping Assistant"
+                },
+                {
+                    "name": "Housekeeping Supervisor"
+                }
+            ]
+        },
+        {
+            "group": "restaurant",
+            "roles": [
+                {
+                    "name": "Restaurant Supervisor"
+                }
+            ]
+        },
+        {
+            "group": "frontdesk",
+            "roles": [
+                {
+                    "name": "Booking Approver"
+                }
+            ]
+        }
+    ],
+    "role_profile": [
+        {
+            "name": "Restaurant",
+            "roles_assigned": [
+                {
+                    "name": "Restaurant User"
+                },
+                {
+                    "name": "Restaurant Supervisor"
+                },
+                {
+                    "name": "Accounts User"
+                },
+                {
+                    "name": "Accounts Manager"
+                },
+                {
+                    "name": "Employee Self Service"
+                }
+            ]
+        },
+        {
+            "name": "Frontdesk",
+            "roles_assigned": [
+                {
+                    "name": "Hotel Reservation User"
+                },
+                {
+                    "name": "Hotel Manager"
+                },
+                {
+                    "name": "Booking Approver"
+                },
+                {
+                    "name": "Purchase User"
+                },
+                {
+                    "name": "Purchase Manager"
+                },
+                {
+                    "name": "Accounts Manager"
+                },
+                {
+                    "name": "Accounts User"
+                },
+                {
+                    "name": "Sales User"
+                },
+                {
+                    "name": "Sales Manager"
+                },
+                {
+                    "name": "Sales Master Manager"
+                },
+                {
+                    "name": "Employee Self Service"
+                }
+            ]
+        },
+        {
+            "name": "Housekeeping",
+            "roles_assigned": [
+                {
+                    "name": "Housekeeping Assistant"
+                },
+                {
+                    "name": "Housekeeping Supervisor"
+                },
+                {
+                    "name": "Accounts Manager"
+                },
+                {
+                    "name": "Accounts User"
+                },
+                {
+                    "name": "Employee Self Service"
+                }
+            ]
+        }
+    ]
+}

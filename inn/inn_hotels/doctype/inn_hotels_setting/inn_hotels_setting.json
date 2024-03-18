@@ -56,6 +56,7 @@
   "master_data_generator_sb",
   "bed_type_generator",
   "room_type_generator",
+  "role_generator",
   "cb4",
   "inn_hotels_account_generator",
   "folio_transaction_type_generator",
@@ -381,11 +382,16 @@
    "label": "Customer Room Payment Transaction Type",
    "options": "Inn Folio Transaction Type",
    "reqd": 1
+  },
+  {
+   "fieldname": "role_generator",
+   "fieldtype": "Button",
+   "label": "Generate Role and Role Profile"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-03-04 13:44:21.907454",
+ "modified": "2024-03-14 11:11:12.054970",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
@@ -400,6 +406,13 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "All",
+   "share": 1
   }
  ],
  "quick_entry": 1,
