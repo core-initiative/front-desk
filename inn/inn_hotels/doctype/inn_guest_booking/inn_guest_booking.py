@@ -6,6 +6,7 @@ import frappe
 from inn.helper import daterange
 from frappe.model.document import Document
 from datetime import date, timedelta, datetime
+from hashlib import sha256
 
 
 class InnGuestBooking(Document):
@@ -24,6 +25,7 @@ class InnGuestBooking(Document):
 			self.incl_breakfast = False if prices[0] == "non-breakfast" else True
 			self.price = "".join(prices[3].split(","))
 		self.room_rate = frappe.db.get_value("Inn Room Rate", {"customer_group": "Guest Booking Group", "room_type": self.room_type, "final_total_rate_amount": self.price}, ["name"])
+		self.booking_code = sha256(str(self)).hexdigest()[:6].upper()
 	
 	def after_insert(self, *args, **kwrags):
 		available_room = self.list_available_room()
