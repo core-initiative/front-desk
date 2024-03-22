@@ -9,7 +9,8 @@
   "pos_invoice",
   "print_status",
   "processed_item",
-  "new_item"
+  "new_item",
+  "transfer_to_folio"
  ],
  "fields": [
   {
@@ -47,6 +48,12 @@
    "fieldtype": "Table",
    "label": "New Item",
    "options": "Inn POS Usage Item"
+  },
+  {
+   "fieldname": "transfer_to_folio",
+   "fieldtype": "Link",
+   "label": "Transfer To Folio",
+   "options": "Inn Folio"
   }
  ],
  "index_web_pages_for_search": 1,

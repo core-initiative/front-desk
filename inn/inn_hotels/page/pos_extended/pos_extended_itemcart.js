@@ -89,6 +89,7 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                 <div class="caption-order-btn" data-button-value="captain-order">${__('Captain Order')}</div>
                 <div class="table-order-btn" data-button-value="table-order">${__('Table Order')}</div>
             </div>
+            <div class="transfer-btn">Transfer Charges</div> 
             <div class="checkout-btn">${__('Checkout')}</div>
             <div class="edit-cart-btn">${__('Edit Cart')}</div>`
             )
@@ -105,11 +106,17 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                 this.$cart_container.find('.table-order-btn').css({
                     'background-color': 'var(--gray-800)'
                 });
+                this.$cart_container.find('.transfer-btn').css({
+                    'background-color': 'var(--gray-800)'
+                });
             } else {
                 this.$cart_container.find('.caption-order-btn').css({
                     'background-color': 'var(--gray-300)'
                 });
                 this.$cart_container.find('.table-order-btn').css({
+                    'background-color': 'var(--gray-300)'
+                });
+                this.$cart_container.find('.transfer-btn').css({
                     'background-color': 'var(--gray-300)'
                 });
             }
@@ -129,6 +136,12 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                 if ($(this).attr('style').indexOf('--gray-800') == -1) return;
 
                 await me.events.print_table_order();
+            })
+
+            this.$component.on("click", ".transfer-btn", async function () {
+                if ($(this).attr('style').indexOf('--gray-800') == -1) return;
+
+                await me.events.transfer_folio();
             })
         }
     }

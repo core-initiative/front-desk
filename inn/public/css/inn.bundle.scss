@@ -71,3 +71,8 @@
         @extend .print-button-order;
     }
 }
+
+.transfer-btn {
+    @extend .primary-action-pos;
+    @extend .print-button-order
+}

@@ -25,7 +25,8 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 						return {
 							filters: {
 								user: frappe.session.user,
-								docstatus: 1
+								docstatus: 1,
+								status: "Open"
 							}
 						}
 					}
@@ -90,7 +91,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			}
 
 			init_payments() {
-				this.payment = new erpnext.PointOfSale.Payment({
+				this.payment = new inn.PointOfSale.PosExtendedPayment({
 					wrapper: this.$components_wrapper,
 					events: {
 						get_frm: () => this.frm || {},
@@ -141,7 +142,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				});
 			}
 
-			save_draft_invoice() {
+			async save_draft_invoice() {
 				if (!this.$components_wrapper.is(":visible")) return;
 
 				if (this.frm.doc.items.length == 0) {
@@ -162,8 +163,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 					return;
 				}
 
-
-				this.frm.save(undefined, undefined, undefined, () => {
+				await this.frm.save(undefined, undefined, undefined, () => {
 					frappe.show_alert({
 						message: __("There was an error saving the document."),
 						indicator: 'red'
@@ -193,6 +193,20 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				this.page.add_menu_item(('Close the POS'), this.close_pos.bind(this), false, 'Shift+Ctrl+C');
 			}
 
+			init_recent_order_list() {
+				this.recent_order_list = new inn.PointOfSale.PosExtendedPastOrderList({
+					wrapper: this.$components_wrapper,
+					events: {
+						open_invoice_data: (name) => {
+							frappe.db.get_doc('POS Invoice', name).then((doc) => {
+								this.order_summary.load_summary_of(doc);
+							});
+						},
+						reset_summary: () => this.order_summary.toggle_summary_placeholder(true)
+					}
+				})
+			}
+
 			init_item_cart() {
 				this.cart = new inn.PointOfSale.PosExtendItemCart({
 					wrapper: this.$components_wrapper,
@@ -219,9 +233,91 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 
 						print_captain_order: () => this.print_captain_order(),
 						print_table_order: () => this.print_table_order(),
+
+						transfer_folio: () => this.dialog_transfer_folio(),
 					}
 				})
 			}
+
+			dialog_transfer_folio() {
+				var me = this
+				let d = new frappe.ui.Dialog({
+					title: 'Transfer to Folio',
+					fields: [
+						{
+							label: 'Inn Folio',
+							fieldname: 'inn_folio_transfer',
+							fieldtype: 'Link',
+							options: "Inn Folio",
+							reqd: 1,
+							get_query() {
+								return {
+									filters: {
+										status: "Open"
+									}
+								}
+							}
+						}
+					],
+					size: 'large', // small, large, extra-large 
+					primary_action_label: 'Select',
+					primary_action(values) {
+						d.hide();
+						me.transfer_folio(values.inn_folio_transfer)
+					},
+				});
+
+
+				d.show();
+			}
+
+			transfer_folio(folio_id) {
+				frappe.run_serially([
+					() => frappe.dom.freeze(),
+
+					this.frm.savesubmit()
+						.then((r) => {
+							this.toggle_components(false);
+							this.order_summary.toggle_component(true);
+							this.order_summary.load_summary_of(this.frm.doc, true);
+
+							frappe.call({
+								method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
+								args: {
+									invoice_name: this.frm.doc.name,
+									table: this.cart.table_number,
+									action: "save_draft"
+								},
+								async: false
+							})
+
+							frappe.call({
+								method: "inn.inn_hotels.page.pos_extended.pos_extended.clean_table_number",
+								async: false,
+								args: {
+									invoice_name: this.frm.doc.name
+								}
+							})
+
+							frappe.call({
+								method: "inn.inn_hotels.page.pos_extended.pos_extended.transfer_to_folio",
+								args: {
+									invoice_doc: this.frm.doc,
+									folio_name: folio_id
+								},
+								async: false,
+							})
+
+							frappe.show_alert({
+								indicator: 'green',
+								message: __('POS invoice {0} created succesfully', [r.doc.name])
+							});
+						}),
+					() => frappe.dom.unfreeze()
+				])
+
+			}
+
 
 			async print_table_order() {
 				const me = this
@@ -255,26 +351,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				const me = this
 				let success = false
 
-				if (!this.$components_wrapper.is(":visible")) return;
-
-				if (this.frm.doc.items.length == 0) {
-					frappe.show_alert({
-						message: __("You must add atleast one item to save it as draft."),
-						indicator: 'red'
-					});
-					frappe.utils.play_sound("error");
-					return;
-				}
-
-				if (!("table_number" in this.cart)) {
-					frappe.show_alert({
-						message: __("You must assign table to this order."),
-						indicator: 'red'
-					});
-					frappe.utils.play_sound("error");
-					return;
-				}
-
 				await this.frm.save(undefined, undefined, undefined, () => {
 					frappe.show_alert({
 						message: __("There was an error saving the document."),
@@ -307,7 +383,6 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			}
 
 			print_bill(draft) {
-				console.log(draft)
 				frappe.utils.print(
 					draft.doctype,
 					draft.name,

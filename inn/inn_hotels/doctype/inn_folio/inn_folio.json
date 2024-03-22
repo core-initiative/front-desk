@@ -121,7 +121,9 @@
   {
    "fieldname": "customer_id",
    "fieldtype": "Link",
+   "in_filter": 1,
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Customer",
    "options": "Customer",
    "reqd": 1
@@ -228,7 +230,7 @@
   }
  ],
  "links": [],
- "modified": "2024-03-14 11:37:52.880971",
+ "modified": "2024-03-22 10:40:49.860403",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Folio",
@@ -294,6 +296,7 @@
    "write": 1
   }
  ],
+ "search_fields": "customer_id",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
