@@ -39,9 +39,11 @@
   "number_of_floor",
   "inn_guest_booking_section",
   "guest_booking_group",
+  "booking_code_email_sender",
   "inn_customer_section",
   "inn_customer_group_as_supplier",
   "profit_sharing_reservation_section",
+  "guest_account_receiveable",
   "profit_sharing_account",
   "profit_sharing_transaction_type",
   "room_revenue_account",
@@ -296,7 +298,7 @@
   {
    "fieldname": "profit_sharing_reservation_section",
    "fieldtype": "Section Break",
-   "label": "Comission Reservation"
+   "label": "Inn Folio Setting"
   },
   {
    "fieldname": "profit_sharing_account",
@@ -387,11 +389,24 @@
    "fieldname": "role_generator",
    "fieldtype": "Button",
    "label": "Generate Role and Role Profile"
+  },
+  {
+   "fieldname": "booking_code_email_sender",
+   "fieldtype": "Link",
+   "label": "Booking Code Email Sender",
+   "options": "Email Account"
+  },
+  {
+   "fieldname": "guest_account_receiveable",
+   "fieldtype": "Link",
+   "label": "Guest Account Receiveable",
+   "options": "Account",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-03-14 11:11:12.054970",
+ "modified": "2024-03-21 15:26:53.168662",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
