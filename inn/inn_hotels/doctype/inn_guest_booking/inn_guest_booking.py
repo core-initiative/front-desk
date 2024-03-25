@@ -6,13 +6,17 @@ import frappe
 from inn.helper import daterange
 from frappe.model.document import Document
 from datetime import date, timedelta, datetime
-from hashlib import sha256
+import string
+import random
+import re
 
-
+RE_EMAIL_VALID = r"[^@]+@[^@]+\.[^@]+"
 class InnGuestBooking(Document):
 	pass
 
 	def before_insert(self, *args, **kwargs):
+		CUSTOMER_GROUP = frappe.db.get_single_value("Inn Hotels Setting", fieldname="guest_booking_group")
+
 		if self.room_type_custom is None:
 			pass
 		else:
@@ -24,13 +28,54 @@ class InnGuestBooking(Document):
 			prices = data[3].split(" ")
 			self.incl_breakfast = False if prices[0] == "non-breakfast" else True
 			self.price = "".join(prices[3].split(","))
-		self.room_rate = frappe.db.get_value("Inn Room Rate", {"customer_group": "Guest Booking Group", "room_type": self.room_type, "final_total_rate_amount": self.price}, ["name"])
-		self.booking_code = sha256(str(self)).hexdigest()[:6].upper()
+		self.room_rate = frappe.db.get_value("Inn Room Rate", {"customer_group": CUSTOMER_GROUP, "room_type": self.room_type, "final_total_rate_amount": self.price}, ["name"])
+		self.booking_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
 	
 	def after_insert(self, *args, **kwrags):
 		available_room = self.list_available_room()
 		self.generate_booking_room(available_room)
+
+		self.send_to_email()
 		pass
+
+	def send_to_email(self):
+		EMAIL_ACCOUNT = frappe.db.get_single_value("Inn Hotels Setting", fieldname="booking_code_email_sender")
+		if EMAIL_ACCOUNT == None or EMAIL_ACCOUNT == "":
+			return
+		
+		EMAIL_ACCOUNT = frappe.db.get_value("Email Account", filters={"name": EMAIL_ACCOUNT}, fieldname="email_id")
+		DEFAULT_COMPANY = frappe.db.get_single_value("Global Defaults", fieldname="default_company")
+
+		if self.email != None and self.email != "":
+			if re.fullmatch(RE_EMAIL_VALID, self.email):
+
+				args = {
+					"customer_name": self.customer_name,
+					"booking_code": self.booking_code,
+					"company": DEFAULT_COMPANY,
+					"start": self.start,
+					"end": self.end,
+					"number_of_rooms": self.number_of_rooms,
+					"room_type": self.room_type,
+					"bed_type": self.bed_type,
+					"allow_smoking": self.allow_smoking,
+					"incl_breakfast": self.incl_breakfast,
+					"price": self.price,
+					"phone_number": self.phone_number,
+					"email": self.email
+				}
+
+				frappe.sendmail(
+					recipients=[self.email],
+					sender =EMAIL_ACCOUNT,
+					subject = "Booking code",
+					template="booking_email",
+					args=args,
+					delayed=False
+				)
+
+	def generate_body_email(self):
+		return ""	
 
 	def new_room_booking(self, room_id):
 		doc_irb = frappe.new_doc("Inn Room Booking")
