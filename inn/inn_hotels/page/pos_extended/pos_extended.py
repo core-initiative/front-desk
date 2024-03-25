@@ -1,5 +1,7 @@
 
 import frappe
+from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges
+import json
 
 PRINT_STATUS_DRAFT = 0
 PRINT_STATUS_CAPTAIN = 1
@@ -131,3 +133,93 @@ def clean_table_number(invoice_name):
     doc_table.status = "Empty"
     doc_table.save()
     return
+
+
+@frappe.whitelist()
+def transfer_to_folio(invoice_doc, folio_name):
+    invoice_doc = json.loads(invoice_doc)
+    if not frappe.db.exists({"doctype": "Inn POS Usage", "pos_invoice": invoice_doc["name"]}):
+        raise ValueError("save this transaction as draft first or print a captain order")
+
+    pos_usage = frappe.get_last_doc("Inn POS Usage", filters={"pos_invoice": invoice_doc["name"]})
+    pos_usage.transfer_to_folio = folio_name
+    pos_usage.save()
+  
+    # Create Inn Folio Transaction Bundle
+    ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
+    ftb_doc.transaction_type = 'Restaurant Transfer Charges'
+    ftb_doc.insert()
+
+
+    # create folio transaction restaurant charge
+    food_remark = 'Transfer Restaurant Food Charges from POS Order: ' + invoice_doc["name"]
+    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["net_total"], "Restaurant Food", ftb_doc, food_remark)
+
+    # create folio transaction restaurant tax 1 dst
+    guest_account_receiveable = frappe.db.get_single_value("Inn Hotels Setting", "guest_account_receiveable")
+
+    # HARDCODED
+    # todo make dynamic
+    tax_type = ["FBS -- Service 10 %", "FBS -- Tax 11 %"]
+    remarks = ['Service of Transfer Restaurant Charges from POS Order: ' + invoice_doc["name"],
+               'Tax of Transfer Restaurant Charges from POS Order: ' + invoice_doc["name"]
+               ]
+    
+    if len(invoice_doc["taxes"]) == 1:
+        # if the tax is only one, its probably just a tax charge
+        tax_type.pop(0)
+        remarks.pop(0)
+
+    for ii in range(len(invoice_doc["taxes"])):
+        taxe = invoice_doc["taxes"][ii]
+        create_folio_trx(invoice_doc["name"], folio_name, taxe["tax_amount_after_discount_amount"], tax_type[ii], ftb_doc, remarks[ii], guest_account_receiveable, taxe["account_head"])
+	
+    roundoff_remark = 'Rounding off Amount of Transfer Restaurant Charges from Restaurant Order: ' + invoice_doc["name"]
+    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["rounding_adjustment"], "Round Off", ftb_doc, roundoff_remark, guest_account_receiveable)
+
+    ftb_doc.save()
+
+    remove_pos_invoice_bill(invoice_doc["name"], folio_name)
+
+
+def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, debit_account = None , credit_account = None):
+    if credit_account == None:
+        credit_account = frappe.get_value('Inn Folio Transaction Type', filters={"name": type}, fieldname = "credit_account")
+    if debit_account == None:
+        debit_account = frappe.get_value('Inn Folio Transaction Type', filters={"name": type}, fieldname = "debit_account") 
+
+	# Create Inn Folio Transaction
+    new_doc = frappe.new_doc('Inn Folio Transaction')
+    new_doc.flag = 'Debit'
+    new_doc.is_void = 0
+    new_doc.transaction_type = type
+    new_doc.amount = amount
+    new_doc.reference_id = invoice_name
+    new_doc.debit_account = debit_account
+    new_doc.credit_account = credit_account
+    new_doc.remark = remark
+    new_doc.parent = folio
+    new_doc.parenttype = 'Inn Folio'
+    new_doc.parentfield = 'folio_transaction'
+    new_doc.ftb_id = ftb_doc.name
+    new_doc.insert()    
+	
+    # Create Inn Folio Transaction Bundle Detail
+    ftbd_doc = frappe.new_doc('Inn Folio Transaction Bundle Detail')
+    ftbd_doc.transaction_type = new_doc.transaction_type
+    ftbd_doc.transaction_id = new_doc.name
+    ftb_doc.append('transaction_detail', ftbd_doc)
+
+def remove_pos_invoice_bill(invoice_name : str, folio_name: str):
+    pos_invoice = frappe.get_doc("POS Invoice", invoice_name)
+    for payment in pos_invoice.payments:
+        frappe.db.set_value("Sales Invoice Payment", payment.name, "amount", 0)
+        frappe.db.set_value("Sales Invoice Payment", payment.name, "base_amount", 0)
+
+    frappe.db.set_value("POS Invoice", invoice_name, "status", "Transferred")
+    frappe.db.set_value("POS Invoice", invoice_name, "grand_total", 0)
+    frappe.db.set_value("POS Invoice", invoice_name, "rounded_total", 0)
+    frappe.db.set_value("POS Invoice", invoice_name, "in_words", 0)
+    frappe.db.set_value("POS Invoice", invoice_name, "paid_amount", 0)
+    frappe.db.set_value("POS Invoice", invoice_name, "consolidated_invoice", f"Transferred to {folio_name}")
+    frappe.db.set_value("POS Invoice", invoice_name, "status", f"Consolidated")

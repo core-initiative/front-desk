@@ -11,6 +11,8 @@ from frappe.model.document import Document
 from frappe.desk.page.setup_wizard.setup_wizard import make_records
 from erpnext.accounts.doctype.account.account import update_account_number
 from inn.inn_hotels.doctype.inn_hotels_setting.setting_data import get_account
+from inn.helper import role  
+
 
 class InnHotelsSetting(Document):
 	pass
@@ -422,3 +424,7 @@ def show_supervisor_passcode():
 	else:
 		generate_supervisor_passcode()
 		show_supervisor_passcode()
+
+@frappe.whitelist()
+def insert_role():
+	role.insert_role()

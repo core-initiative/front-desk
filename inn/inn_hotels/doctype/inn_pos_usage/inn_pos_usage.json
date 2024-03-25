@@ -9,7 +9,8 @@
   "pos_invoice",
   "print_status",
   "processed_item",
-  "new_item"
+  "new_item",
+  "transfer_to_folio"
  ],
  "fields": [
   {
@@ -47,11 +48,17 @@
    "fieldtype": "Table",
    "label": "New Item",
    "options": "Inn POS Usage Item"
+  },
+  {
+   "fieldname": "transfer_to_folio",
+   "fieldtype": "Link",
+   "label": "Transfer To Folio",
+   "options": "Inn Folio"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-03-06 10:47:24.814513",
+ "modified": "2024-03-14 11:10:14.256112",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn POS Usage",
@@ -67,6 +74,30 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Restaurant User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Restaurant Supervisor",
    "share": 1,
    "write": 1
   }
