@@ -179,7 +179,7 @@ def transfer_to_folio(invoice_doc, folio_name):
 
     ftb_doc.save()
 
-    remove_pos_invoice_bill(invoice_doc["name"])
+    remove_pos_invoice_bill(invoice_doc["name"], folio_name)
 
 
 def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, debit_account = None , credit_account = None):
@@ -210,7 +210,7 @@ def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, debit_a
     ftbd_doc.transaction_id = new_doc.name
     ftb_doc.append('transaction_detail', ftbd_doc)
 
-def remove_pos_invoice_bill(invoice_name : str):
+def remove_pos_invoice_bill(invoice_name : str, folio_name: str):
     pos_invoice = frappe.get_doc("POS Invoice", invoice_name)
     for payment in pos_invoice.payments:
         frappe.db.set_value("Sales Invoice Payment", payment.name, "amount", 0)
@@ -219,6 +219,7 @@ def remove_pos_invoice_bill(invoice_name : str):
     frappe.db.set_value("POS Invoice", invoice_name, "status", "Transferred")
     frappe.db.set_value("POS Invoice", invoice_name, "grand_total", 0)
     frappe.db.set_value("POS Invoice", invoice_name, "rounded_total", 0)
-    frappe.db.set_value("POS Invoice", invoice_name, "rounding_adjustment", 0)
     frappe.db.set_value("POS Invoice", invoice_name, "in_words", 0)
     frappe.db.set_value("POS Invoice", invoice_name, "paid_amount", 0)
+    frappe.db.set_value("POS Invoice", invoice_name, "consolidated_invoice", f"Transferred to {folio_name}")
+    frappe.db.set_value("POS Invoice", invoice_name, "status", f"Consolidated")
