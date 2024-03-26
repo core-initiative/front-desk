@@ -20,7 +20,7 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                 df: {
                     label: __('Invoice Status'),
                     fieldtype: 'Select',
-                    options: `Draft\nPaid\nTransferred\nConsolidated\nReturn`,
+                    options: `Draft\nPaid\nConsolidated\nReturn`,
                     placeholder: __('Filter by invoice status'),
                     onchange: function () {
                         if (me.$component.is(':visible')) me.refresh_list();

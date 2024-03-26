@@ -120,7 +120,7 @@ def save_pos_usage(invoice_name, table, action):
 
 @frappe.whitelist()
 def get_table_number(invoice_name):
-    return frappe.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table"])
+    return frappe.db.get_value(doctype="Inn POS Usage", filters={"pos_invoice": invoice_name }, fieldname=["table", "transfer_to_folio"], as_dict=True)
 
 
 @frappe.whitelist()
@@ -151,9 +151,12 @@ def transfer_to_folio(invoice_doc, folio_name):
     ftb_doc.insert()
 
 
+    idx = frappe.get_all('Inn Folio Transaction', filters={'parent': folio_name, 'parenttype': 'Inn Folio', 'parentfield': 'folio_transaction'})
+    idx = len(idx)
     # create folio transaction restaurant charge
     food_remark = 'Transfer Restaurant Food Charges from POS Order: ' + invoice_doc["name"]
-    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["net_total"], "Restaurant Food", ftb_doc, food_remark)
+    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["net_total"], "Restaurant Food", ftb_doc, food_remark, idx)
+    idx = idx + 1
 
     # create folio transaction restaurant tax 1 dst
     guest_account_receiveable = frappe.db.get_single_value("Inn Hotels Setting", "guest_account_receiveable")
@@ -170,19 +173,21 @@ def transfer_to_folio(invoice_doc, folio_name):
         tax_type.pop(0)
         remarks.pop(0)
 
+
     for ii in range(len(invoice_doc["taxes"])):
         taxe = invoice_doc["taxes"][ii]
-        create_folio_trx(invoice_doc["name"], folio_name, taxe["tax_amount_after_discount_amount"], tax_type[ii], ftb_doc, remarks[ii], guest_account_receiveable, taxe["account_head"])
+        create_folio_trx(invoice_doc["name"], folio_name, taxe["tax_amount_after_discount_amount"], tax_type[ii], ftb_doc, remarks[ii], idx, guest_account_receiveable, taxe["account_head"])
+        idx = idx + 1
 	
     roundoff_remark = 'Rounding off Amount of Transfer Restaurant Charges from Restaurant Order: ' + invoice_doc["name"]
-    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["rounding_adjustment"], "Round Off", ftb_doc, roundoff_remark, guest_account_receiveable)
+    create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["rounding_adjustment"], "Round Off", ftb_doc, roundoff_remark, idx, guest_account_receiveable)
 
     ftb_doc.save()
 
     remove_pos_invoice_bill(invoice_doc["name"], folio_name)
 
 
-def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, debit_account = None , credit_account = None):
+def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, index, debit_account = None , credit_account = None):
     if credit_account == None:
         credit_account = frappe.get_value('Inn Folio Transaction Type', filters={"name": type}, fieldname = "credit_account")
     if debit_account == None:
@@ -192,6 +197,7 @@ def create_folio_trx(invoice_name, folio, amount, type, ftb_doc, remark, debit_a
     new_doc = frappe.new_doc('Inn Folio Transaction')
     new_doc.flag = 'Debit'
     new_doc.is_void = 0
+    new_doc.idx = index
     new_doc.transaction_type = type
     new_doc.amount = amount
     new_doc.reference_id = invoice_name
