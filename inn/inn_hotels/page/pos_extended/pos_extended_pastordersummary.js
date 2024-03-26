@@ -54,6 +54,7 @@ frappe.require(["point-of-sale.bundle.js"], function () {
             status === 'Return' && (indicator_color = 'grey');
 
             var table_number = undefined
+            var me = this
 
             frappe.call({
                 method: "inn.inn_hotels.page.pos_extended.pos_extended.get_table_number",
@@ -62,9 +63,18 @@ frappe.require(["point-of-sale.bundle.js"], function () {
                 },
                 async: false,
                 callback: function (r) {
-                    table_number = r.message
+                    table_number = r.message.table
+                    me.transfer_to_folio = r.message.transfer_to_folio
                 }
             })
+
+            if (this.transfer_to_folio != null) {
+                this.$payment_container.append(`
+                <div class="summary-row-wrapper payments">
+					<div>Transferred to</div>
+					<div>${this.transfer_to_folio}</div>
+				</div>`);
+            }
 
             return `<div class="left-section">
                     <div class="customer-name">${doc.customer}</div>
