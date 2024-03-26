@@ -69,18 +69,34 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			}
 
 			check_opening_entry() {
-				this.fetch_opening_entry().then((r) => {
+				this.fetch_opening_entry().then(async (r) => {
 					if (r.message.length) {
+						var pos_profile = undefined
 
 						if (this.profile_opening_name == undefined) {
-							this.prepare_app_defaults(r.message[0]);
-							return;
+							await this.prepare_app_defaults(r.message[0]);
+							pos_profile = r.message[0].pos_profile
+						} else {
+							for (let i = 0; i < r.message.length; i++) {
+								if (r.message[i].name == this.profile_opening_name) {
+									await this.prepare_app_defaults(r.message[i]);
+									pos_profile = r.message[i].pos_profile
+									return;
+								}
+							}
 						}
 
-						for (let i = 0; i < r.message.length; i++) {
-							if (r.message[i].name == this.profile_opening_name) {
-								this.prepare_app_defaults(r.message[i]);
-								return;
+						// handling select item group bug not filtering based on pos_profile
+						// give timeout so frappe have a time to configuring all the basic process
+						// idk why frappe not using async and await to handle the bug
+						await new Promise(r => setTimeout(r, 400));
+						var me = this
+						this.item_selector.item_group_field.df.get_query = function () {
+							return {
+								query: 'erpnext.selling.page.point_of_sale.point_of_sale.item_group_query',
+								filters: {
+									pos_profile: me.frm.doc ? me.frm.doc.pos_profile : ''
+								}
 							}
 						}
 
