@@ -32,7 +32,7 @@ def check_channel_commission(reservation_doc, room_rate = None) -> Document:
 		raise NameError("no channel with such name")
 	
 	if channel_doc.profit_sharing == PROFIT_SHARING_DISABLED:
-		return None
+		return channel_doc
 	
 	if channel_doc.sharing_type == PROFIT_SHARING_TYPE_FLAT:
 		room_cashback = channel_doc.profit_sharing_amount
