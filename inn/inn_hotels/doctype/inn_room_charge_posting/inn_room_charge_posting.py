@@ -86,7 +86,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		# check if channel is commission
 		channel = check_channel_commission(reservation)
 		is_channel_commision = True
-		if channel == None:
+		if not hasattr(channel, "cashback"):          
 			is_channel_commision = False
 		
 		room_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
