@@ -60,7 +60,7 @@ def populate_tobe_posted():
 def post_individual_room_charges(parent_id, tobe_posted_list):
 
 	# to exclude service charge from reduced because of commision / cashback
-	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["breakfast_revenue_account", "profit_sharing_transaction_type"], as_dict=True)[0]
+	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 
@@ -86,7 +86,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		# check if channel is commission
 		channel = check_channel_commission(reservation)
 		is_channel_commision = True
-		if not hasattr(channel, "cashback"):          
+		if channel.profit_sharing == 0:          
 			is_channel_commision = False
 		
 		room_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
@@ -131,6 +131,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			
 			room_commision_doc.transaction_type = COMMISION_TRANSACTION_TYPE
 			room_commision_doc.amount = channel.room_cashback
+			accumulated_amount += float(int(channel.room_cashback))
 			room_commision_doc.credit_account = PROFIT_SHARING_ACCOUNT
 			room_commision_doc.debit_account = room_charge_debit_account
 			room_commision_doc.remark = 'Commission ' + channel.name + ' : ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
@@ -211,6 +212,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			
 			breakfast_commission.transaction_type = COMMISION_TRANSACTION_TYPE
 			breakfast_commission.amount = channel.breakfast_cashback
+			accumulated_amount += float(int(channel.breakfast_cashback))
 			breakfast_commission.credit_account = PROFIT_SHARING_ACCOUNT
 			breakfast_commission.debit_account = breakfast_charge_credit_account
 			breakfast_commission.remark = 'Commission ' + channel.name + ' : ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
@@ -310,8 +312,6 @@ def post_room_charges(parent_id, tobe_posted_list):
 
 	# to exclude service charge from reduced because of commision / cashback
 	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["room_revenue_account", "breakfast_revenue_account", "profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
-	ROOM_REVENUE_ACCOUNT = room_post_settings.room_revenue_account 
-	BREAKFAST_REVENUE_ACCOUNT = room_post_settings.breakfast_revenue_account
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 
@@ -336,7 +336,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		# check if channel is commission
 		channel = check_channel_commission(reservation)
 		is_channel_commision = True
-		if not hasattr(channel, "cashback"):          
+		if channel.profit_sharing == 0:          
 			is_channel_commision = False
 
 		room_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
@@ -374,9 +374,6 @@ def post_room_charges(parent_id, tobe_posted_list):
 
 
 		if is_channel_commision:
-			room_tb_id, room_tb_amount, tb_total = calculate_inn_tax_and_charges_exclude_commision(reservation.actual_room_rate - fdc_room_rate.final_breakfast_rate_amount, reservation.actual_room_rate_tax, channel.room_cashback)
-
-
 			# add commission first
 			room_commision_doc = frappe.new_doc('Inn Folio Transaction')
 			room_commision_doc.flag = 'Credit'
@@ -385,6 +382,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			
 			room_commision_doc.transaction_type = COMMISION_TRANSACTION_TYPE
 			room_commision_doc.amount = channel.room_cashback
+			accumulated_amount += float(int(channel.room_cashback))
 			room_commision_doc.credit_account = PROFIT_SHARING_ACCOUNT
 			room_commision_doc.debit_account = room_charge_debit_account
 			room_commision_doc.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
@@ -459,6 +457,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			
 			breakfast_commission.transaction_type = COMMISION_TRANSACTION_TYPE
 			breakfast_commission.amount = channel.breakfast_cashback
+			accumulated_amount += float(int(channel.breakfast_cashback))
 			breakfast_commission.credit_account = PROFIT_SHARING_ACCOUNT
 			breakfast_commission.debit_account = breakfast_charge_credit_account
 			breakfast_commission.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
