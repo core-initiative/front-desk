@@ -197,7 +197,7 @@
    "type": "Link"
   }
  ],
- "modified": "2024-02-22 11:21:15.729238",
+ "modified": "2024-04-16 10:48:45.864906",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Operations",
@@ -223,7 +223,17 @@
  "parent_page": "Home",
  "public": 1,
  "quick_lists": [],
- "roles": [],
+ "roles": [
+  {
+   "role": "Housekeeping"
+  },
+  {
+   "role": "Hotel Reservation User"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
  "sequence_id": 4.0,
  "shortcuts": [],
  "title": "Operations"

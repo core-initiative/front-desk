@@ -53,6 +53,9 @@ def create_role_profile(profiles):
                 print(f"----APPEND ROLE: {role_name}")
                 role_doc = frappe.new_doc("Has Role")
                 role_doc.role = role_name
+                role_doc.parentfield = "roles"
+                role_doc.parent = profile_doc.name
+                role_doc.parenttype = "Role Profile"
                 profile_doc.roles.append(role_doc)
             
             profile_doc.save()
