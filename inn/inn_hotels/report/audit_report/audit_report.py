@@ -22,12 +22,6 @@ def execute(filters=None):
             'width': 150,
         },
         {
-            "fieldname": "status",
-            "label": "status",
-            "fieldtype": "Data",
-            "width": 150,
-        },
-        {
             'fieldname': 'customer',
             'label': 'Customer',
             'fieldtype': 'Data',
