@@ -120,7 +120,7 @@ def get_data_detail(start_date):
         from `tabInn Reservation` as ir
         left join `tabInn Folio` as `if`
         on if.reservation_id = ir.name
-        where {FILTER_FIELD_DATE} = '{start_date}' and {FILTER_FIELD_STATUS} != '{STATUS_RESERVED}'
+        where {FILTER_FIELD_DATE} = '{start_date}' and ir.{FILTER_FIELD_STATUS} != '{STATUS_RESERVED}'
     """
 
     reservation = frappe.db.sql(query=query, as_dict=1)
