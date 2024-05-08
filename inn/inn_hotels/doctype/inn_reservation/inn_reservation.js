@@ -350,19 +350,22 @@ frappe.ui.form.on('Inn Reservation', {
 					let now = new Date();
 					let date_arrival = new Date(frm.doc.arrival);
 					let date_departure = new Date(frm.doc.departure);
-					let expected_arrival = new Date(frm.doc.expected_arrival);
-					expected_arrival.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+					let expected_arrival_date = new Date(frm.doc.expected_arrival);
+					expected_arrival_date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+					let default_arrival = expected_arrival_date.toISOString().replace("T", " ")
+					default_arrival = default_arrival.substring(0, default_arrival.length - 5)
 
 					if (frm.doc.arrival < r.message) {
-						frm.set_value('arrival', expected_arrival);
+						frm.set_value('arrival', default_arrival);
 						frappe.msgprint("Actual Arrival must be greater than last audit date: " + r.message + ". Defaulted to Expected Arrival.");
 					}
 					else if (date_departure.setHours(0, 0, 0, 0) <= date_arrival.setHours(0, 0, 0, 0)) {
-						frm.set_value('arrival', expected_arrival);
+						frm.set_value('arrival', default_arrival);
 						frappe.msgprint("Actual Departure must be greater than Actual Arrival. Defaulted to Expected Arrival.");
 					}
 					else if (frm.doc.arrival == null || frm.doc.arrival == undefined || frm.doc.arrival == '') {
-						frm.set_value('arrival', expected_arrival);
+						frm.set_value('arrival', default_arrival);
 						frappe.msgprint("Actual Arrival cannot be empty. Defaulted to Expected Arrival.");
 					}
 					else {
@@ -386,8 +389,11 @@ frappe.ui.form.on('Inn Reservation', {
 				if (r.message) {
 					let date_arrival = new Date(frm.doc.arrival);
 					let date_departure = new Date(frm.doc.departure);
-					let default_departure = new Date(frm.doc.expected_departure);
-					default_departure.setHours(12, 0, 0);
+
+					let default_departure_date = new Date(frm.doc.expected_departure);
+					default_departure_date.setHours(12, 0, 0);
+					let default_departure = default_departure_date.toISOString().replace("T", " ")
+					default_departure = default_departure.substring(0, default_departure.length - 5)
 
 					if (frm.doc.departure < r.message) {
 						frm.set_value('departure', default_departure);
@@ -420,7 +426,7 @@ frappe.ui.form.on('Inn Reservation', {
 										},
 										callback: (resp) => {
 											console.log("resp = " + resp.message);
-											if (resp.message == room_booking_name) {
+											if (resp.message == room_booking_name || resp.message.length == 0) {
 												calculate_rate_and_bill(frm);
 												if (frm.doc.arrival) {
 													frm.set_value('total_night', calculate_nights(frm.doc.arrival, frm.doc.departure));

@@ -111,6 +111,11 @@ def update_by_reservation(reservation_id):
 			if reservation_doc.room_id != room_booking_doc.room_id:
 				reservation_changed = True
 				room_booking_doc.room_id = reservation_doc.room_id
+			if reservation_doc.actual_room_id != room_booking_doc.room_id:
+				# will use the actual usage of room regards less of reserved room, because actual room takes precedence over a reservation room
+				# this flow in handled when check-in but the flow also needed in save as reservation. 'if user can save it,  handle it'
+				reservation_changed = True
+				room_booking_doc.room_id = reservation_doc.actual_room_id 
 			if reservation_changed:
 				room_booking_doc.save()
 				return_message = room_booking_doc.name + ' Updated by changes in Reservation: ' + reservation_doc.name
