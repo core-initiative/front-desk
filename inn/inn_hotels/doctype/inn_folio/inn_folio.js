@@ -352,6 +352,16 @@ function add_charge(frm) {
 			});
 			d.set_primary_action(__('Save'), () => {
 				let remark_to_save = '';
+				let values = d.get_values()
+				if (values.amount == 0) {
+					frappe.msgprint({
+						title: __("Validation Error"),
+						indicator: "red",
+						message: __("Amount cannot be zero")
+					})
+					return
+				}
+
 				if (d.get_values().remark !== undefined || d.get_values().remark != null) {
 					remark_to_save = d.get_values().remark;
 				}
@@ -447,6 +457,17 @@ function add_payment(frm) {
 			});
 			d.set_primary_action(__('Save'), () => {
 				let remark_to_save = '';
+
+				let values = d.get_values()
+				if (values.amount == 0) {
+					frappe.msgprint({
+						title: __("Validation Error"),
+						indicator: "red",
+						message: __("Amount cannot be zero")
+					})
+					return
+				}
+
 				if (d.get_values.remark !== undefined) {
 					remark_to_save = d.get_values.remark;
 				}
@@ -517,6 +538,16 @@ function add_refund(frm) {
 	}
 	d.set_primary_action(__('Save'), () => {
 		let remark_to_save = '';
+
+		let values = d.get_values()
+		if (values.amount == 0) {
+			frappe.msgprint({
+				title: __("Validation Error"),
+				indicator: "red",
+				message: __("Amount cannot be zero")
+			})
+			return
+		}
 		if (d.get_values.remark !== undefined) {
 			remark_to_save = d.get_values.remark;
 		}

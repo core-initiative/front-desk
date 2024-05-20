@@ -59,8 +59,13 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
                 async: false,
                 callback: function (r) {
                     table_number = r.message
-                    me.$table_section.find("input").val(table_number)
-                    me.table_number = table_number
+                    if (table_number) {
+                        me.$table_section.find("input").val(table_number.table)
+                        me.table_number = table_number
+                    } else {
+                        me.$table_section.find("input").val()
+                        me.table_number = ""
+                    }
                 }
             })
         }

@@ -255,6 +255,20 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 				})
 			}
 
+			async save_and_checkout() {
+				await super.save_and_checkout()
+
+				frappe.call({
+					method: "inn.inn_hotels.page.pos_extended.pos_extended.save_pos_usage",
+					args: {
+						invoice_name: this.frm.doc.name,
+						table: this.cart.table_number,
+						action: "save_draft"
+					},
+					async: true
+				})
+			}
+
 			dialog_transfer_folio() {
 				var me = this
 				let d = new frappe.ui.Dialog({

@@ -134,9 +134,9 @@ def get_data_detail(start_date):
          folio_detail[x.folio]["breakfast_revenue"],
          x.channel,
          "",
-         folio_detail[x.folio]["mode_of_payment"][:-2],
+         "",
          folio_detail[x.folio]["total_amount"],
-         folio_detail[x.folio]["payment_date"],
+         "",
          x.bill_instructions
          ]
         for x in reservation]
@@ -151,10 +151,16 @@ def get_folio_detail(folio_id: list):
     fill_setting_data()
     transaction_type_list = (TRANSACTION_TYPE_COMISSION, TRANSACTION_TYPE_ROOM_REVENUE,
                              TRANSACTION_TYPE_BREAKFAST_REVENUE, TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT)
+
+    if (len(folio_id) == 1):
+        folio_id_query = f'= {folio_id[0]}'
+    else:
+        folio_id_query = f'in {folio_id}'
+
     query = f"""
         select parent, transaction_type, amount, mode_of_payment, creation
         from `tabInn Folio Transaction` as ift
-        where ift.parent in {folio_id}
+        where ift.parent {folio_id_query}
         and
         ift.transaction_type in {transaction_type_list}
     """
