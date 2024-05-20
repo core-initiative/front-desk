@@ -39,7 +39,6 @@ frappe.require(["point-of-sale.bundle.js", "inn-pos.bundle.js"], function () {
             this.render_payment_mode_dom();
             this.make_invoice_fields_control();
             this.update_totals_section();
-            this.focus_on_default_mop();
         }
     }
 });
