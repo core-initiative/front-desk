@@ -203,6 +203,9 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			}
 
 			prepare_menu() {
+				this.page.add_menu_item(("Open Table Monitor"), () => {
+					frappe.set_route("inn-pos-table")
+				}, false, 'Ctrl+T');
 				this.page.add_menu_item(("Open Form View"), this.open_form_view.bind(this), false, 'Ctrl+F');
 				this.page.add_menu_item(("Toggle Recent Orders"), this.toggle_recent_order.bind(this), false, 'Ctrl+O');
 				this.page.add_menu_item(("Save as Draft"), this.save_draft_invoice.bind(this), false, 'Ctrl+S');
@@ -380,6 +383,8 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			async print_captain_order() {
 				const me = this
 				let success = false
+
+				this.frm.dirty()
 
 				await this.frm.save(undefined, undefined, undefined, () => {
 					frappe.show_alert({
