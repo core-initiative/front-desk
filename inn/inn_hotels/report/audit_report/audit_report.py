@@ -150,8 +150,8 @@ def get_data_detail(start_date, is_show_mode_payment):
              "",
              # mode of payment
              folio_detail[x.folio]["mode_of_payment"][:-2],
-             folio_detail[x.folio]["payment_date"],  # paid date
              folio_detail[x.folio]["total_amount"],
+             folio_detail[x.folio]["payment_date"],  # paid date
              "",
              x.bill_instructions
              ]
@@ -169,8 +169,8 @@ def get_data_detail(start_date, is_show_mode_payment):
              x.channel,
              "",
              "",  # mode of payment
-             folio_detail[x.folio]["payment_date"],  # paid date
              folio_detail[x.folio]["total_amount"],
+             folio_detail[x.folio]["payment_date"],  # paid date
              "",
              x.bill_instructions
              ]
