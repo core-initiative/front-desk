@@ -8,6 +8,12 @@ frappe.query_reports["Audit Report"] = {
 			label: __('Date'),
 			fieldtype: 'Date',
 			default: frappe.datetime.get_today()
+		},
+		{
+			fieldname: "fill_mode_payment",
+			label: __("Fill Mode of Payment"),
+			fieldtype: "Check",
+			default: 1
 		}
 	],
 	"tree": true,

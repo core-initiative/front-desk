@@ -58,6 +58,12 @@ def execute(filters=None):
             'width': 150,
         },
         {
+            'fieldname': "comission",
+            'fieldtype': "Currency",
+            'label': "Comission",
+            'width': 150
+        },
+        {
             'fieldname': 'payment_by',
             'label': 'Payment By',
             'fieldtype': 'Data',
@@ -82,6 +88,12 @@ def execute(filters=None):
             'width': 150,
         },
         {
+            'fieldname': "posting_date",
+            "label": "Posting date",
+            'fieldtype': 'Date',
+            'width': 150
+        },
+        {
             'fieldname': 'paid_date',
             'label': 'Paid Date',
             'fieldtype': 'Date',
@@ -104,10 +116,10 @@ def get_data(filters):
     if filters.date == None:
         filters.date = date.today().isoformat()
 
-    return get_data_detail(filters.date)
+    return get_data_detail(filters.date, filters.fill_mode_payment)
 
 
-def get_data_detail(start_date):
+def get_data_detail(start_date, is_show_mode_payment):
 
     query = f"""
         select ir.name, ir.status, ir.customer_id, ir.room_type, ir.actual_room_id, ir.channel, ir.actual_room_rate, if.name as folio, if.bill_instructions
@@ -124,22 +136,46 @@ def get_data_detail(start_date):
     folio_name = tuple([x.folio for x in reservation])
     folio_detail = get_folio_detail(folio_name)
 
-    res = [
-        [x.name,
-         x.customer_id,
-         x.room_type,
-         x.actual_room_id,
-         x.actual_room_rate,
-         folio_detail[x.folio]["actual_room_nett"],
-         folio_detail[x.folio]["breakfast_revenue"],
-         x.channel,
-         "",
-         "",
-         folio_detail[x.folio]["total_amount"],
-         "",
-         x.bill_instructions
-         ]
-        for x in reservation]
+    if is_show_mode_payment:
+        res = [
+            [x.name,
+             x.customer_id,
+             x.room_type,
+             x.actual_room_id,
+             x.actual_room_rate,
+             folio_detail[x.folio]["actual_room_nett"],
+             folio_detail[x.folio]["breakfast_revenue"],
+             folio_detail[x.folio]["comission"],  # comission
+             x.channel,
+             "",
+             # mode of payment
+             folio_detail[x.folio]["mode_of_payment"][:-2],
+             folio_detail[x.folio]["payment_date"],  # paid date
+             folio_detail[x.folio]["total_amount"],
+             "",
+             x.bill_instructions
+             ]
+            for x in reservation]
+    else:
+        res = [
+            [x.name,
+             x.customer_id,
+             x.room_type,
+             x.actual_room_id,
+             x.actual_room_rate,
+             folio_detail[x.folio]["actual_room_nett"],
+             folio_detail[x.folio]["breakfast_revenue"],
+             folio_detail[x.folio]["comission"],  # comission
+             x.channel,
+             "",
+             "",  # mode of payment
+             folio_detail[x.folio]["payment_date"],  # paid date
+             folio_detail[x.folio]["total_amount"],
+             "",
+             x.bill_instructions
+             ]
+            for x in reservation]
+
     return res
 
 
@@ -153,7 +189,7 @@ def get_folio_detail(folio_id: list):
                              TRANSACTION_TYPE_BREAKFAST_REVENUE, TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT)
 
     if (len(folio_id) == 1):
-        folio_id_query = f'= {folio_id[0]}'
+        folio_id_query = f"= '{folio_id[0]}'"
     else:
         folio_id_query = f'in {folio_id}'
 
@@ -170,7 +206,8 @@ def get_folio_detail(folio_id: list):
         "breakfast_revenue": 0,
         "mode_of_payment": "",
         "total_amount": 0,
-        "payment_date": ""
+        "payment_date": "",
+        "comission": 0
     } for folio in folio_id}
 
     for data in folio_detail:
@@ -184,6 +221,8 @@ def get_folio_detail(folio_id: list):
             res[data.parent]["payment_date"] += f"{data.creation}, "
         elif data.transaction_type == TRANSACTION_TYPE_BREAKFAST_REVENUE:
             res[data.parent]["breakfast_revenue"] += data.amount
+        elif data.transaction_type == TRANSACTION_TYPE_COMISSION:
+            res[data.parent]["comission"] += data.amount
 
     return res
 

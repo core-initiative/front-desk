@@ -10,6 +10,11 @@ frappe.ui.form.on('Inn Reservation', {
 	onload: function (frm) {
 		get_room_max_active_card();
 		make_read_only(frm);
+
+		if (frm.doc.__islocal != 1) {
+			handle_filter_on_start_if_filled(frm)
+			check_is_room_booking_already_created(frm)
+		}
 	},
 	refresh: function (frm) {
 		is_check_in = getUrlVars()['is_check_in'];
@@ -31,7 +36,7 @@ frappe.ui.form.on('Inn Reservation', {
 			frm.set_df_property('sb1', 'hidden', 1); // Actual Room Rate Breakdown Section
 			frm.set_df_property('sb3', 'hidden', 1); // Issue Card Table Section
 			frm.set_df_property('sb4', 'hidden', 1); // Issue Card Buttons Section
-			toggleRoomDetail(frm)
+			toggle_room_detail(frm)
 		}
 		// Show Folio Button
 		if (frm.doc.__islocal !== 1) {
@@ -311,10 +316,10 @@ frappe.ui.form.on('Inn Reservation', {
 		});
 	},
 	customer_id: function (frm) {
-		toggleRoomDetail(frm)
+		toggle_room_detail(frm)
 	},
 	channel: function (frm) {
-		toggleRoomDetail(frm)
+		toggle_room_detail(frm)
 	},
 	expected_departure: function (frm) {
 		frappe.call({
@@ -332,7 +337,7 @@ frappe.ui.form.on('Inn Reservation', {
 					else {
 						if (frm.doc.expected_arrival && (frm.doc.__islocal == 1 || frm.doc.status == 'Reserved')) {
 							frm.set_value('total_night', calculate_nights(frm.doc.expected_arrival, frm.doc.expected_departure));
-							toggleRoomDetail(frm)
+							toggle_room_detail(frm)
 						}
 					}
 				}
@@ -373,7 +378,7 @@ frappe.ui.form.on('Inn Reservation', {
 						if (frm.doc.departure) {
 							frm.set_value('total_night', calculate_nights(frm.doc.arrival, frm.doc.departure));
 						}
-						toggleRoomDetail(frm)
+						toggle_room_detail(frm)
 					}
 				}
 				else {
@@ -458,7 +463,7 @@ frappe.ui.form.on('Inn Reservation', {
 		});
 	},
 	type: function (frm) {
-		toggleRoomDetail(frm)
+		toggle_room_detail(frm)
 	},
 	room_type: function (frm) {
 		let phase = '';
@@ -515,26 +520,37 @@ frappe.ui.form.on('Inn Reservation', {
 		manage_filters('actual_room_id', phase, start_date);
 	},
 	room_rate: function (frm) {
-		if (frm.doc.room_rate !== undefined) {
-			frappe.call({
-				method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
-				args: {
-					room_rate_id: frm.doc.room_rate
-				},
-				callback: (r) => {
-					if (r.message) {
-						frm.set_value('base_room_rate', r.message);
-						frm.refresh_field('base_room_rate');
-						if (frm.doc.status == 'Reserved') {
-							if (parseInt(r.message) > parseInt(frm.doc.init_actual_room_rate)) {
-								frm.set_value('init_actual_room_rate', parseInt(r.message));
-								frm.refresh_field('init_actual_room_rate');
-							}
+		if (frm.doc.room_rate == undefined || frm.doc.room_rate == "") {
+			return
+		}
+
+		frappe.call({
+			method: 'inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_base_room_rate',
+			args: {
+				room_rate_id: frm.doc.room_rate
+			},
+			callback: (r) => {
+				if (r.message) {
+					frm.set_value('base_room_rate', r.message);
+					frm.refresh_field('base_room_rate');
+					if (frm.doc.status == 'Reserved') {
+						if (parseInt(r.message) > parseInt(frm.doc.init_actual_room_rate)) {
+							frm.set_value('init_actual_room_rate', parseInt(r.message));
+							frm.refresh_field('init_actual_room_rate');
 						}
 					}
 				}
-			});
+			}
+		});
+
+
+		// if status is reserved, front office will trigger checkin and will trigger the nett_room_rate
+		if (frm.doc.status != "Reserved" || is_check_in == 'true') {
+			calculate_rate_and_bill(frm)
 		}
+
+
+
 	},
 	init_actual_room_rate: function (frm) {
 		if ((parseFloat(frm.doc.init_actual_room_rate) == 0.0) || (parseFloat(frm.doc.init_actual_room_rate) > 0 && parseInt(frm.doc.init_actual_room_rate) < parseInt(frm.doc.base_room_rate))) {
@@ -665,25 +681,19 @@ frappe.ui.form.on('Inn Key Card', {
 	}
 });
 
-function toggleRoomDetail(frm) {
-	console.log(frm.doc.customer_id)
-	console.log(frm.doc.type)
-	console.log(frm.doc.channel)
-	console.log(frm.doc.expected_arrival)
-	console.log(frm.doc.expected_departure)
-
+function toggle_room_detail(frm) {
 	if (frm.doc.customer_id == undefined ||
 		frm.doc.type == undefined ||
 		frm.doc.channel == undefined ||
 		frm.doc.expected_arrival == undefined ||
 		frm.doc.expected_departure == undefined) {
-		roomStayDetailToggle(frm, true)
+		room_stay_detail_toggle_show(frm, true)
 	} else {
-		roomStayDetailToggle(frm, false)
+		room_stay_detail_toggle_show(frm, false)
 	}
 }
 
-function roomStayDetailToggle(frm, toggle) {
+function room_stay_detail_toggle_show(frm, toggle) {
 	frm.set_df_property("guest_name", "disabled", toggle)
 	frm.set_df_property("room_type", "disabled", toggle)
 	frm.set_df_property("bed_type", "disabled", toggle)
@@ -744,7 +754,7 @@ function is_form_good_to_in_house(frm) {
 	return is_error;
 }
 
-function formatDatetoStringArrival(datetime) {
+function format_date_to_string_arrival(datetime) {
 	"12-06-2023 23:22:54"
 	var date = datetime.getFullYear() + "-"
 		+ ('0' + (datetime.getMonth() + 1)).slice(-2) + '-'
@@ -770,10 +780,10 @@ function autofill(frm) {
 		frm.set_value('guest_name', frm.doc.customer_id);
 	}
 	if (frm.doc.arrival === undefined || frm.doc.arrival == null || frm.doc.arrival === '') {
-		frm.set_value('arrival', formatDatetoStringArrival(expected_arrival));
+		frm.set_value('arrival', format_date_to_string_arrival(expected_arrival));
 	}
 	if (frm.doc.departure === undefined || frm.doc.departure == null || frm.doc.departure === '') {
-		frm.set_value('departure', formatDatetoStringArrival(expected_departure));
+		frm.set_value('departure', format_date_to_string_arrival(expected_departure));
 	}
 	if (frm.doc.actual_room_rate === undefined || frm.doc.actual_room_rate == null || parseFloat(frm.doc.actual_room_rate) == 0.0) {
 		frm.set_value('actual_room_rate', frm.doc.init_actual_room_rate);
@@ -796,6 +806,56 @@ function autofill(frm) {
 			}
 		});
 	}
+}
+
+function handle_filter_on_start_if_filled(frm) {
+	let start_date = formatDate(frm.doc.arrival ? frm.doc.arrival : frm.doc.expected_arrival);
+	let end_date = formatDate(frm.doc.departure ? frm.doc.departure : frm.doc.expected_departure);
+
+	let query = {
+		"room_id": "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_available",
+		"actual_room_id": "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_available",
+		"room_type": "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_type_available",
+		"bed_type": "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available",
+	}
+
+	let filters = {
+		"start": start_date,
+		"end": end_date,
+		"reference_name": frm.doc.name,
+		"room_type": frm.doc.room_type,
+		"bed_type": frm.doc.bed_type,
+		"phase": ""
+	}
+
+	for (let fieldname of ["room_id", "actual_room_id", "room_type", "bed_type"]) {
+		frm.set_query(fieldname, function () {
+			return {
+				query: query[fieldname],
+				filters: filters
+			}
+		})
+	}
+
+	// get room rate
+	frappe.db.get_value("Customer", frm.doc.customer_id, "customer_group", (customer) => {
+		let customer_group_list = ["All Customer Groups"]
+		customer_group_list.push(customer.customer_group)
+
+		frm.set_query("room_rate", function () {
+			return {
+				filters: [
+					['Inn Room Rate', 'room_type', '=', frm.doc.room_type],
+					['Inn Room Rate', 'is_disabled', '=', 0],
+					['Inn Room Rate', 'customer_group', 'in', customer_group_list],
+					['Inn Room Rate', 'from_date', '<=', start_date],
+					['Inn Room Rate', 'to_date', '>=', start_date],
+				]
+			}
+		})
+
+	})
+
 }
 
 // Function to adjust dropdown shown in cascading dropdown: room_type, bed_type, room_id/actual_room_id
@@ -1321,4 +1381,28 @@ function check_membership_cards() {
 		d.hide();
 	});
 	d.show();
+}
+
+function check_is_room_booking_already_created(frm) {
+	// if this is not saved yet, dont check this
+	frappe.call({
+		method: "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_room_booking_name_by_reservation",
+		args: {
+			reservation_id: frm.doc.name,
+		},
+		callback: (r) => {
+			if (!r.message) {
+				create_booking_room(frm)
+			}
+		}
+	})
+}
+
+function create_booking_room(frm) {
+	frappe.call({
+		metrhod: "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.update_by_reservation",
+		args: {
+			reservation_id: frm.doc.name,
+		}
+	})
 }

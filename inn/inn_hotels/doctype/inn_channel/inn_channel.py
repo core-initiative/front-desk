@@ -16,9 +16,10 @@ PROFIT_SHARING_DISABLED = 0
 PROFIT_SHARING_TYPE_PERCENTAGE = "Percentage"
 PROFIT_SHARING_TYPE_FLAT = "Flat"
 
-def check_channel_commission(reservation_doc, room_rate = None) -> Document:
+def check_channel_commission(reservation_doc, room_rate = None, reservation_price: int = None) -> Document:
 	'''
 	:param reservation_doc to get channel_name and actual_room_rate
+	:param reservation_price if document is not saved yet and want to update the price (case happen when in Check In Process or when you want to change room with different price)
 	:return channel with appended cashback amount and adjusted room and breakfast amount
 
 	check if channel used by reservation is need a commision.
@@ -43,9 +44,13 @@ def check_channel_commission(reservation_doc, room_rate = None) -> Document:
 		if room_rate == None:
 			room_rate = frappe.get_doc("Inn Room Rate", reservation_doc.room_rate)
 
-		room_price = reservation_doc.actual_room_rate
+		if reservation_price:
+			room_price = reservation_price
+		else:
+			room_price = reservation_doc.actual_room_rate
 		if room_price == 0:
 			room_price = reservation_doc.init_actual_room_rate
+   
 		room_cashback = (room_price - room_rate.final_breakfast_rate_amount) * channel_doc.profit_sharing_amount / 100
 		channel_doc.room_cashback = room_cashback
 		
