@@ -486,7 +486,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 				breakfast_commission.amount = float(int(channel.breakfast_cashback))
 				accumulated_amount += float(int(channel.breakfast_cashback))
 				breakfast_commission.credit_account = PROFIT_SHARING_ACCOUNT
-				breakfast_commission.debit_account = breakfast_charge_credit_account
+				breakfast_commission.debit_account = breakfast_charge_debit_account
 				breakfast_commission.remark = 'Commission ' + channel.name + ' : ' + item["room_id"] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
 				breakfast_commission.parent = item["folio_id"]
 				breakfast_commission.parenttype = 'Inn Folio'
