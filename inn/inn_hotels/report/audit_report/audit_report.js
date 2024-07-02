@@ -20,4 +20,12 @@ frappe.query_reports["Audit Report"] = {
 	"name_field": "account",
 	"parent_field": "parent_account",
 	"initial_depth": 1,
+	"formatter": function (value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data)
+
+		if (column.fieldname == "rsv") {
+			value = `<a href='/app/inn-reservation/${value}'>${value}</a>`
+		}
+		return value
+	}
 };
