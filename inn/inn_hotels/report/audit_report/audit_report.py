@@ -12,6 +12,27 @@ TRANSACTION_TYPE_ROOM_PAYMENT = ""
 BREAKFAST_REVENUE_ACCOUNT = ""
 ROOM_REVENUE_ACCOUNT = ""
 
+'''goals:
+
+i want to see all reservation that have in house status in specified date
+from all those reservation i want all transaction from that specified date on those reservation
+
+question:
+
+- apa yang menandakan bahwa reservasi sedang berstatus in house pada tanggal tsb?
+jawab:
+opt1:  
+    - cek apakah reservasi sekarang berstatus in house memiliki expected date dibawah tanggal tersebut? 
+        => tandanya pada tanggal tersebut terdapat transaksi pada reservasi tersebut
+    - untuk reservasi status Reserved, Canceled, No Show berarti belum inhouse pada tanggal tersebut
+    - untuk reservasi status finished, check apakah actual arrival dan actual 
+        departure berada diantara tanggal tersebut 
+        => tandanya pada tanggal tersebut terdapat transaksi pada reservasi
+    - untuk seluruh transaksi pada reservasi, ambil transaksi yang terjadi pada tanggal tersebut
+
+
+'''
+
 
 def execute(filters=None):
     columns = [
@@ -126,7 +147,9 @@ def get_data_detail(start_date, is_show_mode_payment):
         from `tabInn Reservation` as ir
         left join `tabInn Folio` as `if`
         on if.reservation_id = ir.name
-        where {FILTER_FIELD_DATE} = '{start_date}' and ir.{FILTER_FIELD_STATUS} != '{STATUS_RESERVED}'
+        where 
+        (ir.status = 'In House' and ir.expected_arrival = '{start_date}') or
+        (ir.status = 'Finish' and ir.expected_arrival <= '{start_date}' and ir.expected_departure > '{start_date} ')
     """
 
     reservation = frappe.db.sql(query=query, as_dict=1)
@@ -134,7 +157,7 @@ def get_data_detail(start_date, is_show_mode_payment):
         return []
 
     folio_name = tuple([x.folio for x in reservation])
-    folio_detail = get_folio_detail(folio_name)
+    folio_detail = get_folio_detail(folio_name, start_date)
 
     if is_show_mode_payment:
         res = [
@@ -179,7 +202,7 @@ def get_data_detail(start_date, is_show_mode_payment):
     return res
 
 
-def get_folio_detail(folio_id: list):
+def get_folio_detail(folio_id: list, start_date: str):
     # folio detail
     # need data:
     # actual room nett, breakfast revenue, mode of payment, total_amount (payment_amount?), payment_date
@@ -198,8 +221,10 @@ def get_folio_detail(folio_id: list):
         from `tabInn Folio Transaction` as ift
         where ift.parent {folio_id_query}
         and
-        ift.transaction_type in {transaction_type_list}
+        ift.transaction_type in {transaction_type_list} and
+        ift.audit_date = '{start_date} '
     """
+    print(query)
     folio_detail = frappe.db.sql(query=query, as_dict=1)
     res = {folio: {
         "actual_room_nett": 0,

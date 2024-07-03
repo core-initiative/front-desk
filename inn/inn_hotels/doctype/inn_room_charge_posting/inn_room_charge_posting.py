@@ -399,7 +399,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		if is_channel_commision:
 			# add commission first
 			room_commision_doc = frappe.new_doc('Inn Folio Transaction')
-			room_commision_doc.flag = 'Credit'
+			room_commision_doc.flag = 'Debit'
 			room_commision_doc.is_void = 0
 			room_commision_doc.idx = get_idx(item["folio_id"])
 			
@@ -478,7 +478,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			if is_channel_commision:
 				# add commission first
 				breakfast_commission = frappe.new_doc('Inn Folio Transaction')
-				breakfast_commission.flag = 'Credit'
+				breakfast_commission.flag = 'Debit'
 				breakfast_commission.is_void = 0
 				breakfast_commission.idx = get_idx(item["folio_id"])
 				
