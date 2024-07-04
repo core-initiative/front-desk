@@ -4,7 +4,7 @@
 
 from __future__ import unicode_literals
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import frappe
 from frappe.model.document import Document
@@ -478,7 +478,7 @@ def populate_cr_refund(shift_id):
 @frappe.whitelist()
 def close_shift(shift_id):
 	doc = frappe.get_doc('Inn Shift', shift_id)
-	doc.time_out = datetime.now()
+	doc.time_out = datetime.now() + timedelta(hours=7)
 	doc.username = frappe.session.user
 	doc.status = 'Closed'
 	doc.save()
