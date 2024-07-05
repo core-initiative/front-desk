@@ -148,8 +148,8 @@ def get_data_detail(start_date, is_show_mode_payment):
         left join `tabInn Folio` as `if`
         on if.reservation_id = ir.name
         where 
-        (ir.status = 'In House' and ir.expected_arrival = '{start_date}') or
-        (ir.status = 'Finish' and ir.expected_arrival <= '{start_date}' and ir.expected_departure > '{start_date} ')
+        (ir.status = 'In House' and ir.expected_arrival < '{start_date}') or
+        (ir.status = 'Finish' and ir.expected_arrival < '{start_date}' and ir.expected_departure >= '{start_date} ')
     """
 
     reservation = frappe.db.sql(query=query, as_dict=1)
