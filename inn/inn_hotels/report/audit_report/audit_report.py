@@ -142,15 +142,14 @@ def get_data(filters):
 
 
 def get_data_detail(start_date, is_show_mode_payment):
-    reservation_date = parse(start_date) - timedelta(days=1)
     query = f"""
         select ir.name, ir.status, ir.customer_id, ir.room_type, ir.actual_room_id, ir.channel, ir.actual_room_rate, if.name as folio, if.bill_instructions
         from `tabInn Reservation` as ir
         left join `tabInn Folio` as `if`
         on if.reservation_id = ir.name
         where 
-        (ir.status = 'In House' and ir.expected_arrival < '{reservation_date}') or
-        (ir.status = 'Finish' and ir.expected_arrival < '{reservation_date}' and ir.expected_departure >= '{reservation_date} ')
+        (ir.status = 'In House' and ir.expected_arrival <= '{start_date}') or
+        (ir.status = 'Finish' and ir.expected_arrival <= '{start_date}' and ir.expected_departure > '{start_date}')
     """
 
     reservation = frappe.db.sql(query=query, as_dict=1)
@@ -223,7 +222,7 @@ def get_folio_detail(folio_id: list, start_date: str):
         where ift.parent {folio_id_query}
         and
         ift.transaction_type in {transaction_type_list} and
-        ift.audit_date = '{start_date} '
+        ift.audit_date = '{start_date}'
     """
     print(query)
     folio_detail = frappe.db.sql(query=query, as_dict=1)
