@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"mQhBeS--Rl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reservation</span>\",\"col\":12}},{\"id\":\"BxqoGNVQ4q\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Inn House\",\"col\":3}},{\"id\":\"wZnRYcYnXv\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Arrival\",\"col\":3}},{\"id\":\"wtb_GqbdIZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Departure\",\"col\":3}},{\"id\":\"NjOnJ7GpSF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Check Out\",\"col\":3}},{\"id\":\"nrjSQoFUDF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Sold</b></span>\",\"col\":12}},{\"id\":\"Ik_PvcF5sO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":4}},{\"id\":\"WsrVm9DRLn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available\",\"col\":4}},{\"id\":\"4UtfBl96nC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Out of Order\",\"col\":4}},{\"id\":\"eAOak1AJ_L\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Revenue Summary</b></span>\",\"col\":12}},{\"id\":\"sKu5ru_37L\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"ARR\",\"col\":6}},{\"id\":\"mxvXiLXtkU\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold Today\",\"col\":6}},{\"id\":\"lf4XkzibVt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"x8GJwV8hzM\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction\",\"col\":4}},{\"id\":\"-GtWnq-goz\",\"type\":\"card\",\"data\":{\"card_name\":\"City Ledger\",\"col\":4}},{\"id\":\"8XQ43ifBk4\",\"type\":\"card\",\"data\":{\"card_name\":\"Night Audit\",\"col\":4}}]",
+ "content": "[{\"id\":\"mQhBeS--Rl\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reservation</span>\",\"col\":12}},{\"id\":\"RugKEsbajh\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"In House\",\"col\":3}},{\"id\":\"wZnRYcYnXv\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Arrival\",\"col\":3}},{\"id\":\"wtb_GqbdIZ\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Departure\",\"col\":3}},{\"id\":\"NjOnJ7GpSF\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Check Out\",\"col\":3}},{\"id\":\"nrjSQoFUDF\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Sold</b></span>\",\"col\":12}},{\"id\":\"Ik_PvcF5sO\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold\",\"col\":4}},{\"id\":\"WsrVm9DRLn\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Available\",\"col\":4}},{\"id\":\"4UtfBl96nC\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Out of Order\",\"col\":4}},{\"id\":\"eAOak1AJ_L\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Room Revenue Summary</b></span>\",\"col\":12}},{\"id\":\"sKu5ru_37L\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"ARR\",\"col\":6}},{\"id\":\"mxvXiLXtkU\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Total Sold Today\",\"col\":6}},{\"id\":\"lf4XkzibVt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"x8GJwV8hzM\",\"type\":\"card\",\"data\":{\"card_name\":\"Transaction\",\"col\":4}},{\"id\":\"-GtWnq-goz\",\"type\":\"card\",\"data\":{\"card_name\":\"City Ledger\",\"col\":4}},{\"id\":\"8XQ43ifBk4\",\"type\":\"card\",\"data\":{\"card_name\":\"Night Audit\",\"col\":4}}]",
  "creation": "2023-12-15 13:51:19.164024",
  "custom_blocks": [],
  "docstatus": 0,
@@ -74,34 +74,6 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "City Ledger",
-   "link_count": 2,
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "AR City Ledger",
-   "link_count": 0,
-   "link_to": "AR City Ledger",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "City Ledger Invoice",
-   "link_count": 0,
-   "link_to": "AR City Ledger",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Night Audit",
    "link_count": 3,
    "onboard": 0,
@@ -136,9 +108,37 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "City Ledger",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "AR City Ledger",
+   "link_count": 0,
+   "link_to": "AR City Ledger",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "City Ledger Invoice",
+   "link_count": 0,
+   "link_to": "AR City Ledger Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2024-04-16 10:48:11.739433",
+ "modified": "2024-07-10 07:22:52.865212",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Reservation",
@@ -146,6 +146,10 @@
   {
    "label": "Total Sold Today",
    "number_card_name": "Inn Hotel Total Room Rate Sold"
+  },
+  {
+   "label": "In House",
+   "number_card_name": "Inn House"
   },
   {
    "label": "Total Sold",
@@ -162,10 +166,6 @@
   {
    "label": "Out of Order",
    "number_card_name": "Inn Hotel Out of Order Room"
-  },
-  {
-   "label": "Inn House",
-   "number_card_name": "Inn House"
   },
   {
    "label": "ARR",
