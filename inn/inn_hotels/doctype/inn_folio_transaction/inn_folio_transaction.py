@@ -12,7 +12,10 @@ from inn.inn_hotels.doctype.inn_folio_transaction_bundle.inn_folio_transaction_b
 from frappe.model.document import Document
 
 class InnFolioTransaction(Document):
-	pass
+    def validate(self):
+        amount = int(self.amount)
+        if amount == 0:
+        	raise ValueError("Amount cannot be zero")
 
 @frappe.whitelist()
 def get_mode_of_payment_account(mode_of_payment_id, company_name=frappe.get_doc("Global Defaults").default_company):
