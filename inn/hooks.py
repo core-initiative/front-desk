@@ -22,7 +22,9 @@ web_include_css = "inn.bundle.css"
 # page_js = {"point-of-sale" : "public/js/inn-pos.bundle.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Purchase Order" : "public/js/purchase-order/purchase-order.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -118,6 +120,19 @@ scheduler_events = {
 # 		"inn.tasks.monthly"
 # 	]
 }
+
+# Fixture
+# ---------
+
+fixtures = [
+	{
+		"doctype": "Custom Field",
+		"filters": [
+			["module", "=", "Inn Hotels"]
+		]
+	}
+]
+
 
 # Testing
 # -------
