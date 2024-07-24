@@ -197,44 +197,86 @@ def calculate_total_rate_and_sold(start_date, end_date):
     if delta.days < 0:
         raise frappe.ValidationError("start date must before end date")
     
-    total_sold = 0
-    total_rate = 0
-    cached_rate = {}
-    # calculate reservation start before start_date and reservation end after start date
-    current_sold = frappe.db.get_values(doctype="Inn Reservation", filters={"arrival": ["<", start_date], "expected_departure": [">", start_date]}, fieldname=["arrival", "expected_departure", "room_rate"], as_dict=True)
-    for ii in current_sold:
-        room_end_date = ii.expected_departure
-        if room_end_date > end_date:
-            room_end_date = end_date
-        
-        days_sold = (room_end_date - start_date).days
-        total_sold += days_sold
+    # total_sold = 0
+    # total_rate = 0
+    # cached_rate = {}
 
-        if ii.room_rate not in cached_rate:
-            room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={"name": ii.room_rate}, fieldname="final_total_rate_amount")
-            cached_rate[ii.room_rate] = room_rate
-        
-        total_rate += cached_rate[ii.room_rate] * days_sold
+    transaction_type = ('Breakfast Charge Tax/Service',
+                        'Breakfast Charge', 'Room Charge', 'Room Charge Tax/Service')
+    reservation_query = f'''
+        select tif.name as folio_id
+        from `tabInn Reservation` as ir
+        left join `tabInn Folio` as tif
+        on tif.reservation_id = ir.name
+        where 
+        (ir.arrival <= '{start_date}' and ir.expected_departure > '{start_date}') or
+        (ir.expected_arrival >= '{start_date}' and ir.expected_arrival < '{end_date}')
+    '''
 
+    folio_id = frappe.db.sql(reservation_query, as_dict=1)
+    folio_id = tuple([x.folio_id for x in folio_id])
+    if len(folio_id) == 0:
+        # so no need to parse further
+        folio_id = tuple(["", ""])
 
-    # calculate reservation start after start_date and reservations start before before_date
-    current_sold = frappe.db.get_values(doctype="Inn Reservation", filters=[["expected_arrival", "between", [start_date, end_date]]], fieldname=["expected_arrival", "expected_departure", "room_rate"], as_dict=True)
-    for ii in current_sold:
-        room_start_date = ii.expected_arrival
-        room_end_date = ii.expected_departure
-        if room_end_date > end_date:
-            room_end_date = end_date
+    transaction_query = f'''
+        select sum(amount) as total
+        from `tabInn Folio Transaction`
+        where audit_date < '{end_date}' and audit_date >= '{start_date}'
+        and parent in {folio_id}
+        and transaction_type in {transaction_type}
+    '''
+    total = frappe.db.sql(transaction_query, as_dict=1)[0]
 
-        days_sold = (room_end_date - room_start_date).days
-        total_sold += days_sold
+    count_query = f'''
+        select count(*) as count
+        from `tabInn Folio Transaction`
+        where audit_date < '{end_date}' and audit_date >= '{start_date}'
+        and parent in {folio_id}
+        and transaction_type = 'Room Charge'
+    '''
+    count = frappe.db.sql(count_query, as_dict=1)[0]
 
-        
-        if ii.room_rate not in cached_rate:
-            room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={"name": ii.room_rate}, fieldname="final_total_rate_amount")
-            cached_rate[ii.room_rate] = room_rate
-        total_rate += cached_rate[ii.room_rate] * days_sold
+    return total.total, count.count
 
-    return total_rate, total_sold
+    # # calculate reservation start before start_date and reservation end after start date
+    # current_sold = frappe.db.get_values(doctype="Inn Reservation", filters={"arrival": ["<", start_date], "expected_departure": [
+    #                                     ">", start_date]}, fieldname=["name", "arrival", "expected_departure", "room_rate"], as_dict=True)
+    # reservation_id = [x.name for x in current_sold]
+    # for ii in current_sold:
+    #     room_end_date = ii.expected_departure
+    #     if room_end_date > end_date:
+    #         room_end_date = end_date
+
+    #     days_sold = (room_end_date - start_date).days
+    #     total_sold += days_sold
+
+    #     if ii.room_rate not in cached_rate:
+    #         room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={
+    #                                         "name": ii.room_rate}, fieldname="final_total_rate_amount")
+    #         cached_rate[ii.room_rate] = room_rate
+
+    #     total_rate += cached_rate[ii.room_rate] * days_sold
+
+    # # calculate reservation start after start_date and reservations start before before_date
+    # current_sold = frappe.db.get_values(doctype="Inn Reservation", filters=[["expected_arrival", "between", [
+    #                                     start_date, end_date]]], fieldname=["expected_arrival", "expected_departure", "room_rate"], as_dict=True)
+    # for ii in current_sold:
+    #     room_start_date = ii.expected_arrival
+    #     room_end_date = ii.expected_departure
+    #     if room_end_date > end_date:
+    #         room_end_date = end_date
+
+    #     days_sold = (room_end_date - room_start_date).days
+    #     total_sold += days_sold
+
+    #     if ii.room_rate not in cached_rate:
+    #         room_rate = frappe.db.get_value(doctype="Inn Room Rate", filters={
+    #                                         "name": ii.room_rate}, fieldname="final_total_rate_amount")
+    #         cached_rate[ii.room_rate] = room_rate
+    #     total_rate += cached_rate[ii.room_rate] * days_sold
+
+    # return total_rate, total_sold
 
 @frappe.whitelist()
 def calculate_average_rate(start_date=None, end_date=None):
