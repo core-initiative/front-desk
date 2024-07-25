@@ -68,6 +68,8 @@ def get_data(start_date: datetime, end_date: datetime, delta_time):
 
         for date in daterange(booking.start, booking.end):
             date = date.strftime(FORMAT_DATE)
+            if date not in cur:
+                continue
             cur[date] += 1
 
     transposed = []
