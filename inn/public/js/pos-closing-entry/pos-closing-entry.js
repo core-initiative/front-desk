@@ -1,24 +1,27 @@
 frappe.ui.form.on("POS Closing Entry", {
     async refresh(frm) {
-        frm.draft_invoice = await frappe.call({
-            method: "inn.overrides.erpnext.accounts.pos_closing_entry.pos_closing_entry.get_draft_pos_invoice",
-            args: {
-                start: frappe.datetime.get_datetime_as_string(frm.doc.period_start_date),
-                end: frappe.datetime.get_datetime_as_string(frm.doc.period_end_date),
-                pos_profile: frm.doc.pos_profile,
-                user: frm.doc.user,
-            }
-        })
-        frm.draft_invoice = frm.draft_invoice.message
-        if (frm.draft_invoice.length > 0) {
-            frm.disable_save()
-            frm.dashboard.set_headline(
-                __(
-                    "There are POS Invoice that not paid yet, please overhandle at Create Overhandle"
-                )
-            )
-        }
+        if (frm.doc.pos_profile && frm.doc.user) {
 
+            frm.draft_invoice = await frappe.call({
+                method: "inn.overrides.erpnext.accounts.pos_closing_entry.pos_closing_entry.get_draft_pos_invoice",
+                args: {
+                    start: frappe.datetime.get_datetime_as_string(frm.doc.period_start_date),
+                    end: frappe.datetime.get_datetime_as_string(frm.doc.period_end_date),
+                    pos_profile: frm.doc.pos_profile,
+                    user: frm.doc.user,
+                }
+            })
+            frm.draft_invoice = frm.draft_invoice.message
+            if (frm.draft_invoice.length > 0) {
+                frm.disable_save()
+                frm.dashboard.set_headline(
+                    __(
+                        "There are POS Invoice that not paid yet, please overhandle at Create Overhandle"
+                    )
+                )
+            }
+
+        }
 
         frm.add_custom_button(__("Create Overhandle"), async function () {
             await create_overhandle(frm)
@@ -31,6 +34,14 @@ frappe.ui.form.on("POS Closing Entry", {
 })
 
 async function get_overhandle(frm) {
+    if (!frm.doc.pos_profile) {
+        frappe.msgprint({
+            indicator: "red",
+            message: "Please fill out POS Opening Entry, POS Profile, and Cashier first"
+        })
+        return
+    }
+
     frm.new_invoice = await frappe.call({
         method: "inn.overrides.erpnext.accounts.pos_closing_entry.pos_closing_entry.get_overhandled_pos_invoice",
         args: {
@@ -88,6 +99,14 @@ async function take_overhandle_pos_invoice(frm) {
 }
 
 async function create_overhandle(frm) {
+
+    if (!frm.draft_invoice) {
+        frappe.msgprint({
+            indicator: "red",
+            message: "Please fill out POS Opening Entry, POS Profile, and Cashier first"
+        })
+        return
+    }
     frappe.msgprint({
         title: __("POS Invoice not Consolidated"),
         message: __(`
