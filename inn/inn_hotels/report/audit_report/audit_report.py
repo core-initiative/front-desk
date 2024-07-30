@@ -165,7 +165,7 @@ def get_data_detail(start_date, is_show_mode_payment):
              x.customer_id,
              x.room_type,
              x.actual_room_id,
-             x.actual_room_rate,
+             folio_detail[x.folio]["actual_room_rate"],
              folio_detail[x.folio]["actual_room_nett"],
              folio_detail[x.folio]["breakfast_revenue"],
              folio_detail[x.folio]["comission"],  # comission
@@ -185,7 +185,7 @@ def get_data_detail(start_date, is_show_mode_payment):
              x.customer_id,
              x.room_type,
              x.actual_room_id,
-             x.actual_room_rate,
+             folio_detail[x.folio]["actual_room_rate"],
              folio_detail[x.folio]["actual_room_nett"],
              folio_detail[x.folio]["breakfast_revenue"],
              folio_detail[x.folio]["comission"],  # comission
@@ -217,7 +217,7 @@ def get_folio_detail(folio_id: list, start_date: str):
         folio_id_query = f'in {folio_id}'
 
     query = f"""
-        select parent, transaction_type, amount, mode_of_payment, creation
+        select parent, transaction_type, amount, mode_of_payment, creation, actual_room_rate
         from `tabInn Folio Transaction` as ift
         where ift.parent {folio_id_query}
         and
@@ -227,6 +227,7 @@ def get_folio_detail(folio_id: list, start_date: str):
     print(query)
     folio_detail = frappe.db.sql(query=query, as_dict=1)
     res = {folio: {
+        "actual_room_rate": 0,
         "actual_room_nett": 0,
         "breakfast_revenue": 0,
         "mode_of_payment": "",
@@ -239,6 +240,8 @@ def get_folio_detail(folio_id: list, start_date: str):
         # populate aggrate folio data detail, grouped by folio number
         if data.transaction_type == TRANSACTION_TYPE_ROOM_REVENUE:
             res[data.parent]["actual_room_nett"] += data.amount
+            print(data)
+            res[data.parent]["actual_room_rate"] = data.actual_room_rate
         elif data.transaction_type == TRANSACTION_TYPE_PAYMENT or data.transaction_type == TRANSACTION_TYPE_ROOM_PAYMENT:
             res[data.parent]["mode_of_payment"] += f"BY {data.mode_of_payment} {data.amount:,}".replace(
                 ",", ".") + ", "

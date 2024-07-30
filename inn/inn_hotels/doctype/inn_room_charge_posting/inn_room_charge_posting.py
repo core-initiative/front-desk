@@ -99,6 +99,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.debit_account = room_charge_debit_account
 		room_charge_folio_trx.credit_account = room_charge_credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item_doc.room_id + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+		room_charge_folio_trx.actual_room_rate = reservation.actual_room_rate
 		room_charge_folio_trx.parent = item_doc.folio_id
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
@@ -373,6 +374,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.credit_account = room_charge_credit_account
 		room_charge_folio_trx.remark = 'Room Charge: Room Rate (Nett): ' + item[
 			'room_id'] + " - " + get_last_audit_date().strftime("%d-%m-%Y")
+		room_charge_folio_trx.actual_room_rate = reservation.actual_room_rate
 		room_charge_folio_trx.parent = item['folio_id']
 		room_charge_folio_trx.parenttype = 'Inn Folio'
 		room_charge_folio_trx.parentfield = 'folio_transaction'
