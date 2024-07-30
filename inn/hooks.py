@@ -23,7 +23,8 @@ web_include_css = "inn.bundle.css"
 
 # include js in doctype views
 doctype_js = {
-    "Purchase Order" : "public/js/purchase-order/purchase-order.js"
+    "Purchase Order" : "public/js/purchase-order/purchase-order.js",
+    "POS Closing Entry": "public/js/pos-closing-entry/pos-closing-entry.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
