@@ -22,6 +22,7 @@
   "mode_of_payment",
   "cb1",
   "credit_account",
+  "actual_room_rate",
   "sb1",
   "remark",
   "sb2",
@@ -172,11 +173,18 @@
    "label": "Inn Void Folio Transaction ID",
    "options": "Inn Void Folio Transaction",
    "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.transaction_type == 'Room Charge';",
+   "fieldname": "actual_room_rate",
+   "fieldtype": "Currency",
+   "label": "Actual Room Rate",
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2023-12-21 11:35:00.684099",
+ "modified": "2024-07-30 10:02:56.344779",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Folio Transaction",

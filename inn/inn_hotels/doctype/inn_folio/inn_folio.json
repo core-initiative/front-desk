@@ -27,6 +27,7 @@
   "status",
   "cb1",
   "group_id",
+  "channel",
   "sb3",
   "total_debit",
   "cb4",
@@ -227,10 +228,18 @@
    "label": "Journal Entry ID When Closed",
    "options": "Journal Entry",
    "read_only": 1
+  },
+  {
+   "fetch_from": "reservation_id.channel",
+   "fieldname": "channel",
+   "fieldtype": "Link",
+   "label": "Channel",
+   "options": "Inn Channel",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2024-03-22 10:40:49.860403",
+ "modified": "2024-07-30 16:33:41.091293",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Folio",
