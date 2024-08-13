@@ -48,8 +48,8 @@ def check_channel_commission(reservation_doc, room_rate = None, reservation_pric
 			room_price = reservation_price
 		else:
 			room_price = reservation_doc.actual_room_rate
-		if room_price == 0:
-			room_price = reservation_doc.init_actual_room_rate
+			if room_price == 0:
+				room_price = reservation_doc.init_actual_room_rate
    
 		room_cashback = (room_price - room_rate.final_breakfast_rate_amount) * channel_doc.profit_sharing_amount / 100
 		channel_doc.room_cashback = room_cashback
