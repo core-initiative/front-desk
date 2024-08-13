@@ -1,6 +1,6 @@
 frappe.ui.form.on("Purchase Order", {
     refresh: function (frm) {
-        if (doc.status === 0) {
+        if (frm.doc.docstatus === 0) {
             frm.add_custom_button(
                 __("Check Last Purchase"),
                 async function () {
@@ -10,6 +10,11 @@ frappe.ui.form.on("Purchase Order", {
                     refresh_field("items")
                 }
             )
+        }
+    },
+    before_save: async function (frm) {
+        for (const row of frm.doc.items) {
+            await get_last_purchase(frm, row)
         }
     }
 })
