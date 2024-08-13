@@ -14,7 +14,7 @@ from inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction import g
 from inn.inn_hotels.doctype.inn_audit_log.inn_audit_log import get_last_audit_date
 from inn.inn_hotels.doctype.inn_tax.inn_tax import calculate_inn_tax_and_charges, calculate_inn_tax_and_charges_exclude_commision
 from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission
-
+from frappe.utils import flt
 
 class InnRoomChargePosting(Document):
 	pass
@@ -63,7 +63,15 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
-
+	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude",
+				 filters = {
+					 "parenttype": "Inn Hotels Setting", 
+					 "parent": "Inn Hotels Setting", 
+					 "parentfield": "inn_channel_exclude_tax"
+					 }, pluck="channel")
+	inn_settings = frappe.get_value("Inn Hotels Setting", None, ["maximum_payment_exclude", "inn_tax_exclude_option"], as_dict=1)
+	maximum_price_exclude_tax = inn_settings.maximum_payment_exclude
+	inn_tax_exclude = inn_settings.inn_tax_exclude_option
 	return_value = ''
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
@@ -81,6 +89,13 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		accumulated_amount = 0.00
 		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
 		reservation = frappe.get_doc('Inn Reservation', item_doc.reservation_id)
+		is_exclude_tax = False
+		if (reservation.channel in channel_exclude_tax) or (reservation.actual_room_rate <= flt(maximum_price_exclude_tax)):
+			reservation.actual_room_rate_tax = inn_tax_exclude
+			reservation.actual_breakfast_rate_tax = inn_tax_exclude
+			is_exclude_tax = True
+			recalculate_nett_charge(reservation)
+			
 		fdc_reservation = reservation
 
 		# check if channel is commission
@@ -121,6 +136,11 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-1].breakdown_account
 		else:
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-2].breakdown_account
+		
+		# get tax breakdown account from reservation
+		if is_exclude_tax:
+			fdc_room_rate_tax = frappe.get_doc("Inn Tax", reservation.actual_room_rate_tax)
+			fdc_room_rate_tax_account = fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_account if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0 else fdc_room_rate_tax.inn_tax_breakdown[-2].breakdown_account
 
 		if is_channel_commision:
 			# add commission first
@@ -329,6 +349,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 
 	room_charge_posting_doc.save()
 	calculate_already_posted_total(room_charge_posting_doc.name)
+ 
 	return return_value
 
 @frappe.whitelist()
@@ -338,6 +359,15 @@ def post_room_charges(parent_id, tobe_posted_list):
 	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["room_revenue_account", "breakfast_revenue_account", "profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
+	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude", 
+				 {
+					 "parenttype": "Inn Hotels Setting", 
+					 "parent": "Inn Hotels Setting", 
+					 "parentfield": "inn_channel_exclude_tax"
+					 },
+					 pluck="channel"
+					 )
+	maximum_price_exclude_tax, inn_tax_exclude = frappe.get_value("Inn Hotels Setting", None, ["maximum_payment_exclude", "inn_tax_exclude_option"], as_dict=1)
 
 	return_value = ''
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
@@ -356,7 +386,13 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
 		reservation = frappe.get_doc('Inn Reservation', item['reservation_id'])
 		fdc_reservation = reservation
-
+		is_exclude_tax = False
+		if (reservation.channel in channel_exclude_tax) or (reservation.actual_room_rate <= flt(maximum_price_exclude_tax)):
+			reservation.actual_room_rate_tax = inn_tax_exclude
+			reservation.actual_breakfast_rate_tax = inn_tax_exclude
+			is_exclude_tax = True
+			recalculate_nett_charge(reservation)
+			
 		# check if channel is commission
 		channel = check_channel_commission(reservation)
 		is_channel_commision = True
@@ -396,6 +432,10 @@ def post_room_charges(parent_id, tobe_posted_list):
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-1].breakdown_account
 		else:
 			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-2].breakdown_account
+				# get tax breakdown account from reservation
+		if is_exclude_tax:
+			fdc_room_rate_tax = frappe.get_doc("Inn Tax", reservation.actual_room_rate_tax)
+			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-1].breakdown_account if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0 else fdc_room_rate_tax_breakdown[-2].breakdown_account
 
 
 		if is_channel_commision:
@@ -536,7 +576,6 @@ def post_room_charges(parent_id, tobe_posted_list):
 		print("abs = " + str(abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate))))
 		if abs(math.ceil(accumulated_amount) - int(reservation.actual_room_rate)) != 0:
 			difference = math.ceil(accumulated_amount) - int(reservation.actual_room_rate)
-      
 			if breakfast_price > 0:
 				if difference > 0:
 					adjusted_room_charge_amount = room_charge_folio_trx.amount
@@ -573,7 +612,6 @@ def post_room_charges(parent_id, tobe_posted_list):
 						adjusted_room_rate_tax_amount = adjusted_room_rate_tax_amount + 1.0
 					fdc_folio_trx_tax.amount = adjusted_room_rate_tax_amount
 					fdc_folio_trx_tax.save()
-     
 				room_charge_folio_trx.amount = adjusted_room_charge_amount
 				room_charge_folio_trx.save()
 
@@ -609,3 +647,46 @@ def calculate_already_posted_total(room_charge_posting_id):
 			total += item.actual_room_rate
 
 	frappe.db.set_value('Inn Room Charge Posting', doc.name, 'already_posted_total', total)
+
+def recalculate_nett_charge(reservation_doc):
+	room_tax_name, new_room_charge, breakfast_tax_name, new_breakfast_charge = recalculate_tax_by_exclude_tax(reservation_doc)
+	reservation_doc.nett_actual_room_rate = new_room_charge
+	reservation_doc.nett_actual_breakfast_rate = new_breakfast_charge
+	return reservation_doc
+
+
+def recalculate_tax_by_exclude_tax(reservation_doc):
+	'''wrapper to ease naming'''
+	return __get_actual_room_rate_breakdown_check_commission(reservation_doc)
+
+def __get_actual_room_rate_breakdown_check_commission(reservation_doc):
+	'''
+	creating new function because old function is calculating tax breakdown based on room rate tax. 
+	dont want to risk it to change to reservation tax.
+
+	calculating nett based on tax in inn hotels setting.
+	'''
+	from inn.inn_hotels.doctype.inn_channel.inn_channel import check_channel_commission, PROFIT_SHARING_ENABLED, PROFIT_SHARING_TYPE_PERCENTAGE
+	
+	
+	channel = check_channel_commission(reservation_doc, reservation_price=reservation_doc.actual_room_rate)
+	if channel.profit_sharing == PROFIT_SHARING_ENABLED:
+		if channel.sharing_type != PROFIT_SHARING_TYPE_PERCENTAGE:
+			raise NotImplementedError("comission type other than percentage is not supported yet")
+			# if channel is profit sharing enabled it will autofill room_cashback and breakfast_cashback
+	else:
+		channel.room_cashback = 0
+		channel.breakfast_cashback = 0
+	
+	room_rate_doc = frappe.get_doc('Inn Room Rate', reservation_doc.room_rate)
+
+	# diff in here: using reservation tax as a base and when channel is not in commission also call this function will filled cashback as 0 
+	_, _, room_price = calculate_inn_tax_and_charges_exclude_commision(reservation_doc.actual_room_rate - room_rate_doc.final_breakfast_rate_amount, reservation_doc.actual_room_rate_tax, channel.room_cashback)
+	_, _, breakfast_price = calculate_inn_tax_and_charges_exclude_commision(room_rate_doc.final_breakfast_rate_amount, reservation_doc.actual_breakfast_rate_tax, channel.breakfast_cashback)
+	# diff on top
+	room_rate_tax = reservation_doc.actual_room_rate_tax
+	room_rate = room_price[0]
+	breakfast_tax = reservation_doc.actual_breakfast_rate_tax
+	breakfast_rate = breakfast_price[0]
+
+	return room_rate_tax, room_rate, breakfast_tax, breakfast_rate

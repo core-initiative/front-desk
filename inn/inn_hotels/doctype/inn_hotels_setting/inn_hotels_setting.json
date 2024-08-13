@@ -42,6 +42,11 @@
   "booking_code_email_sender",
   "inn_customer_section",
   "inn_customer_group_as_supplier",
+  "inn_folio_tax_setting_section",
+  "column_break_hqnb",
+  "inn_channel_exclude_tax",
+  "maximum_payment_exclude",
+  "inn_tax_exclude_option",
   "profit_sharing_reservation_section",
   "guest_account_receiveable",
   "profit_sharing_account",
@@ -402,11 +407,38 @@
    "label": "Guest Account Receiveable",
    "options": "Account",
    "reqd": 1
+  },
+  {
+   "fieldname": "inn_folio_tax_setting_section",
+   "fieldtype": "Section Break",
+   "label": "Inn Folio Tax Setting"
+  },
+  {
+   "fieldname": "inn_channel_exclude_tax",
+   "fieldtype": "Table MultiSelect",
+   "label": "Inn Channel Exclude Tax",
+   "options": "Inn Channel Tax Exclude"
+  },
+  {
+   "description": "This setting for Inn Channel to be excluded and maximum payment to be excluded. \nInn Tax Exclude Option will be option Inn Tax without tax ",
+   "fieldname": "column_break_hqnb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "inn_tax_exclude_option",
+   "fieldtype": "Link",
+   "label": "Inn Tax Exclude Option",
+   "options": "Inn Tax"
+  },
+  {
+   "fieldname": "maximum_payment_exclude",
+   "fieldtype": "Currency",
+   "label": "Maximum Payment Exclude"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-03-21 15:26:53.168662",
+ "modified": "2024-08-13 14:06:36.577463",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
