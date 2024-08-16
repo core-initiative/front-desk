@@ -17,7 +17,7 @@ def get_last_purchase_request(item_code):
         left join `tabPurchase Order` tpo
         on tpo.name = tpoi.parent
         where tpoi.item_code = '{item_code}'
-        and tpo.status != 'Draft'
+        and tpo.status not ('Draft', 'Cancelled')
         order by tpo.transaction_date desc 
         limit 1
     '''
