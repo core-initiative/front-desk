@@ -1,3 +1,4 @@
+/
 # -*- coding: utf-8 -*-
 # Copyright (c) 2020, Core Initiative and contributors
 # For license information, please see license.txt
@@ -64,6 +65,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude",
+				 parent_doctype='Inn Hotels Setting',	
 				 filters = {
 					 "parenttype": "Inn Hotels Setting", 
 					 "parent": "Inn Hotels Setting", 
@@ -360,7 +362,8 @@ def post_room_charges(parent_id, tobe_posted_list):
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude", 
-				 {
+					 parent_doctype='Inn Hotels Setting',
+					 {
 					 "parenttype": "Inn Hotels Setting", 
 					 "parent": "Inn Hotels Setting", 
 					 "parentfield": "inn_channel_exclude_tax"
