@@ -362,12 +362,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
 	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
 	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude", 
+						{
+						"parenttype": "Inn Hotels Setting", 
+						"parent": "Inn Hotels Setting", 
+						"parentfield": "inn_channel_exclude_tax"
+						},
 					 parent_doctype='Inn Hotels Setting',
-					 {
-					 "parenttype": "Inn Hotels Setting", 
-					 "parent": "Inn Hotels Setting", 
-					 "parentfield": "inn_channel_exclude_tax"
-					 },
 					 pluck="channel"
 					 )
 	maximum_price_exclude_tax, inn_tax_exclude = frappe.get_value("Inn Hotels Setting", None, ["maximum_payment_exclude", "inn_tax_exclude_option"], as_dict=1)
