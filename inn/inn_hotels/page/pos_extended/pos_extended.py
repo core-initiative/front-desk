@@ -179,7 +179,7 @@ def transfer_to_folio(invoice_doc, folio_name):
         create_folio_trx(invoice_doc["name"], folio_name, taxe["tax_amount_after_discount_amount"], tax_type[ii], ftb_doc, remarks[ii], idx, guest_account_receiveable, taxe["account_head"])
         idx = idx + 1
 	
-    if invoice_doc["rounding_adjustment"] != 0:
+    if "rounding_adjustment" in invoice_doc and invoice_doc["rounding_adjustment"] != 0:
         roundoff_remark = 'Rounding off Amount of Transfer Restaurant Charges from Restaurant Order: ' + invoice_doc["name"]
         create_folio_trx(invoice_doc["name"], folio_name, invoice_doc["rounding_adjustment"], "Round Off", ftb_doc, roundoff_remark, idx, guest_account_receiveable)
 

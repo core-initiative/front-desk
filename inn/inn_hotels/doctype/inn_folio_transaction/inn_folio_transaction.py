@@ -13,7 +13,7 @@ from frappe.model.document import Document
 
 class InnFolioTransaction(Document):
     def validate(self):
-        amount = int(self.amount)
+        amount = float(self.amount)
         if amount == 0:
         	raise ValueError("Amount cannot be zero")
 
