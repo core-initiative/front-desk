@@ -370,8 +370,10 @@ def post_room_charges(parent_id, tobe_posted_list):
 					 parent_doctype='Inn Hotels Setting',
 					 pluck="channel"
 					 )
-	maximum_price_exclude_tax, inn_tax_exclude = frappe.get_value("Inn Hotels Setting", None, ["maximum_payment_exclude", "inn_tax_exclude_option"], as_dict=1)
-
+	inn_settings = frappe.get_value("Inn Hotels Setting", None, ["maximum_payment_exclude", "inn_tax_exclude_option"], as_dict=1)
+	maximum_price_exclude_tax = inn_settings.maximum_payment_exclude
+	inn_tax_exclude = inn_settings.inn_tax_exclude_option
+	
 	return_value = ''
 	room_charge_posting_doc = frappe.get_doc('Inn Room Charge Posting', parent_id)
 	list_json = json.loads(tobe_posted_list)
