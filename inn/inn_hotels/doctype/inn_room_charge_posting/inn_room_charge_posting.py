@@ -440,7 +440,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 				# get tax breakdown account from reservation
 		if is_exclude_tax:
 			fdc_room_rate_tax = frappe.get_doc("Inn Tax", reservation.actual_room_rate_tax)
-			fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[-1].breakdown_account if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0 else fdc_room_rate_tax_breakdown[-2].breakdown_account
+			fdc_room_rate_tax_account = fdc_room_rate_tax[-1].breakdown_account if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0 else fdc_room_rate_tax[-2].breakdown_account
 
 
 		if is_channel_commision:
