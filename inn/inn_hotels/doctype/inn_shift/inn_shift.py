@@ -11,7 +11,8 @@ from frappe.utils import now
 from frappe.model.document import Document
 
 class InnShift(Document):
-	pass
+	def before_insert(self):
+		self.status = "Open"
 
 @frappe.whitelist()
 def is_there_open_shift():
