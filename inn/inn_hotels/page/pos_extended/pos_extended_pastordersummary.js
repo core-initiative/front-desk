@@ -68,6 +68,10 @@ frappe.require(["point-of-sale.bundle.js"], function () {
                 }
             })
 
+            if (table_number == undefined) {
+                table_number = "-"
+            }
+
             if (this.transfer_to_folio != null) {
                 this.$payment_container.append(`
                 <div class="summary-row-wrapper payments">

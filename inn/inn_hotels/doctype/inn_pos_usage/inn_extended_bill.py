@@ -8,9 +8,14 @@ def extended_bil_extra_data(invoice):
         address = frappe.get_all("Dynamic Link", filters={"link_doctype": "Company", "link_name": invoice.company,"parenttype":"Address"}, fields=["parent"])
         address = frappe.get_value("Address", filters=address[0].parent, fieldname="address_line1", as_dict=True)
         address = address.address_line1
-    order_id, transferred_to, table = frappe.get_value("Inn POS Usage", filters={"pos_invoice": invoice.name}, fieldname=["name", "transfer_to_folio", "table"])
+    
+    order_id, transferred_to, table = None, None, None
+    if frappe.db.exists("Inn POS Usage", {"pos_invoice": invoice.name}):
+        order_id, transferred_to, table = frappe.get_value("Inn POS Usage", filters={"pos_invoice": invoice.name}, fieldname=["name", "transfer_to_folio", "table"])
     if order_id == None:
         order_id = ""
+    if table == None:
+        table = "-"
 
     total_tax = 0
     for tax in invoice.taxes:

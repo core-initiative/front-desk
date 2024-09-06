@@ -11,26 +11,39 @@ ORDER_FINISHED = 3
 NEW_ORDER = 1
 
 @frappe.whitelist()
-def save_pos_usage(invoice_name, table, action):
+def save_pos_usage(invoice_name, action, table = None):
     if action not in ["save_draft", "print_captain", "print_table", "save_submit"]:
         raise TypeError("argument error: action not found")
 
- 
     new = False
     doc = ""
     if not frappe.db.exists({"doctype": "Inn POS Usage", "pos_invoice": invoice_name}):
-        inn_table = frappe.get_doc("Inn Point Of Sale Table", table)
-        inn_table.status = "Occupied"
-        inn_table.save()
-
         doc = frappe.new_doc("Inn POS Usage")
-        doc.table = table
+
+        if table != None and table != "":
+            doc.table = table
+            inn_table = frappe.get_doc("Inn Point Of Sale Table", table)
+            inn_table.status = "Occupied"
+            inn_table.save()
+
         doc.pos_invoice = invoice_name
         new = True
 
     else:
         doc = frappe.get_last_doc("Inn POS Usage", filters={"pos_invoice": invoice_name})
+        # move table
+        if doc.table != table:
+            if doc.table != "" and doc.table != None:
+                doc_table = frappe.get_doc("Inn Point Of Sale Table", doc.table)
+                doc_table.status = "Empty"
+                doc_table.save()
 
+            doc.table = table
+            if table != None and table != "":
+                doc_table = frappe.get_doc("Inn Point Of Sale Table", doc.table)
+                doc_table.status = "Occupied"
+                doc_table.save()
+            
     # mainly change state except when flow repeated, will move tracked item to processed item and add new item to tracked item
     if action in ["save_draft", "print_captain"] and doc.print_status == PRINT_STATUS_TABLE and not new:
         # case if customer want to add the order
@@ -64,7 +77,7 @@ def save_pos_usage(invoice_name, table, action):
         doc.print_status = ORDER_FINISHED
 
     else:
-        raise TypeError("print error: status not match")
+        raise frappe.DataError("print error: status not match")
     
     if action in ["save_draft", "print_captain"]:
         # add untracked child
@@ -129,9 +142,10 @@ def clean_table_number(invoice_name):
     table_name.print_status = ORDER_FINISHED
     table_name.save()
 
-    doc_table = frappe.get_doc("Inn Point Of Sale Table", table_name.table)
-    doc_table.status = "Empty"
-    doc_table.save()
+    if table_name.table is not None:
+        doc_table = frappe.get_doc("Inn Point Of Sale Table", table_name.table)
+        doc_table.status = "Empty"
+        doc_table.save()
     return
 
 

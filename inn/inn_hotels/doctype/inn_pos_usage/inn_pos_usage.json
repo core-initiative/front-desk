@@ -18,8 +18,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Table",
-   "options": "Inn Point Of Sale Table",
-   "reqd": 1
+   "options": "Inn Point Of Sale Table"
   },
   {
    "fieldname": "pos_invoice",
