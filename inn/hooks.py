@@ -23,12 +23,16 @@ web_include_css = "inn.bundle.css"
 
 # include js in doctype views
 doctype_js = {
-    "Purchase Order" : "public/js/purchase-order/purchase-order.js",
+    "Purchase Order": "public/js/purchase-order/purchase-order.js",
     "POS Closing Entry": "public/js/pos-closing-entry/pos-closing-entry.js"
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+
+override_doctype_class = {
+    "Customer": "inn.overrides.customer.CustomCustomer"
+}
 
 # Home Pages
 # ----------
