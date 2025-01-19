@@ -234,7 +234,7 @@ def calculate_total_rate_and_sold(start_date, end_date):
         and transaction_type in {transaction_type}
     '''
     total = frappe.db.sql(transaction_query, as_dict=1)[0]
-    if total.total == None:
+    if total.total is None:
         total.total = 0
 
     count_query = f'''
@@ -254,6 +254,8 @@ def calculate_total_rate_and_sold(start_date, end_date):
         '''
         today = frappe.db.sql(today_query, as_dict=1)
         today = today[0]
+        if today.total is None:
+            today.total = 0
         total.total += today.total
         count.count += today.count
 
