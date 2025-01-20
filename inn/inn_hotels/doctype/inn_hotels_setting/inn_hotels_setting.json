@@ -62,11 +62,15 @@
   "pos_receipt_remarks",
   "master_data_generator_sb",
   "bed_type_generator",
+  "bed_type",
   "room_type_generator",
+  "room_type",
   "role_generator",
+  "role",
   "cb4",
   "inn_hotels_account_generator",
   "folio_transaction_type_generator",
+  "folio_transaction_type",
   "supervisor_passcode"
  ],
  "fields": [
@@ -434,11 +438,35 @@
    "fieldname": "maximum_payment_exclude",
    "fieldtype": "Currency",
    "label": "Maximum Payment Exclude"
+  },
+  {
+   "fieldname": "bed_type",
+   "fieldtype": "Table",
+   "label": "Bed Type",
+   "options": "Inn Setting Tools"
+  },
+  {
+   "fieldname": "room_type",
+   "fieldtype": "Table",
+   "label": "Room Type",
+   "options": "Inn Setting Tools"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Table",
+   "label": "Role",
+   "options": "Inn Role"
+  },
+  {
+   "fieldname": "folio_transaction_type",
+   "fieldtype": "Table",
+   "label": "Folio Transaction Type",
+   "options": "Inn Folio Transaction Type Setting"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-08-13 14:06:36.577463",
+ "modified": "2025-01-20 07:51:20.331534",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
