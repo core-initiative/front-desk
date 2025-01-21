@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # Copyright (c) 2020, Core Initiative and contributors
 # For license information, please see license.txt
@@ -59,11 +58,41 @@ def populate_tobe_posted():
 
 @frappe.whitelist()
 def post_individual_room_charges(parent_id, tobe_posted_list):
+	# Fetch all transaction types from Inn Hotels Setting
+	hotel_settings = frappe.get_doc("Inn Hotels Setting")
+	transaction_types = {
+		"room_charge_tax_service": hotel_settings.room_charge_tax_service,
+		"breakfast_charge_tax_service": hotel_settings.breakfast_charge_tax_service,
+		"credit_card_administration_fee": hotel_settings.credit_card_administration_fee,
+		"package": hotel_settings.package,
+		"room_charge": hotel_settings.room_charge,
+		"breakfast_charge": hotel_settings.breakfast_charge,
+		"refund": hotel_settings.refund,
+		"dp_kamar": hotel_settings.dp_kamar,
+		"room_payment": hotel_settings.room_payment,
+		"deposit": hotel_settings.deposit,
+		"down_payment": hotel_settings.down_payment,
+		"payment": hotel_settings.payment,
+		"additional_charge": hotel_settings.additional_charge,
+		"restaurant_food": hotel_settings.restaurant_food,
+		"restaurant_beverages": hotel_settings.restaurant_beverages,
+		"restaurant_other": hotel_settings.restaurant_other,
+		"room_service_food": hotel_settings.room_service_food,
+		"room_service_beverage": hotel_settings.room_service_beverage,
+		"fbs_service_10": hotel_settings.fbs_service_10,
+		"fbs_tax_11": hotel_settings.fbs_tax_11,
+		"round_off": hotel_settings.round_off,
+		"laundry": hotel_settings.laundry,
+		"cancellation_fee": hotel_settings.cancellation_fee,
+		"late_checkout": hotel_settings.late_checkout,
+		"early_checkin": hotel_settings.early_checkin,
+	}
 
 	# to exclude service charge from reduced because of commision / cashback
 	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
-	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
+	COMMISION_TRANSACTION_TYPE = room_post_settings.profit_sharing_transaction_type
+
 	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude",
 				 parent_doctype='Inn Hotels Setting',	
 				 filters = {
@@ -83,13 +112,13 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 	for item in list_json:
 		# Create Inn Folio Transaction Bundle
 		ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
-		ftb_doc.transaction_type = 'Room Charge'
+		ftb_doc.transaction_type = transaction_types["room_charge"]  # Use dynamic value
 		ftb_doc.insert()
 
 		# Posting Room Charge
 		item_doc = frappe.get_doc('Inn Room Charge To Be Posted', item)
 		accumulated_amount = 0.00
-		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
+		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id(transaction_types["room_charge"])  # Use dynamic value
 		reservation = frappe.get_doc('Inn Reservation', item_doc.reservation_id)
 		is_exclude_tax = False
 		if (reservation.channel in channel_exclude_tax) or (reservation.actual_room_rate <= flt(maximum_price_exclude_tax)):
@@ -110,7 +139,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.flag = 'Debit'
 		room_charge_folio_trx.is_void = 0
 		room_charge_folio_trx.idx = get_idx(item_doc.folio_id)
-		room_charge_folio_trx.transaction_type = 'Room Charge'
+		room_charge_folio_trx.transaction_type = transaction_types["room_charge"]  # Use dynamic value
 		room_charge_folio_trx.amount = float(int(reservation.nett_actual_room_rate))
 		accumulated_amount += float(int(reservation.nett_actual_room_rate))
 		room_charge_folio_trx.debit_account = room_charge_debit_account
@@ -179,7 +208,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.flag = 'Debit'
 			room_tax_doc.is_void = 0
 			room_tax_doc.idx = get_idx(item_doc.folio_id)
-			room_tax_doc.transaction_type = 'Room Charge Tax/Service'
+			room_tax_doc.transaction_type = transaction_types["room_charge_tax_service"]  
 			room_tax_doc.amount = room_tb_amount[index]
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
@@ -205,12 +234,12 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 		breakfast_price = float(int(reservation.nett_actual_breakfast_rate))
 		if breakfast_price > 0:
 			# Posting Breakfast Charge
-			breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
+			breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id(transaction_types["breakfast_charge"])  
 			breakfast_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
 			breakfast_charge_folio_trx.flag = 'Debit'
 			breakfast_charge_folio_trx.is_void = 0
 			breakfast_charge_folio_trx.idx = get_idx(item_doc.folio_id)
-			breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
+			breakfast_charge_folio_trx.transaction_type = transaction_types["breakfast_charge"]  
 			breakfast_charge_folio_trx.amount = float(int(reservation.nett_actual_breakfast_rate))
 			accumulated_amount += float(int(reservation.nett_actual_breakfast_rate))
 			breakfast_charge_folio_trx.debit_account = breakfast_charge_debit_account
@@ -264,7 +293,7 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 				breakfast_tax_doc.flag = 'Debit'
 				breakfast_tax_doc.is_void = 0
 				breakfast_tax_doc.idx = get_idx(item_doc.folio_id)
-				breakfast_tax_doc.transaction_type = 'Breakfast Charge Tax/Service'
+				breakfast_tax_doc.transaction_type = transaction_types["breakfast_charge_tax_service"]  
 				breakfast_tax_doc.amount = breakfast_tb_amount[index]
 				accumulated_amount += breakfast_tb_amount[index]
 				breakfast_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown',
@@ -356,11 +385,41 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
 
 @frappe.whitelist()
 def post_room_charges(parent_id, tobe_posted_list):
+	# Fetch all transaction types from Inn Hotels Setting
+	hotel_settings = frappe.get_doc("Inn Hotels Setting")
+	transaction_types = {
+		"room_charge_tax_service": hotel_settings.room_charge_tax_service,
+		"breakfast_charge_tax_service": hotel_settings.breakfast_charge_tax_service,
+		"credit_card_administration_fee": hotel_settings.credit_card_administration_fee,
+		"package": hotel_settings.package,
+		"room_charge": hotel_settings.room_charge,
+		"breakfast_charge": hotel_settings.breakfast_charge,
+		"refund": hotel_settings.refund,
+		"dp_kamar": hotel_settings.dp_kamar,
+		"room_payment": hotel_settings.room_payment,
+		"deposit": hotel_settings.deposit,
+		"down_payment": hotel_settings.down_payment,
+		"payment": hotel_settings.payment,
+		"additional_charge": hotel_settings.additional_charge,
+		"restaurant_food": hotel_settings.restaurant_food,
+		"restaurant_beverages": hotel_settings.restaurant_beverages,
+		"restaurant_other": hotel_settings.restaurant_other,
+		"room_service_food": hotel_settings.room_service_food,
+		"room_service_beverage": hotel_settings.room_service_beverage,
+		"fbs_service_10": hotel_settings.fbs_service_10,
+		"fbs_tax_11": hotel_settings.fbs_tax_11,
+		"round_off": hotel_settings.round_off,
+		"laundry": hotel_settings.laundry,
+		"cancellation_fee": hotel_settings.cancellation_fee,
+		"late_checkout": hotel_settings.late_checkout,
+		"early_checkin": hotel_settings.early_checkin,
+	}
 
 	# to exclude service charge from reduced because of commision / cashback
 	room_post_settings = frappe.db.get_values_from_single(doctype="Inn Hotels Setting", filters="", fields=["room_revenue_account", "breakfast_revenue_account", "profit_sharing_account", "profit_sharing_transaction_type"], as_dict=True)[0]
 	PROFIT_SHARING_ACCOUNT = room_post_settings.profit_sharing_account
-	COMMISION_TRANSACTION_TYPE   = room_post_settings.profit_sharing_transaction_type
+	COMMISION_TRANSACTION_TYPE = room_post_settings.profit_sharing_transaction_type
+
 	channel_exclude_tax = frappe.get_list("Inn Channel Tax Exclude", 
 						{
 						"parenttype": "Inn Hotels Setting", 
@@ -383,12 +442,12 @@ def post_room_charges(parent_id, tobe_posted_list):
 	for item in list_json:
 		# Create Inn Folio Transaction Bundle
 		ftb_doc = frappe.new_doc('Inn Folio Transaction Bundle')
-		ftb_doc.transaction_type = 'Room Charge'
+		ftb_doc.transaction_type = transaction_types["room_charge"]  
 		ftb_doc.insert()
 
 		# Posting Room Charge
 		accumulated_amount = 0.00
-		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id('Room Charge')
+		room_charge_debit_account, room_charge_credit_account = get_accounts_from_id(transaction_types["room_charge"])  
 		reservation = frappe.get_doc('Inn Reservation', item['reservation_id'])
 		fdc_reservation = reservation
 		is_exclude_tax = False
@@ -408,7 +467,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 		room_charge_folio_trx.flag = 'Debit'
 		room_charge_folio_trx.is_void = 0
 		room_charge_folio_trx.idx = get_idx(item['folio_id'])
-		room_charge_folio_trx.transaction_type = 'Room Charge'
+		room_charge_folio_trx.transaction_type = transaction_types["room_charge"]  
 		room_charge_folio_trx.amount = float(int(reservation.nett_actual_room_rate))
 		accumulated_amount += float(int(reservation.nett_actual_room_rate))
 		room_charge_folio_trx.debit_account = room_charge_debit_account
@@ -477,7 +536,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 			room_tax_doc.flag = 'Debit'
 			room_tax_doc.is_void = 0
 			room_tax_doc.idx = get_idx(item['folio_id'])
-			room_tax_doc.transaction_type = 'Room Charge Tax/Service'
+			room_tax_doc.transaction_type = transaction_types["room_charge_tax_service"] 
 			room_tax_doc.amount = room_tb_amount[index]
 			accumulated_amount += room_tb_amount[index]
 			room_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown', room_tax_item_name).breakdown_account
@@ -498,12 +557,11 @@ def post_room_charges(parent_id, tobe_posted_list):
 		if breakfast_price > 0:
 			
 			# Posting Breakfast Charge
-			breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id('Breakfast Charge')
-			breakfast_charge_folio_trx = frappe.new_doc('Inn Folio Transaction')
+			breakfast_charge_debit_account, breakfast_charge_credit_account = get_accounts_from_id(transaction_types["breakfast_charge"]) 
 			breakfast_charge_folio_trx.flag = 'Debit'
 			breakfast_charge_folio_trx.is_void = 0
 			breakfast_charge_folio_trx.idx = get_idx(item['folio_id'])
-			breakfast_charge_folio_trx.transaction_type = 'Breakfast Charge'
+			breakfast_charge_folio_trx.transaction_type = transaction_types["breakfast_charge"]  
 			breakfast_charge_folio_trx.amount = float(int(reservation.nett_actual_breakfast_rate))
 			accumulated_amount += float(int(reservation.nett_actual_breakfast_rate))
 			breakfast_charge_folio_trx.debit_account = breakfast_charge_debit_account
@@ -555,7 +613,7 @@ def post_room_charges(parent_id, tobe_posted_list):
 				breakfast_tax_doc.flag = 'Debit'
 				breakfast_tax_doc.is_void = 0
 				breakfast_tax_doc.idx = get_idx(item['folio_id'])
-				breakfast_tax_doc.transaction_type = 'Breakfast Charge Tax/Service'
+				breakfast_tax_doc.transaction_type = transaction_types["breakfast_charge_tax_service"]  
 				breakfast_tax_doc.amount = breakfast_tb_amount[index]
 				accumulated_amount += breakfast_tb_amount[index]
 				breakfast_tax_doc.credit_account = frappe.get_doc('Inn Tax Breakdown',
