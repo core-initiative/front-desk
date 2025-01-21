@@ -69,6 +69,7 @@
   "role",
   "cb4",
   "inn_hotels_account_generator",
+  "inn_account_setting",
   "folio_transaction_type_generator",
   "folio_transaction_type",
   "supervisor_passcode"
@@ -462,11 +463,17 @@
    "fieldtype": "Table",
    "label": "Folio Transaction Type",
    "options": "Inn Folio Transaction Type Setting"
+  },
+  {
+   "fieldname": "inn_account_setting",
+   "fieldtype": "Table",
+   "label": "Inn Account Setting",
+   "options": "Inn Account Setting"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-20 07:51:20.331534",
+ "modified": "2025-01-21 10:27:44.239782",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
