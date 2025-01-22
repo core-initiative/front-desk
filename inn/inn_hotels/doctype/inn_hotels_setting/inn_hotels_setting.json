@@ -75,8 +75,8 @@
   "supervisor_passcode",
   "folio_default_tab",
   "package_tax",
-  "room_charge_taxservice",
-  "breakfast_charge_taxservice",
+  "room_charge_tax_service",
+  "breakfast_charge_tax_service",
   "credit_card_administration_fee",
   "package",
   "room_charge",
@@ -93,8 +93,8 @@
   "restaurant_other",
   "room_service_food",
   "room_service_beverage",
-  "fbs__service_10_",
-  "fbs__tax_11_",
+  "fbs_service_10",
+  "fbs_tax_11",
   "round_off",
   "laundry",
   "cancellation_fee",
@@ -508,18 +508,6 @@
    "label": "Folio Default"
   },
   {
-   "fieldname": "room_charge_taxservice",
-   "fieldtype": "Link",
-   "label": "Room Charge Tax/Service",
-   "options": "Inn Folio Transaction Type"
-  },
-  {
-   "fieldname": "breakfast_charge_taxservice",
-   "fieldtype": "Link",
-   "label": "Breakfast Charge Tax/Service",
-   "options": "Inn Folio Transaction Type"
-  },
-  {
    "fieldname": "credit_card_administration_fee",
    "fieldtype": "Link",
    "label": "Credit Card Administration Fee",
@@ -616,18 +604,6 @@
    "options": "Inn Folio Transaction Type"
   },
   {
-   "fieldname": "fbs__service_10_",
-   "fieldtype": "Link",
-   "label": "FBS  Service 10 %",
-   "options": "Inn Folio Transaction Type"
-  },
-  {
-   "fieldname": "fbs__tax_11_",
-   "fieldtype": "Link",
-   "label": "FBS  Tax 11 %",
-   "options": "Inn Folio Transaction Type"
-  },
-  {
    "fieldname": "round_off",
    "fieldtype": "Link",
    "label": "Round Off",
@@ -662,11 +638,35 @@
    "fieldtype": "Link",
    "label": "Package Tax",
    "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_charge_tax_service",
+   "fieldtype": "Link",
+   "label": "Room Charge Tax/Service",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "breakfast_charge_tax_service",
+   "fieldtype": "Link",
+   "label": "Breakfast Charge Tax/Service",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "fbs_tax_11",
+   "fieldtype": "Link",
+   "label": "FBS  Tax 11 %",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "fbs_service_10",
+   "fieldtype": "Link",
+   "label": "FBS  Service 10 %",
+   "options": "Inn Folio Transaction Type"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-21 22:07:25.990438",
+ "modified": "2025-01-22 19:51:25.793321",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",

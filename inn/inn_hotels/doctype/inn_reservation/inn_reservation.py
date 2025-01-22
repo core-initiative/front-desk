@@ -256,19 +256,33 @@ def allowed_to_in_house(reservation_id):
 
 @frappe.whitelist()
 def get_total_deposit(doc):
-	if doc.group_id != None:
-		return frappe.db.sql("""SELECT SUM(amount) AS amount 
-			FROM `tabInn Folio Transaction` ft
-			LEFT JOIN `tabInn Folio` f ON f.name=ft.parent
-			LEFT JOIN `tabInn Reservation` r ON r.name=f.reservation_id
-			WHERE r.group_id=%s AND ft.transaction_type='Down Payment'""", doc.group_id, as_dict=True)
-	else:
-		return frappe.db.sql("""SELECT sum(amount) as amount 
-			FROM `tabInn Folio Transaction` ft
-			LEFT JOIN `tabInn Folio` f ON f.name=ft.parent
-			LEFT JOIN `tabInn Reservation` r ON r.name=f.reservation_id
-			WHERE r.name=%s AND ft.transaction_type='Down Payment'""", doc.name, as_dict=True)
+	"""
+	Get the total deposit for a reservation or group.
+	The transaction type (e.g., 'Down Payment') is dynamically fetched from Inn Hotels Setting.
+	"""
+	# Fetch the transaction type from Inn Hotels Setting
+	transaction_type = frappe.db.get_single_value('Inn Hotels Setting', 'down_payment')
 
+	if not transaction_type:
+		frappe.throw("Transaction type for deposit is not set in Inn Hotels Setting.")
+
+	if doc.group_id:
+		return frappe.db.sql("""
+			SELECT SUM(amount) AS amount 
+			FROM `tabInn Folio Transaction` ft
+			LEFT JOIN `tabInn Folio` f ON f.name=ft.parent
+			LEFT JOIN `tabInn Reservation` r ON r.name=f.reservation_id
+			WHERE r.group_id=%s AND ft.transaction_type=%s
+		""", (doc.group_id, transaction_type), as_dict=True)
+	else:
+		return frappe.db.sql("""
+			SELECT SUM(amount) AS amount 
+			FROM `tabInn Folio Transaction` ft
+			LEFT JOIN `tabInn Folio` f ON f.name=ft.parent
+			LEFT JOIN `tabInn Reservation` r ON r.name=f.reservation_id
+			WHERE r.name=%s AND ft.transaction_type=%s
+		""", (doc.name, transaction_type), as_dict=True)
+	
 @frappe.whitelist()
 def get_date():
 	return datetime.datetime.now().strftime("%d/%m/%Y")

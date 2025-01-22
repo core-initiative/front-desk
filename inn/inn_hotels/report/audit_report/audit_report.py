@@ -1,5 +1,5 @@
 import frappe
-from datetime import date, timedelta
+from datetime import date
 from dateutil.parser import parse
 
 FILTER_FIELD_DATE = "expected_arrival"
@@ -33,7 +33,6 @@ opt1:
 
 
 '''
-
 
 def execute(filters=None):
     columns = [
@@ -133,13 +132,11 @@ def execute(filters=None):
 
     return columns, data
 
-
 def get_data(filters):
-    if filters.date == None:
+    if filters.date is None:
         filters.date = date.today().isoformat()
 
     return get_data_detail(filters.date, filters.fill_mode_payment)
-
 
 def get_data_detail(start_date, is_show_mode_payment):
     query = f"""
@@ -200,10 +197,8 @@ def get_data_detail(start_date, is_show_mode_payment):
             for x in reservation]
 
     return res
-
-
-def get_folio_detail(folio_id: list, start_date: str):
-    # folio detail
+def get_folio_detail(folio_ids, start_date):
+# folio detail
     # need data:
     # actual room nett, breakfast revenue, mode of payment, total_amount (payment_amount?), payment_date
 
@@ -211,21 +206,22 @@ def get_folio_detail(folio_id: list, start_date: str):
     transaction_type_list = (TRANSACTION_TYPE_COMISSION, TRANSACTION_TYPE_ROOM_REVENUE,
                              TRANSACTION_TYPE_BREAKFAST_REVENUE, TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT)
 
-    if (len(folio_id) == 1):
-        folio_id_query = f"= '{folio_id[0]}'"
+    if len(folio_ids) == 1:
+        folio_id_query = "= %(folio_id)s"
+        params = {'folio_id': folio_ids[0], 'start_date': start_date}
     else:
-        folio_id_query = f'in {folio_id}'
+        folio_id_query = "IN %(folio_ids)s"
+        params = {'folio_ids': folio_ids, 'start_date': start_date}
 
     query = f"""
-        select parent, transaction_type, amount, mode_of_payment, creation, actual_room_rate
-        from `tabInn Folio Transaction` as ift
-        where ift.parent {folio_id_query}
-        and
-        ift.transaction_type in {transaction_type_list} and
-        ift.audit_date = '{start_date}'
+        SELECT parent, transaction_type, amount, mode_of_payment, creation, actual_room_rate
+        FROM `tabInn Folio Transaction` AS ift
+        WHERE ift.parent {folio_id_query}
+        AND ift.transaction_type IN %(transaction_types)s
+        AND ift.audit_date = %(start_date)s
     """
-    print(query)
-    folio_detail = frappe.db.sql(query=query, as_dict=1)
+
+    folio_detail = frappe.db.sql(query, {**params, 'transaction_types': transaction_type_list}, as_dict=True)
     res = {folio: {
         "actual_room_rate": 0,
         "actual_room_nett": 0,
@@ -234,17 +230,14 @@ def get_folio_detail(folio_id: list, start_date: str):
         "total_amount": 0,
         "payment_date": "",
         "comission": 0
-    } for folio in folio_id}
+    } for folio in folio_ids}
 
     for data in folio_detail:
-        # populate aggrate folio data detail, grouped by folio number
         if data.transaction_type == TRANSACTION_TYPE_ROOM_REVENUE:
             res[data.parent]["actual_room_nett"] += data.amount
-            print(data)
             res[data.parent]["actual_room_rate"] = data.actual_room_rate
-        elif data.transaction_type == TRANSACTION_TYPE_PAYMENT or data.transaction_type == TRANSACTION_TYPE_ROOM_PAYMENT:
-            res[data.parent]["mode_of_payment"] += f"BY {data.mode_of_payment} {data.amount:,}".replace(
-                ",", ".") + ", "
+        elif data.transaction_type in (TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT):
+            res[data.parent]["mode_of_payment"] += f"BY {data.mode_of_payment} {data.amount:,}, ".replace(",", ".")
             res[data.parent]["total_amount"] += data.amount
             res[data.parent]["payment_date"] += f"{data.creation}, "
         elif data.transaction_type == TRANSACTION_TYPE_BREAKFAST_REVENUE:
@@ -254,45 +247,20 @@ def get_folio_detail(folio_id: list, start_date: str):
 
     return res
 
-
 def fill_setting_data():
-    # get data setting
     global TRANSACTION_TYPE_COMISSION, TRANSACTION_TYPE_ROOM_REVENUE, TRANSACTION_TYPE_BREAKFAST_REVENUE, TRANSACTION_TYPE_PAYMENT, TRANSACTION_TYPE_ROOM_PAYMENT, BREAKFAST_REVENUE_ACCOUNT, ROOM_REVENUE_ACCOUNT
-    transaction_type = frappe.db.get_values_from_single(fields=["profit_sharing_transaction_type", "room_revenue_transaction_type", "breakfast_revenue_transaction_type", "customer_payment_transaction_type",
-                                                        "customer_room_payment_transaction_type", "breakfast_revenue_account", "room_revenue_account"], filters="", doctype="Inn Hotels Setting", as_dict=True)[0]
-    if transaction_type.profit_sharing_transaction_type == None:
-        TRANSACTION_TYPE_COMISSION = "Comission Channel"
-    else:
-        TRANSACTION_TYPE_COMISSION = transaction_type.profit_sharing_transaction_type
 
-    if transaction_type.room_revenue_transaction_type == None:
-        TRANSACTION_TYPE_ROOM_REVENUE = "Room Charge"
-    else:
-        TRANSACTION_TYPE_ROOM_REVENUE = transaction_type.room_revenue_transaction_type
+    setting = frappe.get_single("Inn Hotels Setting")
+    TRANSACTION_TYPE_COMISSION = setting.comission_channel or "Comission Channel"
+    TRANSACTION_TYPE_ROOM_REVENUE = setting.room_charge or "Room Charge"
+    TRANSACTION_TYPE_BREAKFAST_REVENUE = setting.breakfast_charge or "Breakfast Charge"
+    TRANSACTION_TYPE_PAYMENT = setting.payment or "Payment"
+    TRANSACTION_TYPE_ROOM_PAYMENT = setting.room_payment or "Room Payment"
 
-    if transaction_type.breakfast_revenue_transaction_type == None:
-        TRANSACTION_TYPE_BREAKFAST_REVENUE = "Breakfast Charge"
-    else:
-        TRANSACTION_TYPE_BREAKFAST_REVENUE = transaction_type.breakfast_revenue_transaction_type
+    if not setting.breakfast_revenue_account:
+        frappe.throw("Breakfast Revenue Account in Inn Hotels Setting not set yet")
+    BREAKFAST_REVENUE_ACCOUNT = setting.breakfast_revenue_account
 
-    if transaction_type.customer_payment_transaction_type == None:
-        TRANSACTION_TYPE_PAYMENT = "Payment"
-    else:
-        TRANSACTION_TYPE_PAYMENT = transaction_type.customer_payment_transaction_type
-
-    if transaction_type.customer_room_payment_transaction_type == None:
-        TRANSACTION_TYPE_ROOM_PAYMENT = "Room Payment"
-    else:
-        TRANSACTION_TYPE_ROOM_PAYMENT = transaction_type.customer_room_payment_transaction_type
-
-    if transaction_type.breakfast_revenue_account == None:
-        raise ImportError(
-            "Breakfast Revenue Account in Inn Hotels Setting not set yet")
-    else:
-        BREAKFAST_REVENUE_ACCOUNT = transaction_type.breakfast_revenue_account
-
-    if transaction_type.room_revenue_account == None:
-        raise ImportError(
-            "Room Revenue Account in Inn Hotels Setting not set yet")
-    else:
-        ROOM_REVENUE_ACCOUNT = transaction_type.room_revenue_account
+    if not setting.room_revenue_account:
+        frappe.throw("Room Revenue Account in Inn Hotels Setting not set yet")
+    ROOM_REVENUE_ACCOUNT = setting.room_revenue_account

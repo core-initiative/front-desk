@@ -25,7 +25,37 @@ def is_there_open_dayend_close():
 def process_dayend_close(doc_id):
 	need_resolve_flag = False
 
-	COMMISSION_TRANSACTION_TYPE = frappe.db.get_single_value("Inn Hotels Setting", fieldname="profit_sharing_transaction_type")
+	# Fetch transaction types from Inn Hotels Setting
+	hotel_settings = frappe.get_doc("Inn Hotels Setting")
+	transaction_types = {
+		"room_charge_tax_service": hotel_settings.room_charge_tax_service,
+		"breakfast_charge_tax_service": hotel_settings.breakfast_charge_tax_service,
+		"credit_card_administration_fee": hotel_settings.credit_card_administration_fee,
+		"package": hotel_settings.package,
+		"room_charge": hotel_settings.room_charge,
+		"breakfast_charge": hotel_settings.breakfast_charge,
+		"refund": hotel_settings.refund,
+		"dp_kamar": hotel_settings.dp_kamar,
+		"room_payment": hotel_settings.room_payment,
+		"deposit": hotel_settings.deposit,
+		"down_payment": hotel_settings.down_payment,
+		"payment": hotel_settings.payment,
+		"additional_charge": hotel_settings.additional_charge,
+		"restaurant_food": hotel_settings.restaurant_food,
+		"restaurant_beverages": hotel_settings.restaurant_beverages,
+		"restaurant_other": hotel_settings.restaurant_other,
+		"room_service_food": hotel_settings.room_service_food,
+		"room_service_beverage": hotel_settings.room_service_beverage,
+		"fbs_service_10": hotel_settings.fbs_service_10,
+		"fbs_tax_11": hotel_settings.fbs_tax_11,
+		"round_off": hotel_settings.round_off,
+		"laundry": hotel_settings.laundry,
+		"cancellation_fee": hotel_settings.cancellation_fee,
+		"late_checkout": hotel_settings.late_checkout,
+		"early_checkin": hotel_settings.early_checkin,
+	}
+
+	COMMISSION_TRANSACTION_TYPE = hotel_settings.profit_sharing_transaction_type
 
 	# Create Journal Entry Pairing for Every Eligible Inn Folio Transactions
 	folio_list = frappe.get_all('Inn Folio', filters={'status': ['in', ['Open', 'Closed']], 'journal_entry_id_closed': ['=', '']}, fields=["name", "reservation_id"])
@@ -159,8 +189,7 @@ def process_dayend_close(doc_id):
 
 		# Create Journal Entry for Inn Restaurant Finished Order
 		# Get all finished order that not transfered to folio and not paired with journal entry yet
-		# create_je_for_inn_restaurant_finished_order()
-
+		create_je_for_inn_restaurant_finished_order(transaction_types)
 
 		doc_audit_log = frappe.new_doc('Inn Audit Log')
 		doc_audit_log.naming_series = 'AL.DD.-.MM.-.YYYY.-'
@@ -265,7 +294,7 @@ def create_journal_entry(title, remark, debit_account, credit_account, amount):
 	doc_je.save()
 	doc_je.submit()
 
-def create_je_for_inn_restaurant_finished_order():
+def create_je_for_inn_restaurant_finished_order(transaction_types):
 	order_list = frappe.get_all('Inn Restaurant Finished Order',
 								filters={
 									'transfer_charges_folio': ('=', ''),
@@ -303,44 +332,44 @@ def create_je_for_inn_restaurant_finished_order():
 			print("entry restaurant food")
 			food_title = 'Restaurant Food of ' + order.name
 			food_remark = 'Restaurant Food Charges from Restaurant Order: ' + order.name
-			food_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Food').debit_account
-			food_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Food').credit_account
+			food_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_food"]).debit_account
+			food_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_food"]).credit_account
 			create_journal_entry(food_title, food_remark, food_debit_account, food_credit_account, restaurant_food)
 
 		if restaurant_beverage > 0:
 			print("entry restaurant beverage")
 			bev_title = 'Restaurant Beverages of ' + order.name
 			bev_remark = 'Restaurant Beverage Charges from Restaurant Order: ' + order.name
-			bev_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Beverages').debit_account
-			bev_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Restaurant Beverages').credit_account
+			bev_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_beverages"]).debit_account
+			bev_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_beverages"]).credit_account
 			create_journal_entry(bev_title, bev_remark, bev_debit_account, bev_credit_account, restaurant_beverage)
 		if restaurant_other > 0:
 			print("entry Other Restaurant")
 			other_title = 'Other Restaurant of ' + order.name
 			other_remark = 'Other Restaurant Charges from Restaurant Order: ' + order.name
-			other_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Other Restaurant').debit_account
-			other_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Other Restaurant').credit_account
+			other_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_other"]).debit_account
+			other_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["restaurant_other"]).credit_account
 			create_journal_entry(other_title, other_remark, other_debit_account, other_credit_account, restaurant_other)
 
 		# Create Journal Entry for Round Off Charges
 		if float(order.rounding_amount) > 0:
 			ro_title = 'Round Off of ' + order.name
 			ro_remark = 'Rounding off Amount of Restaurant Charges from Restaurant Order: ' + order.name
-			ro_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').debit_account
-			ro_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'Round Off').credit_account
+			ro_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["round_off"]).debit_account
+			ro_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["round_off"]).credit_account
 			create_journal_entry(ro_title, ro_remark, ro_debit_account, ro_credit_account, order.rounding_amount)
 
 		# Create Journal Entry for Service
 		service_title = 'FBS -- Service 10 % of ' + order.name
 		service_remark = 'Service of Restaurant Charges from Restaurant Order: ' + order.name
-		srv_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'FBS -- Service 10 %').debit_account
-		srv_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'FBS -- Service 10 %').credit_account
+		srv_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["fbs_service_10"]).debit_account
+		srv_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["fbs_service_10"]).credit_account
 		create_journal_entry(service_title, service_remark, srv_debit_account, srv_credit_account, order.service_amount)
 		# Create Journal Entry for Tax
 		tax_title = 'FBS -- Tax 11 %' + order.name
 		tax_remark = 'Tax of Restaurant Charges from Restaurant Order: ' + order.name
-		tax_debit_account = frappe.get_doc('Inn Folio Transaction Type', 'FBS -- Tax 11 %').debit_account
-		tax_credit_account = frappe.get_doc('Inn Folio Transaction Type', 'FBS -- Tax 11 %').credit_account
+		tax_debit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["fbs_tax_11"]).debit_account
+		tax_credit_account = frappe.get_doc('Inn Folio Transaction Type', transaction_types["fbs_tax_11"]).credit_account
 		create_journal_entry(tax_title, tax_remark, tax_debit_account, tax_credit_account, order.tax_amount)
 
 		# 2. ORDER PAYMENT IN RESTAURANT FINISHED ORDER
