@@ -74,6 +74,20 @@
   "folio_transaction_type",
   "supervisor_passcode",
   "folio_default_tab",
+  "bed_type_section",
+  "studio",
+  "superior",
+  "deluxe",
+  "executive",
+  "suite",
+  "column_break_pekg",
+  "housekeeping",
+  "housekeeping_assistant",
+  "restaurant_user",
+  "restaurant_supervisor",
+  "housekeeping_supervisor",
+  "booking_approver",
+  "folio_transaction_type_section",
   "package_tax",
   "room_charge_tax_service",
   "breakfast_charge_tax_service",
@@ -662,11 +676,91 @@
    "fieldtype": "Link",
    "label": "FBS  Service 10 %",
    "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "folio_transaction_type_section",
+   "fieldtype": "Section Break",
+   "label": "Folio Transaction Type"
+  },
+  {
+   "fieldname": "bed_type_section",
+   "fieldtype": "Section Break",
+   "label": "Room Type & Role"
+  },
+  {
+   "fieldname": "studio",
+   "fieldtype": "Link",
+   "label": "Studio",
+   "options": "Inn Room Type"
+  },
+  {
+   "fieldname": "superior",
+   "fieldtype": "Link",
+   "label": "Superior",
+   "options": "Inn Room Type"
+  },
+  {
+   "fieldname": "deluxe",
+   "fieldtype": "Link",
+   "label": "Deluxe",
+   "options": "Inn Room Type"
+  },
+  {
+   "fieldname": "executive",
+   "fieldtype": "Link",
+   "label": "Executive",
+   "options": "Inn Room Type"
+  },
+  {
+   "fieldname": "suite",
+   "fieldtype": "Link",
+   "label": "Suite",
+   "options": "Inn Room Type"
+  },
+  {
+   "fieldname": "column_break_pekg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "housekeeping",
+   "fieldtype": "Link",
+   "label": "Housekeeping",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_assistant",
+   "fieldtype": "Link",
+   "label": "Housekeeping Assistant",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_user",
+   "fieldtype": "Link",
+   "label": "Restaurant User",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_supervisor",
+   "fieldtype": "Link",
+   "label": "Restaurant Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_supervisor",
+   "fieldtype": "Link",
+   "label": "Housekeeping Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "booking_approver",
+   "fieldtype": "Link",
+   "label": "Booking Approver",
+   "options": "Role"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-22 19:51:25.793321",
+ "modified": "2025-01-24 21:07:55.122096",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",

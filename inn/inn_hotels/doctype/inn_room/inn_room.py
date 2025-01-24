@@ -54,12 +54,18 @@ def update_room_status(rooms, mode):
 	is_housekeeping_supervisor = False
 	is_administrator = False
 
+	# Fetch role names from Inn Hotels Setting
+	roles = frappe.get_doc("Inn Hotels Setting")
+	housekeeping_assistant_role = roles.housekeeping_assistant
+	housekeeping_supervisor_role = roles.housekeeping_supervisor
+	administrator_role = "Administrator"  
+
 	for role in frappe.get_roles(frappe.session.user):
-		if role == 'Housekeeping Assistant':
+		if role == housekeeping_assistant_role:
 			is_housekeeping_assistant = True
-		elif role == 'Housekeeping Supervisor':
+		elif role == housekeeping_supervisor_role:
 			is_housekeeping_supervisor = True
-		elif role == 'Administrator':
+		elif role == administrator_role:
 			is_administrator = True
 
 	if mode == 'clean':
@@ -108,27 +114,22 @@ def update_single_room_status(room, mode):
 	is_housekeeping_supervisor = False
 	is_administrator = False
 
+	# Fetch role names from Inn Hotels Setting
+	roles = frappe.get_doc("Inn Hotels Setting")
+	housekeeping_role = roles.housekeeping
+	housekeeping_assistant_role = roles.housekeeping_assistant
+	housekeeping_supervisor_role = roles.housekeeping_supervisor
+	administrator_role = "Administrator"  
+
 	for role in frappe.get_roles(frappe.session.user):
-		if role == 'Housekeeping':
+		if role == housekeeping_role:
 			is_housekeeping = True
-			is_housekeeping_assistant = False
-			is_housekeeping_supervisor = False
-			is_administrator = False
-		elif role == 'Housekeeping Assistant':
+		elif role == housekeeping_assistant_role:
 			is_housekeeping_assistant = True
-			is_housekeeping = False
-			is_housekeeping_supervisor = False
-			is_administrator = False
-		elif role == 'Housekeeping Supervisor':
-			is_housekeeping_assistant = False
-			is_housekeeping = False
+		elif role == housekeeping_supervisor_role:
 			is_housekeeping_supervisor = True
-			is_administrator = False
-		elif role == 'Administrator':
+		elif role == administrator_role:
 			is_administrator = True
-			is_housekeeping = False
-			is_housekeeping_assistant = False
-			is_housekeeping_supervisor = False
 
 	if mode == 'clean':
 		door_status = frappe.db.get_value('Inn Room', room, 'door_status')
@@ -139,7 +140,7 @@ def update_single_room_status(room, mode):
 			elif room_status == 'Occupied Dirty':
 				frappe.db.set_value('Inn Room', room, 'room_status', 'Occupied Clean')
 			elif room_status == 'Vacant Clean':
-				if not is_housekeeping and ( is_housekeeping_supervisor or is_housekeeping_assistant or is_administrator):
+				if not is_housekeeping and (is_housekeeping_supervisor or is_housekeeping_assistant or is_administrator):
 					frappe.db.set_value('Inn Room', room, 'room_status', 'Vacant Ready')
 				else:
 					pass
