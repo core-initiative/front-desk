@@ -47,6 +47,8 @@
   "inn_channel_exclude_tax",
   "maximum_payment_exclude",
   "inn_tax_exclude_option",
+  "column_break_mssu",
+  "include_tax",
   "profit_sharing_reservation_section",
   "guest_account_receiveable",
   "profit_sharing_account",
@@ -74,46 +76,35 @@
   "folio_transaction_type",
   "supervisor_passcode",
   "folio_default_tab",
-  "bed_type_section",
-  "studio",
-  "superior",
-  "deluxe",
-  "executive",
-  "suite",
-  "column_break_pekg",
-  "housekeeping",
-  "housekeeping_assistant",
-  "restaurant_user",
-  "restaurant_supervisor",
-  "housekeeping_supervisor",
-  "booking_approver",
   "folio_transaction_type_section",
   "package_tax",
-  "room_charge_tax_service",
-  "breakfast_charge_tax_service",
-  "credit_card_administration_fee",
   "package",
-  "room_charge",
-  "breakfast_charge",
-  "refund",
-  "dp_kamar",
-  "room_payment",
-  "deposit",
   "down_payment",
-  "payment",
   "additional_charge",
-  "restaurant_food",
-  "restaurant_beverages",
-  "restaurant_other",
-  "room_service_food",
-  "room_service_beverage",
-  "fbs_service_10",
-  "fbs_tax_11",
   "round_off",
-  "laundry",
   "cancellation_fee",
   "late_checkout",
-  "early_checkin"
+  "early_checkin",
+  "column_break_mtit",
+  "room_charge_tax_service",
+  "room_charge",
+  "room_payment",
+  "credit_card_administration_fee",
+  "deposit",
+  "payment",
+  "laundry",
+  "fbs_tax_11",
+  "fbs_service_10",
+  "column_break_vbod",
+  "breakfast_charge_tax_service",
+  "breakfast_charge",
+  "dp_kamar",
+  "refund",
+  "restaurant_food",
+  "room_service_food",
+  "room_service_beverage",
+  "restaurant_other",
+  "restaurant_beverages"
  ],
  "fields": [
   {
@@ -683,84 +674,27 @@
    "label": "Folio Transaction Type"
   },
   {
-   "fieldname": "bed_type_section",
-   "fieldtype": "Section Break",
-   "label": "Room Type & Role"
-  },
-  {
-   "fieldname": "studio",
-   "fieldtype": "Link",
-   "label": "Studio",
-   "options": "Inn Room Type"
-  },
-  {
-   "fieldname": "superior",
-   "fieldtype": "Link",
-   "label": "Superior",
-   "options": "Inn Room Type"
-  },
-  {
-   "fieldname": "deluxe",
-   "fieldtype": "Link",
-   "label": "Deluxe",
-   "options": "Inn Room Type"
-  },
-  {
-   "fieldname": "executive",
-   "fieldtype": "Link",
-   "label": "Executive",
-   "options": "Inn Room Type"
-  },
-  {
-   "fieldname": "suite",
-   "fieldtype": "Link",
-   "label": "Suite",
-   "options": "Inn Room Type"
-  },
-  {
-   "fieldname": "column_break_pekg",
+   "fieldname": "column_break_mtit",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "housekeeping",
-   "fieldtype": "Link",
-   "label": "Housekeeping",
-   "options": "Role"
+   "fieldname": "column_break_vbod",
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "housekeeping_assistant",
-   "fieldtype": "Link",
-   "label": "Housekeeping Assistant",
-   "options": "Role"
+   "fieldname": "column_break_mssu",
+   "fieldtype": "Column Break"
   },
   {
-   "fieldname": "restaurant_user",
-   "fieldtype": "Link",
-   "label": "Restaurant User",
-   "options": "Role"
-  },
-  {
-   "fieldname": "restaurant_supervisor",
-   "fieldtype": "Link",
-   "label": "Restaurant Supervisor",
-   "options": "Role"
-  },
-  {
-   "fieldname": "housekeeping_supervisor",
-   "fieldtype": "Link",
-   "label": "Housekeeping Supervisor",
-   "options": "Role"
-  },
-  {
-   "fieldname": "booking_approver",
-   "fieldtype": "Link",
-   "label": "Booking Approver",
-   "options": "Role"
+   "default": "0",
+   "fieldname": "include_tax",
+   "fieldtype": "Check",
+   "label": "Include Tax"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-24 21:07:55.122096",
+ "modified": "2025-01-26 10:35:16.814025",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
