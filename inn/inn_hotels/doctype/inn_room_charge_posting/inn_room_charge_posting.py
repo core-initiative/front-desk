@@ -528,12 +528,14 @@ def post_room_charges(parent_id, tobe_posted_list):
     }
     if hotel_settings.include_tax:
         transaction_types["room_charge_tax_service"] = (
-            hotel_settings.room_charge_tax_service,
+            hotel_settings.room_charge_tax_service
         )
+
         transaction_types["breakfast_charge_tax_service"] = (
-            hotel_settings.breakfast_charge_tax_service,
+            hotel_settings.breakfast_charge_tax_service
         )
-        transaction_types["fbs_tax_11"] = (hotel_settings.fbs_tax_11,)
+
+        transaction_types["fbs_tax_11"] = hotel_settings.fbs_tax_11
 
     # to exclude service charge from reduced because of commision / cashback
     room_post_settings = frappe.db.get_values_from_single(

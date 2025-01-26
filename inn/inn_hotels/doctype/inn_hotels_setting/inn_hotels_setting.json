@@ -104,7 +104,10 @@
   "room_service_food",
   "room_service_beverage",
   "restaurant_other",
-  "restaurant_beverages"
+  "restaurant_beverages",
+  "section_break_kkcy",
+  "ar_city_ledger_invoice_payment_account",
+  "column_break_wphq"
  ],
  "fields": [
   {
@@ -510,7 +513,7 @@
   {
    "fieldname": "folio_default_tab",
    "fieldtype": "Tab Break",
-   "label": "Folio Default"
+   "label": "Hotel Default"
   },
   {
    "fieldname": "credit_card_administration_fee",
@@ -690,11 +693,26 @@
    "fieldname": "include_tax",
    "fieldtype": "Check",
    "label": "Include Tax"
+  },
+  {
+   "fieldname": "section_break_kkcy",
+   "fieldtype": "Section Break",
+   "label": "Default Accounts"
+  },
+  {
+   "fieldname": "ar_city_ledger_invoice_payment_account",
+   "fieldtype": "Link",
+   "label": "AR City Ledger Invoice Payment Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_wphq",
+   "fieldtype": "Column Break"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-26 10:35:16.814025",
+ "modified": "2025-01-26 13:02:20.416368",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
