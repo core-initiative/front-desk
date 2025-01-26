@@ -100,7 +100,6 @@ function filter_folio(frm) {
     },
     callback: (r) => {
       if (r.message) {
-        console.log(r);
         field.get_query = function () {
           return {
             filters: [["Inn Folio", "name", "in", r.message]],
