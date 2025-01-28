@@ -1,12 +1,13 @@
 // Copyright (c) 2020, Core Initiative and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on('Inn Floor Plan', {
-	refresh: function(frm) {
-		var wrapper = frm.get_field("html").$wrapper;
+frappe.ui.form.on("Inn Floor Plan", {
+  refresh: function (frm) {
+    var wrapper = frm.get_field("html").$wrapper;
 
-		var head = '' +
-			'<head>\
+    var head =
+      "" +
+      '<head>\
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">\
 				<style>\
 					#navbar-floor-plan {\
@@ -42,8 +43,9 @@ frappe.ui.form.on('Inn Floor Plan', {
 				</style>\
 			</head>';
 
-		var body = '' +
-			'<body>\
+    var body =
+      "" +
+      '<body>\
 				<div class="navbar" id="navbar-floor-plan">\
 					<div class="dropdown" id="dropdown-floor-plan">\
 						<button class="dropbtn" id="dropbtn-floor-plan">Choose Floor\
@@ -55,86 +57,138 @@ frappe.ui.form.on('Inn Floor Plan', {
 				<div class="col-xs-12 col-md-8" id="floor-plan-content"></div>\
 			</body>';
 
-		var script = '' +
-			'<script>\
-				function changeFloor(id) {\
-					console.log(id);\
-					var all = document.getElementsByTagName("svg");\
-					for (var i = 0; i < all.length; i++) {\
-						all[i].style.display = "none";\
-					}\
-					document.getElementById(id).style.display = "block";\
-					document.getElementById("information").style.display = "block";\
-				}\
-			</script>'
+    var script =
+      "" +
+      `<script>
+			function changeFloor(id) {
+					// Hide all SVG elements
+					var allSVGs = document.getElementsByTagName("svg");
+					for (var i = 0; i < allSVGs.length; i++) {
+						allSVGs[i].style.display = "none";
+					}
+					
+					// Show the selected SVG element
+					console.log(document.getElementById(id));
+					var selectedSVG = document.getElementById(id);
+					if (selectedSVG) {
+						selectedSVG.style.display = "block";
+						} else {
+							console.error("SVG element with ID '" + id + "' not found.");
+					}
 
-		wrapper.html(head+body+script);
-
-		var svg = '';
-
-		var floor_files = [];
-		var rawFile = new XMLHttpRequest();
-		rawFile.open('GET', '/files/floor_files.json', false);
-		rawFile.onreadystatechange = function () {
-			if (rawFile.readyState === 4) {
-				if (rawFile.status === 200 || rawFile.status == 0) {
-					floor_files = JSON.parse(rawFile.responseText);
-				}
-			}
-		}
-		rawFile.send();
-
-		floor_files.forEach(element => {
-			var z = document.createElement('a');
-			z.setAttribute('onclick', 'changeFloor("'+element.id+'")');
-			var t = document.createTextNode(element.name);
-			z.appendChild(t);
-			document.getElementById('dropdown-content-floor-plan').appendChild(z);
-
-			rawFile.open('GET', '/files/' + element.file, false);
-			rawFile.onreadystatechange = function () {
-				if (rawFile.readyState === 4) {
-					if (rawFile.status === 200 || rawFile.status == 0) {
-						svg = svg + rawFile.responseText;
+					// Show the information element (if it exists)
+					var infoElement = document.getElementById("information");
+					if (infoElement) {
+						infoElement.style.display = "block";
+					} else {
+						console.error("Element with ID 'information' not found.");
 					}
 				}
-			}
-			rawFile.send();
-		});
+			</script>`;
 
-		var div = document.getElementById('floor-plan-content');
-		div.insertAdjacentHTML('afterbegin', svg);
+    // function changeFloor(id) {
+    // 	console.log(id);
+    // 	var all = document.getElementsByTagName("svg");
+    // 	console.log(all);
+    // 	for (var i = 0; i < all.length; i++) {
+    // 		all[i].style.display = "none";
+    // 	}
+    // 	console.log(all);
+    // 	document.getElementById(id).style.display = "block";
+    // 	document.getElementById("information").style.display = "block";
+    // }
+    wrapper.html(head + body + script);
 
-		var all = document.getElementsByTagName("svg");
-		for (var i = 0; i < all.length; i++) {
-			all[i].style.display = "none";
-		}
-		
-		frappe.call({
-			method: 'inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_all_room_with_room_booking_status',
-			callback: (resp) => {
-				resp.forEach(element => {
-					if (element.status == 'AV') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#33a02c;');
-					} else if (element.status == 'RS') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#1f78b4;');
-					} else if (element.status == 'RC') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#a6cee3;');
-					} else if (element.status == 'OU') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#ff7f00;');
-					} else if (element.status == 'HU') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fdbf6f;');
-					} else if (element.status == 'OO') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#e31a1c;');
-					} else if (element.status == 'UC') {
-						document.getElementById('room-' + element.name).setAttribute('style', 'fill:#fb9a99;');
-					}
-				});
-			}
-		});
+    var svg = "";
 
-		var information = '' +
-			'<divc class="col-xs-12 col-md-4">\
+    var floor_files = [];
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", "/files/floor_files.json", false);
+    rawFile.onreadystatechange = function () {
+      console.log(rawFile, rawFile.responseText);
+      if (rawFile.readyState === 4) {
+        if (rawFile.status === 200 || rawFile.status == 0) {
+          floor_files = JSON.parse(rawFile.responseText);
+        }
+      }
+    };
+    rawFile.send();
+
+    floor_files.forEach((element) => {
+      console.log(element, "here");
+      var z = document.createElement("a");
+      console.log(element);
+      z.setAttribute("onclick", 'changeFloor("' + element.id + '")');
+      var t = document.createTextNode(element.name);
+      z.appendChild(t);
+      document.getElementById("dropdown-content-floor-plan").appendChild(z);
+
+      rawFile.open("GET", "/files/" + element.file, false);
+      rawFile.onreadystatechange = function () {
+        if (rawFile.readyState === 4) {
+          if (rawFile.status === 200 || rawFile.status == 0) {
+            svg = svg + rawFile.responseText;
+            console.log(svg);
+          }
+        }
+      };
+      rawFile.send();
+    });
+
+    var div = document.getElementById("floor-plan-content");
+    div.insertAdjacentHTML("afterbegin", svg);
+
+    var all = document.getElementsByTagName("svg");
+    for (var i = 0; i < all.length; i++) {
+      all[i].style.display = "none";
+    }
+
+    frappe.call({
+      method:
+        "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_all_room_with_room_booking_status",
+      callback: (resp) => {
+        console.log(resp);
+        resp.message.forEach((element) => {
+          if (element.status == "AV") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#33a02c;");
+          } else if (element.status == "RS") {
+            console.log(
+              document.getElementById("room-" + element.name),
+              element.name
+            );
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#1f78b4;");
+          } else if (element.status == "RC") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#a6cee3;");
+          } else if (element.status == "OU") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#ff7f00;");
+          } else if (element.status == "HU") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#fdbf6f;");
+          } else if (element.status == "OO") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#e31a1c;");
+          } else if (element.status == "UC") {
+            document
+              .getElementById("room-" + element.name)
+              .setAttribute("style", "fill:#fb9a99;");
+          }
+        });
+      },
+    });
+
+    var information =
+      "" +
+      '<divc class="col-xs-12 col-md-4">\
 				<p><b>Information</b></p>\
 				<svg id="information" width="250" height="350">\
 					<rect x="0" y="0" width="50" height="25" fill="#33a02c" stroke="black" />\
@@ -152,8 +206,8 @@ frappe.ui.form.on('Inn Floor Plan', {
 					<rect x="0" y="300" width="50" height="25" fill="#fb9a99" stroke="black" />\
 					<text x="60" y="315" fill="black">UC (Under Construction)</text>\
 				</svg>\
-			</div>'
+			</div>';
 
-		wrapper.html(wrapper.html() + information);
-	}
+    wrapper.html(wrapper.html() + information);
+  },
 });

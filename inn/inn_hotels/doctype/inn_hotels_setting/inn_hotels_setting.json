@@ -107,7 +107,15 @@
   "restaurant_beverages",
   "section_break_kkcy",
   "ar_city_ledger_invoice_payment_account",
-  "column_break_wphq"
+  "column_break_wphq",
+  "default_roles_section",
+  "housekeeping_supervisor",
+  "housekeeping",
+  "housekeeping_assistant",
+  "column_break_dynj",
+  "booking_approver",
+  "restaurant_user",
+  "restaurant_supervisor"
  ],
  "fields": [
   {
@@ -708,11 +716,56 @@
   {
    "fieldname": "column_break_wphq",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "housekeeping",
+   "fieldtype": "Link",
+   "label": "Housekeeping",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_assistant",
+   "fieldtype": "Link",
+   "label": "Housekeeping Assistant",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_user",
+   "fieldtype": "Link",
+   "label": "Restaurant User",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_supervisor",
+   "fieldtype": "Link",
+   "label": "Restaurant Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_supervisor",
+   "fieldtype": "Link",
+   "label": "Housekeeping Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "booking_approver",
+   "fieldtype": "Link",
+   "label": "Booking Approver",
+   "options": "Role"
+  },
+  {
+   "fieldname": "default_roles_section",
+   "fieldtype": "Section Break",
+   "label": "Default Roles"
+  },
+  {
+   "fieldname": "column_break_dynj",
+   "fieldtype": "Column Break"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-26 13:02:20.416368",
+ "modified": "2025-01-28 11:14:31.420714",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
