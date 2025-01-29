@@ -14,6 +14,12 @@ const STATUS = {
 frappe.query_reports["Room Occupation"] = {
   filters: [
     {
+      fieldname: "room",
+      label: __("Room"),
+      fieldtype: "Link",
+      options: "Inn Room",
+    },
+    {
       fieldname: "start_date",
       label: __("Start Date"),
       fieldtype: "Date",

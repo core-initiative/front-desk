@@ -51,6 +51,10 @@ def get_data(filters):
     if start_date >= end_date:
         raise ValueError("end date cannot before start date")
 
+    sql_room_filter = ""
+    if filters.get("room"):
+        sql_room_filter = f"AND rb.room_id = {frappe.db.escape(filters.room)}"
+
     sql = f"""
 					 	SELECT 
 							rb.start, 
@@ -64,6 +68,10 @@ def get_data(filters):
                             r.room_type
 						FROM `tabInn Room Booking` rb
                         LEFT JOIN `tabInn Room` r on rb.room_id = r.name
+                        WHERE 
+                            rb.start >= {frappe.db.escape(filters.get(start_date))}
+                            AND rb.status != 'Canceled'
+                            {sql_room_filter}
 					"""
 
     reservations = frappe.db.sql(sql, as_dict=1)
@@ -102,6 +110,37 @@ def execute(filters=None):
         raise ValueError("end date cannot before start date")
 
     delta_time = end_date - start_date
+    report_summary = get_report_summary()
     columns = get_column(start_date, delta_time.days)
     data = get_data(filters)
-    return columns, data
+    return columns, data, report_summary
+
+
+def get_report_summary():
+    return """
+            <style>
+                .label-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 30px; /* Adjust spacing */
+                    font-family: Arial, sans-serif;
+                }
+
+                .color-box {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 3px;
+                    display: inline-block;
+                }
+            </style>
+
+            <div class="label-container">
+                <span><span class="color-box" style="background-color: #1f78b4;"></span> Room Sold (RS)</span>
+                <span><span class="color-box" style="background-color: #fb9a99;"></span> Under Construction (UC)</span>
+                <span><span class="color-box" style="background-color: #ff7f00;"></span> Office Use (OU)</span>
+                <span><span class="color-box" style="background-color: #e31a1c;"></span> Out of Order (OO)</span>
+                <span><span class="color-box" style="background-color: #fdbf6f;"></span> House Use (HU)</span>
+                <span><span class="color-box" style="background-color: #a6cee3;"></span> Room Compliment (RC)</span>
+                <span><span class="color-box" style="background-color: #33a02c;"></span> Available (AV)</span>
+            </div>
+        """
