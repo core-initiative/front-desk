@@ -20,6 +20,12 @@ frappe.query_reports["Room Occupation"] = {
       options: "Inn Room",
     },
     {
+      fieldname: "room_type",
+      label: __("Room Type"),
+      fieldtype: "Link",
+      options: "Inn Room Type",
+    },
+    {
       fieldname: "start_date",
       label: __("Start Date"),
       fieldtype: "Date",
@@ -27,6 +33,7 @@ frappe.query_reports["Room Occupation"] = {
       default: frappe.datetime.month_start(),
       on_change(query_report) {
         validate_filter(query_report);
+        frappe.query_report.refresh();
       },
     },
     {
@@ -37,6 +44,7 @@ frappe.query_reports["Room Occupation"] = {
       default: frappe.datetime.month_end(),
       on_change(query_report) {
         validate_filter(query_report);
+        frappe.query_report.refresh();
       },
     },
   ],
@@ -47,16 +55,19 @@ frappe.query_reports["Room Occupation"] = {
     value = default_formatter(value, row, column, data);
 
     switch (column.fieldname) {
-      case "type":
+      case "room_type":
+        iconHTML = `<i class="fa fa-bed" style="margin-right: 5px;"></i>`;
+        break;
+      case "room_id":
         iconHTML = `<i class="fa fa-bed" style="margin-right: 5px;"></i>`;
         break;
       default:
         color = STATUS[value];
         iconHTML = `<i class="fa fa-user" style="margin-right: 5px;"></i>`;
-
-        return `<span style="color: ${color};">${iconHTML} ${
+        v = `<span style="color: white;">${iconHTML} ${
           value !== "" ? value : "N/A"
         }</span>`;
+        return `<p style='margin:0px;padding-left:5px;background-color:${color}!important;'>${v}</p>`;
     }
     return `<span style="color: ${color};">${iconHTML} ${
       value !== "" ? value : "N/A"
