@@ -54,6 +54,10 @@ frappe.ui.form.on("Inn Floor Plan", {
 						<div class="dropdown-content" id="dropdown-content-floor-plan"></div>\
 					</div>\
 				</div>\
+        <br>\
+        <br>\
+        <br>\
+        <br>\
 				<div class="col-xs-12 col-md-8" id="floor-plan-content"></div>\
 			</body>';
 
@@ -147,7 +151,7 @@ frappe.ui.form.on("Inn Floor Plan", {
       method:
         "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_all_room_with_room_booking_status",
       callback: (resp) => {
-        console.log(resp);
+        console.log(resp, "resr");
         resp.message.forEach((element) => {
           if (element.status == "AV") {
             document
