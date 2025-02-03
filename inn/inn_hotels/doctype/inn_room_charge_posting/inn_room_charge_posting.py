@@ -82,8 +82,6 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
     # Fetch all transaction types from Inn Hotels Setting
     hotel_settings = frappe.get_doc("Inn Hotels Setting")
     transaction_types = {
-        "room_charge_tax_service": hotel_settings.room_charge_tax_service,
-        "breakfast_charge_tax_service": hotel_settings.breakfast_charge_tax_service,
         "credit_card_administration_fee": hotel_settings.credit_card_administration_fee,
         "package": hotel_settings.package,
         "room_charge": hotel_settings.room_charge,
@@ -101,13 +99,22 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
         "room_service_food": hotel_settings.room_service_food,
         "room_service_beverage": hotel_settings.room_service_beverage,
         "fbs_service_10": hotel_settings.fbs_service_10,
-        "fbs_tax_11": hotel_settings.fbs_tax_11,
         "round_off": hotel_settings.round_off,
         "laundry": hotel_settings.laundry,
         "cancellation_fee": hotel_settings.cancellation_fee,
         "late_checkout": hotel_settings.late_checkout,
         "early_checkin": hotel_settings.early_checkin,
     }
+    if hotel_settings.include_tax:
+        transaction_types["room_charge_tax_service"] = (
+            hotel_settings.room_charge_tax_service
+        )
+
+        transaction_types["breakfast_charge_tax_service"] = (
+            hotel_settings.breakfast_charge_tax_service
+        )
+
+        transaction_types["fbs_tax_11"] = hotel_settings.fbs_tax_11
 
     # to exclude service charge from reduced because of commision / cashback
     room_post_settings = frappe.db.get_values_from_single(
@@ -206,27 +213,30 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
         ftb_doc.append("transaction_detail", ftbd_doc)
 
         fdc_room_rate = frappe.get_doc("Inn Room Rate", fdc_reservation.room_rate)
-        fdc_room_rate_tax = frappe.get_doc("Inn Tax", fdc_room_rate.room_rate_tax)
-        fdc_room_rate_tax_breakdown = fdc_room_rate_tax.inn_tax_breakdown
-        if fdc_room_rate_tax_breakdown[-1].breakdown_rate != 0.0:
-            fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
-                -1
-            ].breakdown_account
-        else:
-            fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
-                -2
-            ].breakdown_account
 
-        # get tax breakdown account from reservation
-        if is_exclude_tax:
-            fdc_room_rate_tax = frappe.get_doc(
-                "Inn Tax", reservation.actual_room_rate_tax
-            )
-            fdc_room_rate_tax_account = (
-                fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_account
-                if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0
-                else fdc_room_rate_tax.inn_tax_breakdown[-2].breakdown_account
-            )
+        if hotel_settings.include_tax:
+
+            fdc_room_rate_tax = frappe.get_doc("Inn Tax", fdc_room_rate.room_rate_tax)
+            fdc_room_rate_tax_breakdown = fdc_room_rate_tax.inn_tax_breakdown
+            if fdc_room_rate_tax_breakdown[-1].breakdown_rate != 0.0:
+                fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
+                    -1
+                ].breakdown_account
+            else:
+                fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
+                    -2
+                ].breakdown_account
+
+            # get tax breakdown account from reservation
+            if is_exclude_tax:
+                fdc_room_rate_tax = frappe.get_doc(
+                    "Inn Tax", reservation.actual_room_rate_tax
+                )
+                fdc_room_rate_tax_account = (
+                    fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_account
+                    if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0
+                    else fdc_room_rate_tax.inn_tax_breakdown[-2].breakdown_account
+                )
 
         if is_channel_commision:
             # add commission first
@@ -266,40 +276,44 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
         )
 
         # Posting Room Charge Tax/Service
-        for index, room_tax_item_name in enumerate(room_tb_id):
-            room_tax_doc = frappe.new_doc("Inn Folio Transaction")
-            room_tax_doc.flag = "Debit"
-            room_tax_doc.is_void = 0
-            room_tax_doc.idx = get_idx(item_doc.folio_id)
-            room_tax_doc.transaction_type = transaction_types["room_charge_tax_service"]
-            room_tax_doc.amount = room_tb_amount[index]
-            accumulated_amount += room_tb_amount[index]
-            room_tax_doc.credit_account = frappe.get_doc(
-                "Inn Tax Breakdown", room_tax_item_name
-            ).breakdown_account
-            room_tax_doc.debit_account = room_charge_debit_account
-            room_tax_doc.remark = (
-                "Room Charge Tax Room Rate "
-                + room_tax_item_name
-                + " : "
-                + item_doc.room_id
-                + " - "
-                + get_last_audit_date().strftime("%d-%m-%Y")
-            )
-            room_tax_doc.parent = item_doc.folio_id
-            room_tax_doc.parenttype = "Inn Folio"
-            room_tax_doc.parentfield = "folio_transaction"
-            room_tax_doc.ftb_id = ftb_doc.name
-            room_tax_doc.insert()
+        if is_exclude_tax:
 
-            if room_tax_doc.credit_account == fdc_room_rate_tax_account:
-                fdc_folio_trx_tax_name = room_tax_doc.name
+            for index, room_tax_item_name in enumerate(room_tb_id):
+                room_tax_doc = frappe.new_doc("Inn Folio Transaction")
+                room_tax_doc.flag = "Debit"
+                room_tax_doc.is_void = 0
+                room_tax_doc.idx = get_idx(item_doc.folio_id)
+                room_tax_doc.transaction_type = transaction_types[
+                    "room_charge_tax_service"
+                ]
+                room_tax_doc.amount = room_tb_amount[index]
+                accumulated_amount += room_tb_amount[index]
+                room_tax_doc.credit_account = frappe.get_doc(
+                    "Inn Tax Breakdown", room_tax_item_name
+                ).breakdown_account
+                room_tax_doc.debit_account = room_charge_debit_account
+                room_tax_doc.remark = (
+                    "Room Charge Tax Room Rate "
+                    + room_tax_item_name
+                    + " : "
+                    + item_doc.room_id
+                    + " - "
+                    + get_last_audit_date().strftime("%d-%m-%Y")
+                )
+                room_tax_doc.parent = item_doc.folio_id
+                room_tax_doc.parenttype = "Inn Folio"
+                room_tax_doc.parentfield = "folio_transaction"
+                room_tax_doc.ftb_id = ftb_doc.name
+                room_tax_doc.insert()
 
-            # Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
-            ftbd_doc = frappe.new_doc("Inn Folio Transaction Bundle Detail")
-            ftbd_doc.transaction_type = room_tax_doc.transaction_type
-            ftbd_doc.transaction_id = room_tax_doc.name
-            ftb_doc.append("transaction_detail", ftbd_doc)
+                if room_tax_doc.credit_account == fdc_room_rate_tax_account:
+                    fdc_folio_trx_tax_name = room_tax_doc.name
+
+                # Create Inn Folio Transaction Bundle Detail Item Room Charge Tax/Service
+                ftbd_doc = frappe.new_doc("Inn Folio Transaction Bundle Detail")
+                ftbd_doc.transaction_type = room_tax_doc.transaction_type
+                ftbd_doc.transaction_id = room_tax_doc.name
+                ftb_doc.append("transaction_detail", ftbd_doc)
 
         ## corner case: if breakfast charge is 0 then don't post any breakfast related to Folio
         breakfast_price = float(int(reservation.nett_actual_breakfast_rate))
@@ -377,40 +391,42 @@ def post_individual_room_charges(parent_id, tobe_posted_list):
                 reservation.actual_breakfast_rate_tax,
             )
 
-            # Posting Breakfast Tax/Service
-            for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
-                breakfast_tax_doc = frappe.new_doc("Inn Folio Transaction")
-                breakfast_tax_doc.flag = "Debit"
-                breakfast_tax_doc.is_void = 0
-                breakfast_tax_doc.idx = get_idx(item_doc.folio_id)
-                breakfast_tax_doc.transaction_type = transaction_types[
-                    "breakfast_charge_tax_service"
-                ]
-                breakfast_tax_doc.amount = breakfast_tb_amount[index]
-                accumulated_amount += breakfast_tb_amount[index]
-                breakfast_tax_doc.credit_account = frappe.get_doc(
-                    "Inn Tax Breakdown", breakfast_tax_item_name
-                ).breakdown_account
-                breakfast_tax_doc.debit_account = breakfast_charge_debit_account
-                breakfast_tax_doc.remark = (
-                    "Breakfast Charge Tax Room Rate "
-                    + breakfast_tax_item_name
-                    + " : "
-                    + item_doc.room_id
-                    + " - "
-                    + get_last_audit_date().strftime("%d-%m-%Y")
-                )
-                breakfast_tax_doc.parent = item_doc.folio_id
-                breakfast_tax_doc.parenttype = "Inn Folio"
-                breakfast_tax_doc.parentfield = "folio_transaction"
-                breakfast_tax_doc.ftb_id = ftb_doc.name
-                breakfast_tax_doc.insert()
+            if hotel_settings.include_tax:
 
-                # Create Inn Folio Transaction Bundle Detail Item Breakfast Charge Tax/Service
-                ftbd_doc = frappe.new_doc("Inn Folio Transaction Bundle Detail")
-                ftbd_doc.transaction_type = breakfast_tax_doc.transaction_type
-                ftbd_doc.transaction_id = breakfast_tax_doc.name
-                ftb_doc.append("transaction_detail", ftbd_doc)
+                # Posting Breakfast Tax/Service
+                for index, breakfast_tax_item_name in enumerate(breakfast_tb_id):
+                    breakfast_tax_doc = frappe.new_doc("Inn Folio Transaction")
+                    breakfast_tax_doc.flag = "Debit"
+                    breakfast_tax_doc.is_void = 0
+                    breakfast_tax_doc.idx = get_idx(item_doc.folio_id)
+                    breakfast_tax_doc.transaction_type = transaction_types[
+                        "breakfast_charge_tax_service"
+                    ]
+                    breakfast_tax_doc.amount = breakfast_tb_amount[index]
+                    accumulated_amount += breakfast_tb_amount[index]
+                    breakfast_tax_doc.credit_account = frappe.get_doc(
+                        "Inn Tax Breakdown", breakfast_tax_item_name
+                    ).breakdown_account
+                    breakfast_tax_doc.debit_account = breakfast_charge_debit_account
+                    breakfast_tax_doc.remark = (
+                        "Breakfast Charge Tax Room Rate "
+                        + breakfast_tax_item_name
+                        + " : "
+                        + item_doc.room_id
+                        + " - "
+                        + get_last_audit_date().strftime("%d-%m-%Y")
+                    )
+                    breakfast_tax_doc.parent = item_doc.folio_id
+                    breakfast_tax_doc.parenttype = "Inn Folio"
+                    breakfast_tax_doc.parentfield = "folio_transaction"
+                    breakfast_tax_doc.ftb_id = ftb_doc.name
+                    breakfast_tax_doc.insert()
+
+                    # Create Inn Folio Transaction Bundle Detail Item Breakfast Charge Tax/Service
+                    ftbd_doc = frappe.new_doc("Inn Folio Transaction Bundle Detail")
+                    ftbd_doc.transaction_type = breakfast_tax_doc.transaction_type
+                    ftbd_doc.transaction_id = breakfast_tax_doc.name
+                    ftb_doc.append("transaction_detail", ftbd_doc)
 
         print("accumulated amount = " + str(accumulated_amount))
         print("math_ceil(accumulated amount) = " + str(math.ceil(accumulated_amount)))
@@ -636,26 +652,28 @@ def post_room_charges(parent_id, tobe_posted_list):
         ftb_doc.append("transaction_detail", ftbd_doc)
 
         fdc_room_rate = frappe.get_doc("Inn Room Rate", fdc_reservation.room_rate)
-        fdc_room_rate_tax = frappe.get_doc("Inn Tax", fdc_room_rate.room_rate_tax)
-        fdc_room_rate_tax_breakdown = fdc_room_rate_tax.inn_tax_breakdown
-        if fdc_room_rate_tax_breakdown[-1].breakdown_rate != 0.0:
-            fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
-                -1
-            ].breakdown_account
-        # else:
-        #     fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
-        #         -2
-        #     ].breakdown_account
-        # get tax breakdown account from reservation
-        if is_exclude_tax:
-            fdc_room_rate_tax = frappe.get_doc(
-                "Inn Tax", reservation.actual_room_rate_tax
-            )
-            fdc_room_rate_tax_account = (
-                fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_account
-                if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0
-                else fdc_room_rate_tax[-2].breakdown_account
-            )
+        if hotel_settings.include_tax:
+
+            fdc_room_rate_tax = frappe.get_doc("Inn Tax", fdc_room_rate.room_rate_tax)
+            fdc_room_rate_tax_breakdown = fdc_room_rate_tax.inn_tax_breakdown
+            if fdc_room_rate_tax_breakdown[-1].breakdown_rate != 0.0:
+                fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
+                    -1
+                ].breakdown_account
+            # else:
+            #     fdc_room_rate_tax_account = fdc_room_rate_tax_breakdown[
+            #         -2
+            #     ].breakdown_account
+            # get tax breakdown account from reservation
+            if is_exclude_tax:
+                fdc_room_rate_tax = frappe.get_doc(
+                    "Inn Tax", reservation.actual_room_rate_tax
+                )
+                fdc_room_rate_tax_account = (
+                    fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_account
+                    if fdc_room_rate_tax.inn_tax_breakdown[-1].breakdown_rate != 0
+                    else fdc_room_rate_tax[-2].breakdown_account
+                )
 
         if is_channel_commision:
             # add commission first
@@ -860,17 +878,18 @@ def post_room_charges(parent_id, tobe_posted_list):
                 elif difference < 0:
                     adjusted_room_charge_amount = room_charge_folio_trx.amount
                     adjusted_breakfast_charge_amount = breakfast_charge_folio_trx.amount
-                    fdc_folio_trx_tax = frappe.get_doc(
-                        "Inn Folio Transaction", fdc_folio_trx_tax_name
-                    )
-                    adjusted_room_rate_tax_amount = fdc_folio_trx_tax.amount
-                    # TODO: ganti tambah difference ke pajak, bukan ke room rate & breakfast
-                    for i in range(0, abs(difference)):
-                        adjusted_room_rate_tax_amount = (
-                            adjusted_room_rate_tax_amount + 1.0
+                    if hotel_settings.include_tax:
+                        fdc_folio_trx_tax = frappe.get_doc(
+                            "Inn Folio Transaction", fdc_folio_trx_tax_name
                         )
-                    fdc_folio_trx_tax.amount = adjusted_room_rate_tax_amount
-                    fdc_folio_trx_tax.save()
+                        adjusted_room_rate_tax_amount = fdc_folio_trx_tax.amount
+                        # TODO: ganti tambah difference ke pajak, bukan ke room rate & breakfast
+                        for i in range(0, abs(difference)):
+                            adjusted_room_rate_tax_amount = (
+                                adjusted_room_rate_tax_amount + 1.0
+                            )
+                        fdc_folio_trx_tax.amount = adjusted_room_rate_tax_amount
+                        fdc_folio_trx_tax.save()
 
                 room_charge_folio_trx.amount = adjusted_room_charge_amount
                 room_charge_folio_trx.save()

@@ -108,6 +108,8 @@
   "section_break_kkcy",
   "ar_city_ledger_invoice_payment_account",
   "column_break_wphq",
+  "mode_of_payment_section",
+  "city_ledger_mode_of_payment",
   "default_roles_section",
   "housekeeping_supervisor",
   "housekeeping",
@@ -761,11 +763,23 @@
   {
    "fieldname": "column_break_dynj",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mode_of_payment_section",
+   "fieldtype": "Section Break",
+   "label": "Mode Of Payment"
+  },
+  {
+   "fieldname": "city_ledger_mode_of_payment",
+   "fieldtype": "Link",
+   "label": "City Ledger Mode of Payment",
+   "options": "Mode of Payment",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2025-01-29 09:01:00.179629",
+ "modified": "2025-02-03 15:07:07.007333",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",
