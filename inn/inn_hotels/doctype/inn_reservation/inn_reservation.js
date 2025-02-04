@@ -20,13 +20,11 @@ frappe.ui.form.on("Inn Reservation", {
     is_check_in = getUrlVars()["is_check_in"];
     get_room_max_active_card();
     make_read_only(frm);
-    console.log("is error = " + is_error);
     // Hide some variables that not needed to be filled first time Reservation Created
     if (frm.doc.__islocal === 1) {
       frm.add_custom_button(__("Check Membership Card"), function () {
         check_membership_cards();
       });
-      console.log("notsaved");
       frm.set_value("status", "Reserved");
       frm.set_df_property("init_actual_room_rate", "hidden", 0);
       frm.set_df_property("arrival", "hidden", 1);
@@ -65,7 +63,6 @@ frappe.ui.form.on("Inn Reservation", {
     }
     // Reservation is Saved, and status Reserved
     if (frm.doc.__islocal !== 1 && frm.doc.status === "Reserved") {
-      console.log("is saved");
       // Set all variables that hidden to be shown again
       frm.set_df_property("arrival", "hidden", 0);
       frm.set_df_property("departure", "hidden", 0);
@@ -74,10 +71,8 @@ frappe.ui.form.on("Inn Reservation", {
       // Still hide actual room rate
       frm.set_df_property("actual_room_rate", "hidden", 1);
       frm.set_df_property("init_actual_room_rate", "hidden", 0);
-      console.log("is_check_in = " + is_check_in);
       // Show Start Check In Process button if is_check_in flag undefined
       if (is_check_in === undefined) {
-        console.log("is_check_in undefined");
         frm.add_custom_button(__("Start Check In Process"), function () {
           is_check_in = "true";
           frappe.call({
@@ -103,8 +98,6 @@ frappe.ui.form.on("Inn Reservation", {
         // Assign some variables from "Reservation Detail" to "Room Stay"
         autofill(frm);
         is_form_not_good_to_go = is_form_good_to_in_house(frm);
-        console.log("is_form_not_good_to_go = " + is_form_not_good_to_go);
-        console.log("error_message = " + error_message);
         if (
           is_form_not_good_to_go === true &&
           (error_message !== "" ||
@@ -535,7 +528,6 @@ frappe.ui.form.on("Inn Reservation", {
               callback: (r) => {
                 if (r.message) {
                   let room_booking_name = r.message;
-                  console.log("r = " + r.message);
                   frappe.call({
                     method:
                       "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_name_within_date_range",
@@ -545,7 +537,6 @@ frappe.ui.form.on("Inn Reservation", {
                       end: formatDate(frm.doc.departure),
                     },
                     callback: (resp) => {
-                      console.log("resp = " + resp.message);
                       if (
                         resp.message == room_booking_name ||
                         resp.message.length == 0
@@ -638,7 +629,6 @@ frappe.ui.form.on("Inn Reservation", {
     } else if (frm.doc.status !== "Reserved") {
       start_date = formatDate(frm.doc.arrival);
     }
-    console.log("actual room id = " + frm.doc.actual_room_id);
     manage_filters("actual_room_id", phase, start_date);
   },
   room_rate: function (frm) {
@@ -678,10 +668,12 @@ frappe.ui.form.on("Inn Reservation", {
         parseInt(frm.doc.init_actual_room_rate) <
           parseInt(frm.doc.base_room_rate))
     ) {
-      frappe.msgprint(
-        "Actual Room Rate must be equal or higher than Base Room Rate."
-      );
-      frm.set_value("init_actual_room_rate", frm.doc.base_room_rate);
+      if (frm.doc.discount === 0) {
+        frappe.msgprint(
+          "Actual Room Rate must be equal or higher than Base Room Rate."
+        );
+        frm.set_value("init_actual_room_rate", frm.doc.base_room_rate);
+      }
     }
   },
   actual_room_rate: function (frm) {
@@ -690,7 +682,9 @@ frappe.ui.form.on("Inn Reservation", {
         frm.set_value("actual_room_rate", frm.doc.base_room_rate);
       } else if (
         parseFloat(frm.doc.actual_room_rate) > 0 &&
-        parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate)
+        parseInt(frm.doc.actual_room_rate) < parseInt(frm.doc.base_room_rate) &&
+        // Add Discount
+        frm.doc.discount === 0
       ) {
         frappe.msgprint(
           "Actual Room Rate must be equal or higher than Base Room Rate."
@@ -718,6 +712,41 @@ frappe.ui.form.on("Inn Reservation", {
         frm.set_value("actual_breakfast_rate_tax", 0);
         frm.set_value("nett_actual_breakfast_rate", 0);
       }
+    }
+  },
+  discount: function (frm) {
+    if (frm.doc.discount > 0) {
+      frappe.call({
+        method:
+          "inn.inn_hotels.doctype.inn_reservation.inn_reservation.check_discount",
+        args: {
+          room_type: frm.doc.room_type,
+          discount: frm.doc.discount,
+        },
+        callback: (r) => {
+          if (r.message) {
+            frm.set_value(
+              "init_actual_room_rate",
+              parseFloat(frm.doc.base_room_rate) *
+                ((100 - frm.doc.discount) / 100)
+            );
+            frm.set_value(
+              "actual_room_rate",
+              parseFloat(frm.doc.base_room_rate) *
+                ((100 - frm.doc.discount) / 100)
+            );
+            calculate_rate_and_bill(frm);
+          } else {
+            frappe.msgprint(
+              "Error the discount percentage entered is more than the allowable discount."
+            );
+            frm.set_value("init_actual_room_rate", frm.doc.base_room_rate);
+            frm.set_value("actual_room_rate", frm.doc.base_room_rate);
+            frm.set_value("discount", 0);
+            calculate_rate_and_bill(frm);
+          }
+        },
+      });
     }
   },
   issue_card: function (frm) {
@@ -965,6 +994,7 @@ function autofill(frm) {
           frm.set_value("actual_room_id", frm.doc.room_id);
         } else {
           get_available("actual_room_id", "Check In");
+          console.log("test");
           frappe.msgprint(
             "Currently, Room " +
               frm.doc.room_id +
@@ -1045,7 +1075,6 @@ function handle_filter_on_start_if_filled(frm) {
 
 // Function to adjust dropdown shown in cascading dropdown: room_type, bed_type, room_id/actual_room_id
 function manage_filters(fieldname, phase, start_date) {
-  console.log("masuk manage_filters from " + fieldname);
   let room_chooser = "room_id";
   if (phase === "Check In") {
     room_chooser = "actual_room_id";
@@ -1105,6 +1134,7 @@ function manage_filters(fieldname, phase, start_date) {
 
 // Function to get available room/room_type/bed_type based on a period of time (start -> end)
 function get_available(fieldname, phase) {
+  console.log(fieldname, phase);
   let field = cur_frm.fields_dict[fieldname];
   let reference_name = cur_frm.doc.name;
   let start = undefined;
@@ -1129,7 +1159,6 @@ function get_available(fieldname, phase) {
     query =
       "inn.inn_hotels.doctype.inn_room_booking.inn_room_booking.get_bed_type_available";
   }
-  console.log("query " + query);
   field.get_query = function () {
     return {
       query: query,
@@ -1166,7 +1195,6 @@ function get_room_max_active_card() {
     callback: (r) => {
       if (r.message) {
         room_max_active_card = r.message;
-        console.log("rmesej = " + room_max_active_card);
       }
     },
   });
@@ -1174,9 +1202,7 @@ function get_room_max_active_card() {
 
 // Function to erase the priviledge of key card to open room door
 function erase_card(flag, card_name) {
-  console.log("card_name = " + card_name);
   let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  console.log(yesterday);
   frappe.call({
     method: "inn.inn_hotels.doctype.inn_key_card.inn_key_card.erase_card",
     args: {
@@ -1204,7 +1230,6 @@ function erase_card(flag, card_name) {
 // Function to get list of Room Rate in Room Rate Dropdown.
 // Filtered by room_type selected and the start date of reservation
 function get_room_rate(start_date) {
-  console.log("masuk get_Room_rate");
   let field = cur_frm.fields_dict["room_rate"];
   let room_type = cur_frm.doc.room_type;
 
@@ -1216,10 +1241,6 @@ function get_room_rate(start_date) {
       (customer) => {
         let customer_group_list = ["All Customer Groups"];
         customer_group_list.push(customer.customer_group);
-        console.log("filters: ");
-        console.log("room_type = " + room_type);
-        console.log("customer_group_list = " + customer_group_list);
-        console.log("start_date = " + start_date);
         field.get_query = function () {
           return {
             filters: [
@@ -1357,7 +1378,6 @@ function move_room(frm) {
         options: "Inn Room Type",
         reqd: 1,
         onchange: () => {
-          console.log("Milih room type");
           if (d.fields_dict["mv_room_type"].get_value() !== "") {
             d.set_df_property("mv_bed_type", "hidden", 0);
             d.fields_dict["mv_bed_type"].get_query = function () {
@@ -1384,7 +1404,6 @@ function move_room(frm) {
         options: "Inn Bed Type",
         reqd: 1,
         onchange: () => {
-          console.log("milih bed type");
           if (d.fields_dict["mv_bed_type"].get_value() !== "") {
             d.set_df_property("mv_room_id", "hidden", 0);
             d.fields_dict["mv_room_id"].get_query = function () {
@@ -1411,7 +1430,6 @@ function move_room(frm) {
         options: "Inn Room",
         reqd: 1,
         onchange: () => {
-          console.log("milih room id");
           frappe.db.get_value(
             "Customer",
             frm.doc.customer_id,
@@ -1505,8 +1523,6 @@ function move_room(frm) {
       }
     }
     if (good_to_go === 1) {
-      console.log(new_room_rate);
-      console.log(new_actual_room_rate);
       frappe.call({
         method:
           "inn.inn_hotels.doctype.inn_move_room.inn_move_room.create_move_room_by_reservation",
@@ -1546,11 +1562,11 @@ function calculate_rate_and_bill(frm) {
     },
     callback: (r) => {
       if (r.message) {
-        console.log(r.message);
         frm.set_value("room_bill", r.message);
       }
     },
   });
+
   frappe.call({
     method:
       "inn.inn_hotels.doctype.inn_room_rate.inn_room_rate.get_actual_room_rate_breakdown_check_commission",
@@ -1571,7 +1587,6 @@ function calculate_rate_and_bill(frm) {
 }
 
 function calculate_nights(arrival, departure) {
-  console.log("calculate_nights called");
   let date_arrival = new Date(arrival);
   let date_departure = new Date(departure);
   let normalized_arrival = date_arrival.setHours(0, 0, 0, 0);
@@ -1581,7 +1596,6 @@ function calculate_nights(arrival, departure) {
   if (days < 1) {
     days = 1;
   }
-  console.log("total nights calculated = " + days);
   return days;
 }
 

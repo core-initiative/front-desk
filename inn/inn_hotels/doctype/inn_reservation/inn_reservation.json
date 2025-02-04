@@ -29,6 +29,7 @@
   "base_room_rate",
   "init_actual_room_rate",
   "actual_room_rate",
+  "discount",
   "adult",
   "child",
   "extra_bed",
@@ -311,10 +312,17 @@
    "label": "Comission",
    "precision": "2",
    "print_hide": 1
+  },
+  {
+   "description": "Use Percentage",
+   "fieldname": "discount",
+   "fieldtype": "Percent",
+   "label": "Discount",
+   "precision": "2"
   }
  ],
  "links": [],
- "modified": "2024-03-14 11:16:24.086635",
+ "modified": "2025-02-04 09:58:03.847590",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Reservation",

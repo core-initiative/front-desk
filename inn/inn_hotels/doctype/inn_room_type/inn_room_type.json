@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "maximum_discount_percentage",
   "description"
  ],
  "fields": [
@@ -15,10 +16,15 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description"
+  },
+  {
+   "fieldname": "maximum_discount_percentage",
+   "fieldtype": "Percent",
+   "label": "Maximum Discount Percentage"
   }
  ],
  "links": [],
- "modified": "2024-03-14 12:01:14.126641",
+ "modified": "2025-02-04 10:12:45.234298",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Room Type",
