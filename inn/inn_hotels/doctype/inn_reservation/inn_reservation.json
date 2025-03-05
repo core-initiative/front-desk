@@ -9,6 +9,8 @@
   "naming_series",
   "status",
   "customer_id",
+  "currency",
+  "exchange_rate",
   "type",
   "group_id",
   "channel",
@@ -27,6 +29,7 @@
   "cb1",
   "room_rate",
   "base_room_rate",
+  "base_room_rate_by_currency",
   "init_actual_room_rate",
   "actual_room_rate",
   "discount",
@@ -319,10 +322,27 @@
    "fieldtype": "Percent",
    "label": "Discount",
    "precision": "2"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate"
+  },
+  {
+   "fieldname": "base_room_rate_by_currency",
+   "fieldtype": "Data",
+   "label": "Base Room Rate By Currency",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2025-02-04 09:58:03.847590",
+ "modified": "2025-03-05 01:00:25.354481",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Reservation",

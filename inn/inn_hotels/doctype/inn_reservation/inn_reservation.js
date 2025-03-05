@@ -365,7 +365,65 @@ frappe.ui.form.on("Inn Reservation", {
   },
   customer_id: function (frm) {
     toggle_room_detail(frm);
+    frm.trigger("fetch_currency");
   },
+
+  fetch_currency: function (frm) {
+    // Check if customer_id is set
+    if (frm.doc.customer_id) {
+        frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+                doctype: "Customer",
+                fieldname: "default_currency",
+                filters: { name: frm.doc.customer_id }
+            },
+            callback: function(r) {
+                if (r.message) {
+                    frm.set_value("currency", r.message.default_currency);
+                }
+            }
+        });
+    } else {
+        // If customer_id is not set, clear the currency field
+        frm.set_value("currency", "");
+    }
+},
+
+before_save: function (frm) {
+  console.log("Before Save Event Triggered");
+
+  var base_room_rate = frm.doc.base_room_rate;
+  var exchange_rate = frm.doc.exchange_rate;
+  var currency = frm.doc.currency;
+
+  // Log input values for debugging
+  // console.log("Base Room Rate:", base_room_rate);
+  // console.log("Exchange Rate:", exchange_rate);
+  // console.log("Currency:", currency);
+
+  // Validate inputs
+  // if (!base_room_rate || !exchange_rate || !currency) {
+  //   frappe.throw(__("Please ensure base_room_rate, exchange_rate, and currency are set."));
+  //   return;
+  // }
+
+  // if (!exchange_rate || exchange_rate <= 0) {
+  //   frappe.throw(__("Exchange rate must be greater than zero."));
+  //   return;
+  // }
+
+  var base_room_rate_by_currency = base_room_rate / exchange_rate;
+
+  base_room_rate_by_currency = Math.round(base_room_rate_by_currency * 100) / 100;
+
+  var formatted_amount = format_currency(base_room_rate_by_currency, currency);
+  // console.log("Formatted Amount:", formatted_amount);
+
+  frm.set_value ('base_room_rate_by_currency', formatted_amount);
+
+  frm.refresh_field('base_room_rate_by_currency');
+},
   channel: function (frm) {
     toggle_room_detail(frm);
   },

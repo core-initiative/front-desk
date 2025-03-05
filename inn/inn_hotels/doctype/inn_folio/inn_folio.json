@@ -30,10 +30,13 @@
   "channel",
   "sb3",
   "total_debit",
+  "total_debit_by_currency",
   "cb4",
   "total_credit",
+  "total_credit_by_currency",
   "cb5",
   "balance",
+  "balance_by_currency",
   "sb0",
   "toggle_void_transaction",
   "folio_transaction",
@@ -236,10 +239,28 @@
    "label": "Channel",
    "options": "Inn Channel",
    "read_only": 1
+  },
+  {
+   "fieldname": "total_debit_by_currency",
+   "fieldtype": "Data",
+   "label": "Total Debit By Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_credit_by_currency",
+   "fieldtype": "Data",
+   "label": "Total Credit By Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balance_by_currency",
+   "fieldtype": "Data",
+   "label": "Balance By Currency",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2024-07-30 16:33:41.091293",
+ "modified": "2025-03-05 02:40:17.921502",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Folio",

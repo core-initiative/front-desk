@@ -7,12 +7,59 @@ var folio_transaction = null;
 frappe.ui.form.on("Inn Folio", {
   before_save: function (frm) {
     make_mandatory(frm);
-  },
-  onload: function (frm) {
-    frm.get_field("folio_transaction").grid.only_sortable();
-    make_read_only(frm);
-    make_fields_filtered(frm);
-  },
+},
+onload: function (frm) {
+  frm.get_field("folio_transaction").grid.only_sortable();
+  make_read_only(frm);
+  make_fields_filtered(frm);
+
+  // Fetch the exchange rate and currency symbol from the linked Inn Reservation
+  frappe.call({
+      method: "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_exchange_rate",
+      args: {
+          reservation_id: frm.doc.reservation_id,
+      },
+      callback: (response) => {
+          const exchange_rate = response.message.exchange_rate;
+          const currency_symbol = response.message.currency_symbol;
+          // console.log("444444444444444444444444444444444",currency_symbol)
+
+          // Proceed with calculations only if exchange_rate is available
+          if (exchange_rate) {
+              const total_debit = frm.doc.total_debit || 0;
+              const total_credit = frm.doc.total_credit || 0;
+              const balance = frm.doc.balance || 0;
+
+              // Calculate amounts in the base currency
+              const total_debit_by_currency = total_debit / exchange_rate;
+              const total_credit_by_currency = total_credit / exchange_rate;
+              const balance_by_currency = balance / exchange_rate;
+
+              // Format the values with the currency symbol for display
+              const formatted_total_debit_by_currency = format_currency(total_debit_by_currency, currency_symbol);
+              const formatted_total_credit_by_currency = format_currency(total_credit_by_currency, currency_symbol);
+              const formatted_balance_by_currency = format_currency(balance_by_currency, currency_symbol);
+
+              // Set the calculated values back to the form fields
+              frm.set_value("total_debit_by_currency", formatted_total_debit_by_currency);
+              frm.set_value("total_credit_by_currency", formatted_total_credit_by_currency);
+              frm.set_value("balance_by_currency", formatted_balance_by_currency);
+
+              // Refresh the fields to reflect the updated values
+              frm.refresh_field("total_debit_by_currency");
+              frm.refresh_field("total_credit_by_currency");
+              frm.refresh_field("balance_by_currency");
+
+              // Display formatted values in the UI (optional)
+              frm.fields_dict.total_debit_by_currency.$wrapper.find(".control-value").text(formatted_total_debit_by_currency);
+              frm.fields_dict.total_credit_by_currency.$wrapper.find(".control-value").text(formatted_total_credit_by_currency);
+              frm.fields_dict.balance_by_currency.$wrapper.find(".control-value").text(formatted_balance_by_currency);
+          } else {
+              frappe.msgprint(__("Exchange rate not found for the linked reservation."));
+          }
+      },
+  });
+},
   transfer_to_another_folio: function (frm) {
     if (frm.doc.__islocal !== 1) {
       let trx_selected = frm.get_field("folio_transaction").grid.get_selected();
@@ -340,8 +387,8 @@ function add_package(frm) {
 // Function to show pop up Dialog for adding new charge to the folio
 function add_charge(frm) {
   frappe.call({
-    method:
-      "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type",
+    method: 
+    "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type",
     args: {
       type: "Debit",
     },
@@ -361,6 +408,13 @@ function add_charge(frm) {
         {
           label: __("Amount"),
           fieldname: "amount",
+          fieldtype: "Currency",
+          columns: 2,
+          reqd: 1,
+        },
+        {
+          label: __("Base Room Rate By Currency"),
+          fieldname: "base_room_rate_by_currency",
           fieldtype: "Currency",
           columns: 2,
           reqd: 1,
@@ -396,6 +450,37 @@ function add_charge(frm) {
         title: __("Add New Charge for Folio " + frm.doc.name),
         fields: fields,
       });
+
+      // Fetch exchange rate and currency symbol
+      frappe.call({
+        method: "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_exchange_rate",
+        args: { reservation_id: frm.doc.reservation_id },
+        callback: (exchange_rate_response) => {
+          const { exchange_rate, currency_symbol } = exchange_rate_response.message;
+
+          // Add currency symbol to labels for clarity
+          d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
+          d.fields_dict.base_room_rate_by_currency.df.label =
+            __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+          d.refresh();
+
+          // Add event listeners for dynamic calculations
+          d.fields_dict.amount.$input.on("input", () => {
+            const amount = d.get_value("amount");
+            if (amount && exchange_rate) {
+              d.set_value("base_room_rate_by_currency", amount / exchange_rate);
+            }
+          });
+
+          d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
+            const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
+            if (base_room_rate_by_currency && exchange_rate) {
+              d.set_value("amount", base_room_rate_by_currency * exchange_rate);
+            }
+          });
+        },
+      });
+
       d.set_primary_action(__("Save"), () => {
         let remark_to_save = "";
         let values = d.get_values();
@@ -443,13 +528,13 @@ function add_charge(frm) {
 // Function to show pop up Dialog for adding new payment to the folio
 function add_payment(frm) {
   frappe.call({
-    method:
-      "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type",
-    args: {
-      type: "Credit",
-    },
+    method: 
+    "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_transaction_type",
+    args: { 
+      type: "Credit"
+     },
     callback: (r) => {
-      let fields = [
+      const fields = [
         {
           label: __("Transaction Type"),
           fieldname: "transaction_type",
@@ -458,9 +543,9 @@ function add_payment(frm) {
           reqd: 1,
         },
         {
-          fieldname: "accb0",
-          fieldtype: "Column Break",
-        },
+           fieldname: "accb0", 
+           fieldtype: "Column Break" 
+          },
         {
           label: __("Amount"),
           fieldname: "amount",
@@ -469,8 +554,14 @@ function add_payment(frm) {
           reqd: 1,
         },
         {
-          fieldname: "acsb0",
-          fieldtype: "Section Break",
+          label: __("Base Room Rate By Currency"),
+          fieldname: "base_room_rate_by_currency",
+          fieldtype: "Currency",
+          columns: 2,
+          reqd: 1,
+        },
+        { fieldname: "acsb0", 
+          fieldtype: "Section Break" 
         },
         {
           label: __("Mode of Payment"),
@@ -479,10 +570,9 @@ function add_payment(frm) {
           options: "Mode of Payment",
           reqd: 1,
         },
-        {
-          fieldname: "accb1",
-          fieldtype: "Column Break",
-        },
+        { fieldname: "accb1", 
+          fieldtype: "Column Break"
+         },
         {
           label: __("Sub Folio"),
           fieldname: "sub_folio",
@@ -496,20 +586,52 @@ function add_payment(frm) {
           default: "A",
           reqd: 1,
         },
-        {
+        { 
           fieldname: "acsb1",
-          fieldtype: "Section Break",
-        },
+           fieldtype: "Section Break" 
+          },
         {
-          label: "Remark",
+          label: __("Remark"),
           fieldname: "remark",
           fieldtype: "Small Text",
         },
       ];
-      var d = new frappe.ui.Dialog({
+
+      const d = new frappe.ui.Dialog({
         title: __("Add New Payment for Folio " + frm.doc.name),
         fields: fields,
       });
+
+      // Fetch exchange rate and currency symbol
+      frappe.call({
+        method: "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_exchange_rate",
+        args: { reservation_id: frm.doc.reservation_id },
+        callback: (exchange_rate_response) => {
+          const { exchange_rate, currency_symbol } = exchange_rate_response.message;
+
+          // Add currency symbol to labels for clarity
+          d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
+          d.fields_dict.base_room_rate_by_currency.df.label =
+            __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+          d.refresh();
+
+          // Add event listeners for dynamic calculations
+          d.fields_dict.amount.$input.on("input", () => {
+            const amount = d.get_value("amount");
+            if (amount && exchange_rate) {
+              d.set_value("base_room_rate_by_currency", amount / exchange_rate);
+            }
+          });
+
+          d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
+            const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
+            if (base_room_rate_by_currency && exchange_rate) {
+              d.set_value("amount", base_room_rate_by_currency * exchange_rate);
+            }
+          });
+        },
+      });
+
       d.set_primary_action(__("Save"), () => {
         let remark_to_save = "";
 
@@ -522,7 +644,7 @@ function add_payment(frm) {
           });
           return;
         }
-
+      
         if (d.get_values.remark !== undefined) {
           remark_to_save = d.get_values.remark;
         }
@@ -566,6 +688,13 @@ function add_refund(frm) {
         reqd: 1,
       },
       {
+        label: __("Base Room Rate By Currency"),
+        fieldname: "base_room_rate_by_currency",
+        fieldtype: "Currency",
+        columns: 2,
+        reqd: 1,
+      },
+      {
         fieldname: "arcb0",
         fieldtype: "Column Break",
       },
@@ -596,9 +725,40 @@ function add_refund(frm) {
   if (frm.doc.balance > 0) {
     d.set_value("amount", frm.doc.balance);
   }
+  
+
+  // Fetch exchange rate and currency symbol
+  frappe.call({
+    method: "inn.inn_hotels.doctype.inn_folio_transaction_type.inn_folio_transaction_type.get_exchange_rate",
+    args: { reservation_id: frm.doc.reservation_id },
+    callback: (exchange_rate_response) => {
+      const { exchange_rate, currency_symbol } = exchange_rate_response.message;
+
+      // Add currency symbol to labels for clarity
+      d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
+      d.fields_dict.base_room_rate_by_currency.df.label =
+        __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+      d.refresh();
+
+      // Add event listeners for dynamic calculations
+      d.fields_dict.amount.$input.on("input", () => {
+        const amount = d.get_value("amount");
+        if (amount && exchange_rate) {
+          d.set_value("base_room_rate_by_currency", amount / exchange_rate);
+        }
+      });
+
+      d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
+        const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
+        if (base_room_rate_by_currency && exchange_rate) {
+          d.set_value("amount", base_room_rate_by_currency * exchange_rate);
+        }
+      });
+    },
+  });
   d.set_primary_action(__("Save"), () => {
     let remark_to_save = "";
-
+    
     let values = d.get_values();
     if (values.amount == 0) {
       frappe.msgprint({
