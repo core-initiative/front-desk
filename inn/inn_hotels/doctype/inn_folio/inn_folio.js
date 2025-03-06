@@ -20,46 +20,57 @@ onload: function (frm) {
           reservation_id: frm.doc.reservation_id,
       },
       callback: (response) => {
-          const exchange_rate = response.message.exchange_rate;
-          const currency_symbol = response.message.currency_symbol;
-          // console.log("444444444444444444444444444444444",currency_symbol)
+          if (response.message) {
+              const { exchange_rate, currency_symbol } = response.message;
+              
+              // Proceed only if exchange_rate is available and valid
+              if (exchange_rate) {
+                  const total_debit = frm.doc.total_debit || 0;
+                  const total_credit = frm.doc.total_credit || 0;
+                  const balance = frm.doc.balance || 0;
 
-          // Proceed with calculations only if exchange_rate is available
-          if (exchange_rate) {
-              const total_debit = frm.doc.total_debit || 0;
-              const total_credit = frm.doc.total_credit || 0;
-              const balance = frm.doc.balance || 0;
+                  // Calculate amounts in the base currency
+                  const total_debit_by_currency = total_debit / exchange_rate;
+                  const total_credit_by_currency = total_credit / exchange_rate;
+                  const balance_by_currency = balance / exchange_rate;
 
-              // Calculate amounts in the base currency
-              const total_debit_by_currency = total_debit / exchange_rate;
-              const total_credit_by_currency = total_credit / exchange_rate;
-              const balance_by_currency = balance / exchange_rate;
+                  // Format the values with the currency symbol for display
+                  const formatted_total_debit_by_currency = format_currency(total_debit_by_currency, currency_symbol);
+                  const formatted_total_credit_by_currency = format_currency(total_credit_by_currency, currency_symbol);
+                  const formatted_balance_by_currency = format_currency(balance_by_currency, currency_symbol);
 
-              // Format the values with the currency symbol for display
-              const formatted_total_debit_by_currency = format_currency(total_debit_by_currency, currency_symbol);
-              const formatted_total_credit_by_currency = format_currency(total_credit_by_currency, currency_symbol);
-              const formatted_balance_by_currency = format_currency(balance_by_currency, currency_symbol);
+                  // Set the calculated values back to the form fields
+                  frm.set_value("total_debit_by_currency", formatted_total_debit_by_currency);
+                  frm.set_value("total_credit_by_currency", formatted_total_credit_by_currency);
+                  frm.set_value("balance_by_currency", formatted_balance_by_currency);
 
-              // Set the calculated values back to the form fields
-              frm.set_value("total_debit_by_currency", formatted_total_debit_by_currency);
-              frm.set_value("total_credit_by_currency", formatted_total_credit_by_currency);
-              frm.set_value("balance_by_currency", formatted_balance_by_currency);
+                  // Refresh the fields to reflect the updated values
+                  frm.refresh_field("total_debit_by_currency");
+                  frm.refresh_field("total_credit_by_currency");
+                  frm.refresh_field("balance_by_currency");
 
-              // Refresh the fields to reflect the updated values
-              frm.refresh_field("total_debit_by_currency");
-              frm.refresh_field("total_credit_by_currency");
-              frm.refresh_field("balance_by_currency");
-
-              // Display formatted values in the UI (optional)
-              frm.fields_dict.total_debit_by_currency.$wrapper.find(".control-value").text(formatted_total_debit_by_currency);
-              frm.fields_dict.total_credit_by_currency.$wrapper.find(".control-value").text(formatted_total_credit_by_currency);
-              frm.fields_dict.balance_by_currency.$wrapper.find(".control-value").text(formatted_balance_by_currency);
-          } else {
-              frappe.msgprint(__("Exchange rate not found for the linked reservation."));
+                  // Optionally, update the UI display if the fields exist
+                  if (frm.fields_dict.total_debit_by_currency && frm.fields_dict.total_debit_by_currency.$wrapper) {
+                      frm.fields_dict.total_debit_by_currency.$wrapper.find(".control-value").text(formatted_total_debit_by_currency);
+                  }
+                  if (frm.fields_dict.total_credit_by_currency && frm.fields_dict.total_credit_by_currency.$wrapper) {
+                      frm.fields_dict.total_credit_by_currency.$wrapper.find(".control-value").text(formatted_total_credit_by_currency);
+                  }
+                  if (frm.fields_dict.balance_by_currency && frm.fields_dict.balance_by_currency.$wrapper) {
+                      frm.fields_dict.balance_by_currency.$wrapper.find(".control-value").text(formatted_balance_by_currency);
+                  }
+              } else {
+                  // Hide the currency fields if exchange_rate is not available
+                  frm.toggle_display("total_debit_by_currency", false);
+                  frm.toggle_display("total_credit_by_currency", false);
+                  frm.toggle_display("balance_by_currency", false);
+                  // frappe.msgprint(__("Exchange rate not found for the linked reservation."));
+              }
           }
       },
   });
 },
+
   transfer_to_another_folio: function (frm) {
     if (frm.doc.__islocal !== 1) {
       let trx_selected = frm.get_field("folio_transaction").grid.get_selected();

@@ -43,25 +43,30 @@ def get_exchange_rate(reservation_id):
     try:
         reservation = frappe.get_doc("Inn Reservation", reservation_id)
     except frappe.DoesNotExistError:
-        frappe.throw(_("Reservation with ID {0} not found").format(reservation_id))
+        return {
+            "exchange_rate": 0,
+            "currency_symbol": ""
+        }
 
     exchange_rate = reservation.exchange_rate
+    # Instead of throwing an error, return exchange_rate as 0 if missing or invalid
     if not exchange_rate or exchange_rate <= 0:
-        frappe.throw(_("Invalid or missing exchange rate for reservation {0}").format(reservation_id))
+        result = {
+            "exchange_rate": 0,
+            "currency_symbol": reservation.currency  
+        }
+        cache_key = f"exchange_rate:{reservation_id}"
+        frappe.cache().setex(cache_key, 3600, json.dumps(result))
+        return result
 
     currency_symbol = frappe.db.get_value("Currency", reservation.currency, "symbol")
     result = {
         "exchange_rate": exchange_rate,
-        "currency_symbol": currency_symbol or reservation.currency,  # Fallback to currency code
+        "currency_symbol": currency_symbol or reservation.currency  
     }
-
-    # Cache the result for 1 hour
     cache_key = f"exchange_rate:{reservation_id}"
-    serialized_result = json.dumps(result)
-    frappe.cache().setex(cache_key, 3600, serialized_result)
-
+    frappe.cache().setex(cache_key, 3600, json.dumps(result))
     return result
-
 # @frappe.whitelist()
 # def get_exchange_rate(reservation_id):
 # 	reservation = frappe.get_doc("Inn Reservation", reservation_id)
