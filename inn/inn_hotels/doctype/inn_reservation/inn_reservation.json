@@ -327,6 +327,7 @@
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
+   "mandatory_depends_on": "eval:doc.exchange_rate > 0",
    "options": "Currency"
   },
   {
@@ -342,7 +343,7 @@
   }
  ],
  "links": [],
- "modified": "2025-03-07 02:06:50.830874",
+ "modified": "2025-03-07 02:37:31.635677",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Reservation",
