@@ -429,6 +429,7 @@ function add_charge(frm) {
           fieldtype: "Currency",
           columns: 2,
           reqd: 1,
+          hidden: 1, 
         },
         {
           fieldname: "accb1",
@@ -469,23 +470,30 @@ function add_charge(frm) {
         callback: (exchange_rate_response) => {
           const { exchange_rate, currency_symbol } = exchange_rate_response.message;
 
+          // Show or hide the Base Room Rate By Currency field based on exchange_rate
+          if (exchange_rate && exchange_rate !== 0) {
+            d.fields_dict.base_room_rate_by_currency.df.hidden = 0; 
+            d.fields_dict.base_room_rate_by_currency.df.label =
+              __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+          } else {
+            d.fields_dict.base_room_rate_by_currency.df.hidden = 1; 
+          }
+
           // Add currency symbol to labels for clarity
           d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
-          d.fields_dict.base_room_rate_by_currency.df.label =
-            __("Base Room Rate By Currency") + ` (${currency_symbol})`;
           d.refresh();
 
           // Add event listeners for dynamic calculations
           d.fields_dict.amount.$input.on("input", () => {
             const amount = d.get_value("amount");
-            if (amount && exchange_rate) {
+            if (amount && exchange_rate && exchange_rate !== 0) {
               d.set_value("base_room_rate_by_currency", amount / exchange_rate);
             }
           });
 
           d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
             const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
-            if (base_room_rate_by_currency && exchange_rate) {
+            if (base_room_rate_by_currency && exchange_rate && exchange_rate !== 0) {
               d.set_value("amount", base_room_rate_by_currency * exchange_rate);
             }
           });
@@ -570,6 +578,7 @@ function add_payment(frm) {
           fieldtype: "Currency",
           columns: 2,
           reqd: 1,
+          hidden: 1, 
         },
         { fieldname: "acsb0", 
           fieldtype: "Section Break" 
@@ -620,23 +629,30 @@ function add_payment(frm) {
         callback: (exchange_rate_response) => {
           const { exchange_rate, currency_symbol } = exchange_rate_response.message;
 
+          // Show or hide the Base Room Rate By Currency field based on exchange_rate
+          if (exchange_rate && exchange_rate !== 0) {
+            d.fields_dict.base_room_rate_by_currency.df.hidden = 0; 
+            d.fields_dict.base_room_rate_by_currency.df.label =
+              __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+          } else {
+            d.fields_dict.base_room_rate_by_currency.df.hidden = 1; 
+          }
+
           // Add currency symbol to labels for clarity
           d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
-          d.fields_dict.base_room_rate_by_currency.df.label =
-            __("Base Room Rate By Currency") + ` (${currency_symbol})`;
           d.refresh();
 
           // Add event listeners for dynamic calculations
           d.fields_dict.amount.$input.on("input", () => {
             const amount = d.get_value("amount");
-            if (amount && exchange_rate) {
+            if (amount && exchange_rate && exchange_rate !== 0) {
               d.set_value("base_room_rate_by_currency", amount / exchange_rate);
             }
           });
 
           d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
             const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
-            if (base_room_rate_by_currency && exchange_rate) {
+            if (base_room_rate_by_currency && exchange_rate && exchange_rate !== 0) {
               d.set_value("amount", base_room_rate_by_currency * exchange_rate);
             }
           });
@@ -656,8 +672,8 @@ function add_payment(frm) {
           return;
         }
       
-        if (d.get_values.remark !== undefined) {
-          remark_to_save = d.get_values.remark;
+        if (d.get_values().remark !== undefined) {
+          remark_to_save = d.get_values().remark;
         }
         frappe.call({
           method:
@@ -704,6 +720,7 @@ function add_refund(frm) {
         fieldtype: "Currency",
         columns: 2,
         reqd: 1,
+        hidden: 1, 
       },
       {
         fieldname: "arcb0",
@@ -733,10 +750,11 @@ function add_refund(frm) {
       },
     ],
   });
+
+  // Set default amount to the current balance if balance is positive
   if (frm.doc.balance > 0) {
     d.set_value("amount", frm.doc.balance);
   }
-  
 
   // Fetch exchange rate and currency symbol
   frappe.call({
@@ -745,31 +763,39 @@ function add_refund(frm) {
     callback: (exchange_rate_response) => {
       const { exchange_rate, currency_symbol } = exchange_rate_response.message;
 
+      // Show or hide the Base Room Rate By Currency field based on exchange_rate
+      if (exchange_rate && exchange_rate !== 0) {
+        d.fields_dict.base_room_rate_by_currency.df.hidden = 0; 
+        d.fields_dict.base_room_rate_by_currency.df.label =
+          __("Base Room Rate By Currency") + ` (${currency_symbol})`;
+      } else {
+        d.fields_dict.base_room_rate_by_currency.df.hidden = 1; 
+      }
+
       // Add currency symbol to labels for clarity
       d.fields_dict.amount.df.label = __("Amount") + ` (${frappe.sys_defaults.currency})`;
-      d.fields_dict.base_room_rate_by_currency.df.label =
-        __("Base Room Rate By Currency") + ` (${currency_symbol})`;
       d.refresh();
 
       // Add event listeners for dynamic calculations
       d.fields_dict.amount.$input.on("input", () => {
         const amount = d.get_value("amount");
-        if (amount && exchange_rate) {
+        if (amount && exchange_rate && exchange_rate !== 0) {
           d.set_value("base_room_rate_by_currency", amount / exchange_rate);
         }
       });
 
       d.fields_dict.base_room_rate_by_currency.$input.on("input", () => {
         const base_room_rate_by_currency = d.get_value("base_room_rate_by_currency");
-        if (base_room_rate_by_currency && exchange_rate) {
+        if (base_room_rate_by_currency && exchange_rate && exchange_rate !== 0) {
           d.set_value("amount", base_room_rate_by_currency * exchange_rate);
         }
       });
     },
   });
+
   d.set_primary_action(__("Save"), () => {
     let remark_to_save = "";
-    
+
     let values = d.get_values();
     if (values.amount == 0) {
       frappe.msgprint({
@@ -779,9 +805,11 @@ function add_refund(frm) {
       });
       return;
     }
-    if (d.get_values.remark !== undefined) {
-      remark_to_save = d.get_values.remark;
+
+    if (d.get_values().remark !== undefined) {
+      remark_to_save = d.get_values().remark;
     }
+
     frappe.call({
       method:
         "inn.inn_hotels.doctype.inn_folio_transaction.inn_folio_transaction.add_charge",
@@ -803,6 +831,7 @@ function add_refund(frm) {
     });
     d.hide();
   });
+
   d.show();
 }
 
