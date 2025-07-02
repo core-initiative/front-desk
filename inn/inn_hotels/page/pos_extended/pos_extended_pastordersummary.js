@@ -1,8 +1,8 @@
 frappe.require(["point-of-sale.bundle.js"], function () {
 
     inn.PointOfSale.PosExtendPastOrderSummary = class PosExtendPastOrderSummary extends erpnext.PointOfSale.PastOrderSummary {
-        constructor({ wrapper, events }) {
-            super({ wrapper, events })
+        constructor({ wrapper, settings, events }) {
+            super({ wrapper, settings, events })
         }
 
         async attach_document_info(doc) {

@@ -430,6 +430,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			init_order_summary() {
 				this.order_summary = new inn.PointOfSale.PosExtendPastOrderSummary({
 					wrapper: this.$components_wrapper,
+					settings: this.settings, 
 					events: {
 						get_frm: () => this.frm,
 
