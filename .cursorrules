@@ -1,0 +1,193 @@
+# Cursor Rules for Inn Hotels Project
+
+## Project Overview
+This is a comprehensive hotel management system built on the Frappe framework. The system handles all aspects of hotel operations including reservations, room management, POS integration, financial management, and advanced integrations with external systems.
+
+## Critical Implementation Paths
+
+### **Document Type Structure**
+- All custom DocTypes follow Frappe's standard structure:
+  - `__init__.py` - Python model
+  - `doctype_name.json` - Schema definition
+  - `doctype_name.js` - Client-side logic
+  - `doctype_name.py` - Server-side logic
+  - `doctype_name_list.js` - List view customization
+  - `doctype_name_list.html` - List view template
+
+### **Naming Conventions**
+- **DocTypes**: Use `inn_` prefix (e.g., `inn_reservation`, `inn_room`)
+- **Fields**: Use snake_case for field names
+- **Functions**: Use snake_case for Python functions, camelCase for JavaScript
+- **Variables**: Use descriptive names that reflect business logic
+
+### **Database Patterns**
+- **Primary Keys**: Use Frappe's automatic naming series where appropriate
+- **Foreign Keys**: Always use Link fields with proper options
+- **Status Fields**: Use Select fields with predefined status options
+- **Audit Fields**: Include creation, modified, and modified_by fields
+
+### **Business Logic Implementation**
+- **Server-side**: Implement in Python files with proper validation
+- **Client-side**: Implement in JavaScript files for UI interactions
+- **Validation**: Use both client-side and server-side validation
+- **Permissions**: Implement role-based access control at field level
+
+## Key Technical Patterns
+
+### **Integration Patterns**
+- **External APIs**: Use requests library with proper error handling
+- **Webhooks**: Implement webhook handlers for real-time updates
+- **Data Sync**: Use event-driven updates for data consistency
+- **Error Handling**: Implement comprehensive error logging and recovery
+
+### **Performance Considerations**
+- **Database Queries**: Optimize queries with proper indexing
+- **Caching**: Use Frappe's caching mechanisms for frequently accessed data
+- **Lazy Loading**: Load data only when needed
+- **Batch Processing**: Handle bulk operations efficiently
+
+### **Security Patterns**
+- **Input Validation**: Sanitize all user inputs
+- **Permission Checks**: Verify user permissions before operations
+- **Audit Logging**: Log all critical operations for compliance
+- **Data Encryption**: Encrypt sensitive data at rest and in transit
+
+## Development Workflow
+
+### **Code Organization**
+- **Helper Functions**: Place utility functions in `helper/` directory
+- **Custom Fields**: Define in `fixtures/` directory
+- **Overrides**: Place framework overrides in `overrides/` directory
+- **Templates**: Store email and page templates in `templates/` directory
+
+### **Testing Strategy**
+- **Unit Tests**: Test individual functions and methods
+- **Integration Tests**: Test module interactions and data flows
+- **Frontend Tests**: Test JavaScript functionality and UI interactions
+- **Database Tests**: Test database operations and constraints
+
+### **Documentation Standards**
+- **Inline Comments**: Document complex business logic
+- **Function Documentation**: Use docstrings for all functions
+- **API Documentation**: Document external API integrations
+- **User Guides**: Create comprehensive user documentation
+
+## Common Patterns & Solutions
+
+### **Reservation Management**
+- Reservations have status transitions: Reserved → In House → Finished
+- Each reservation creates a folio for financial management
+- Room status updates automatically based on reservation changes
+- Channel management tracks booking sources
+
+### **Financial Operations**
+- Folios track all guest charges and payments
+- POS charges automatically post to guest folios
+- Tax calculations handle multiple tax types and rates
+- Payment processing supports multiple methods
+
+### **Room Management**
+- Rooms have multiple statuses: Vacant Ready, Occupied, Out of Order
+- Room types define pricing and amenities
+- Floor plans organize room layouts
+- Housekeeping tracks room maintenance
+
+### **Integration Handling**
+- Door lock systems use TESA/DOWS APIs
+- WiFi hotspot management controls guest access
+- Payment gateways handle multiple processors
+- Channel managers sync with external booking systems
+
+## User Preferences & Workflow
+
+### **Front Desk Operations**
+- Quick check-in/check-out processes
+- Real-time room availability
+- Integrated guest information display
+- Automated billing and payment processing
+
+### **Restaurant Operations**
+- Table management and order processing
+- Automatic guest folio integration
+- Flexible payment and billing options
+- Real-time inventory tracking
+
+### **Management Functions**
+- Comprehensive reporting and analytics
+- Real-time performance metrics
+- Automated audit trails
+- Revenue optimization tools
+
+## Known Challenges & Solutions
+
+### **Performance Issues**
+- **Large Datasets**: Use pagination and filtering
+- **Complex Queries**: Optimize with proper indexing
+- **Real-time Updates**: Use efficient event handling
+- **Concurrent Users**: Implement proper locking mechanisms
+
+### **Integration Complexity**
+- **API Failures**: Implement retry logic and fallbacks
+- **Data Sync**: Use transaction-based updates
+- **Error Handling**: Comprehensive logging and recovery
+- **Version Management**: Handle API version changes gracefully
+
+### **Data Consistency**
+- **Multi-step Operations**: Use database transactions
+- **Validation Rules**: Implement comprehensive business rules
+- **Audit Trails**: Track all data changes
+- **Rollback Capabilities**: Maintain data integrity
+
+## Future Development Considerations
+
+### **Scalability Planning**
+- **Multi-Property Support**: Design for hotel chains
+- **Cloud Deployment**: Optimize for cloud environments
+- **API Development**: Build comprehensive REST APIs
+- **Mobile Support**: Enhance mobile responsiveness
+
+### **Technology Evolution**
+- **AI Integration**: Prepare for machine learning features
+- **IoT Support**: Design for smart room integration
+- **Advanced Analytics**: Implement predictive analytics
+- **Modern Frontend**: Consider modern UI frameworks
+
+## Code Quality Standards
+
+### **Python Code**
+- Follow PEP 8 style guidelines
+- Use type hints where appropriate
+- Implement proper error handling
+- Write comprehensive docstrings
+
+### **JavaScript Code**
+- Use ES6+ features
+- Follow consistent naming conventions
+- Implement proper error handling
+- Use async/await for asynchronous operations
+
+### **Database Design**
+- Normalize data appropriately
+- Use proper indexing strategies
+- Implement referential integrity
+- Optimize for common query patterns
+
+## Communication & Collaboration
+
+### **Code Reviews**
+- Review all code changes before deployment
+- Focus on business logic correctness
+- Ensure proper error handling
+- Verify security and performance considerations
+
+### **Documentation Updates**
+- Update documentation with code changes
+- Maintain current API documentation
+- Keep user guides current
+- Document integration procedures
+
+### **Knowledge Sharing**
+- Share implementation patterns
+- Document common solutions
+- Maintain development guidelines
+- Regular team knowledge sessions
