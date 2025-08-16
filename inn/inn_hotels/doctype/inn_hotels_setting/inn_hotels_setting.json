@@ -47,6 +47,8 @@
   "inn_channel_exclude_tax",
   "maximum_payment_exclude",
   "inn_tax_exclude_option",
+  "column_break_mssu",
+  "include_tax",
   "profit_sharing_reservation_section",
   "guest_account_receiveable",
   "profit_sharing_account",
@@ -62,12 +64,60 @@
   "pos_receipt_remarks",
   "master_data_generator_sb",
   "bed_type_generator",
+  "bed_type",
   "room_type_generator",
+  "room_type",
   "role_generator",
+  "role",
   "cb4",
   "inn_hotels_account_generator",
+  "inn_account_setting",
   "folio_transaction_type_generator",
-  "supervisor_passcode"
+  "folio_transaction_type",
+  "supervisor_passcode",
+  "folio_default_tab",
+  "folio_transaction_type_section",
+  "package_tax",
+  "package",
+  "down_payment",
+  "additional_charge",
+  "round_off",
+  "cancellation_fee",
+  "late_checkout",
+  "early_checkin",
+  "column_break_mtit",
+  "room_charge_tax_service",
+  "room_charge",
+  "room_payment",
+  "credit_card_administration_fee",
+  "deposit",
+  "payment",
+  "laundry",
+  "fbs_tax_11",
+  "fbs_service_10",
+  "column_break_vbod",
+  "breakfast_charge_tax_service",
+  "breakfast_charge",
+  "dp_kamar",
+  "refund",
+  "restaurant_food",
+  "room_service_food",
+  "room_service_beverage",
+  "restaurant_other",
+  "restaurant_beverages",
+  "section_break_kkcy",
+  "ar_city_ledger_invoice_payment_account",
+  "column_break_wphq",
+  "mode_of_payment_section",
+  "city_ledger_mode_of_payment",
+  "default_roles_section",
+  "housekeeping_supervisor",
+  "housekeeping",
+  "housekeeping_assistant",
+  "column_break_dynj",
+  "booking_approver",
+  "restaurant_user",
+  "restaurant_supervisor"
  ],
  "fields": [
   {
@@ -434,11 +484,302 @@
    "fieldname": "maximum_payment_exclude",
    "fieldtype": "Currency",
    "label": "Maximum Payment Exclude"
+  },
+  {
+   "fieldname": "bed_type",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Bed Type",
+   "options": "Inn Setting Tools"
+  },
+  {
+   "fieldname": "room_type",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Room Type",
+   "options": "Inn Setting Tools"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Role",
+   "options": "Inn Role"
+  },
+  {
+   "fieldname": "folio_transaction_type",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Folio Transaction Type",
+   "options": "Inn Folio Transaction Type Setting"
+  },
+  {
+   "fieldname": "inn_account_setting",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Inn Account Setting",
+   "options": "Inn Account Setting"
+  },
+  {
+   "fieldname": "folio_default_tab",
+   "fieldtype": "Tab Break",
+   "label": "Hotel Default"
+  },
+  {
+   "fieldname": "credit_card_administration_fee",
+   "fieldtype": "Link",
+   "label": "Credit Card Administration Fee",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "package",
+   "fieldtype": "Link",
+   "label": "Package",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_charge",
+   "fieldtype": "Link",
+   "label": "Room Charge",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "breakfast_charge",
+   "fieldtype": "Link",
+   "label": "Breakfast Charge",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "refund",
+   "fieldtype": "Link",
+   "label": "Refund",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "dp_kamar",
+   "fieldtype": "Link",
+   "label": "DP Kamar",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_payment",
+   "fieldtype": "Link",
+   "label": "Room Payment",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "deposit",
+   "fieldtype": "Link",
+   "label": "Deposit",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "down_payment",
+   "fieldtype": "Link",
+   "label": "Down Payment",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "payment",
+   "fieldtype": "Link",
+   "label": "Payment",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "additional_charge",
+   "fieldtype": "Link",
+   "label": "Additional Charge",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "restaurant_food",
+   "fieldtype": "Link",
+   "label": "Restaurant Food",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "restaurant_beverages",
+   "fieldtype": "Link",
+   "label": "Restaurant Beverages",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "restaurant_other",
+   "fieldtype": "Link",
+   "label": "Restaurant Other",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_service_food",
+   "fieldtype": "Link",
+   "label": "Room Service Food",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_service_beverage",
+   "fieldtype": "Link",
+   "label": "Room Service Beverage",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "round_off",
+   "fieldtype": "Link",
+   "label": "Round Off",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "laundry",
+   "fieldtype": "Link",
+   "label": "Laundry",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "cancellation_fee",
+   "fieldtype": "Link",
+   "label": "Cancellation Fee",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "late_checkout",
+   "fieldtype": "Link",
+   "label": "Late Checkout",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "early_checkin",
+   "fieldtype": "Link",
+   "label": "Early Checkin",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "package_tax",
+   "fieldtype": "Link",
+   "label": "Package Tax",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "room_charge_tax_service",
+   "fieldtype": "Link",
+   "label": "Room Charge Tax/Service",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "breakfast_charge_tax_service",
+   "fieldtype": "Link",
+   "label": "Breakfast Charge Tax/Service",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "fbs_tax_11",
+   "fieldtype": "Link",
+   "label": "FBS  Tax 11 %",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "fbs_service_10",
+   "fieldtype": "Link",
+   "label": "FBS  Service 10 %",
+   "options": "Inn Folio Transaction Type"
+  },
+  {
+   "fieldname": "folio_transaction_type_section",
+   "fieldtype": "Section Break",
+   "label": "Folio Transaction Type"
+  },
+  {
+   "fieldname": "column_break_mtit",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_vbod",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mssu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_tax",
+   "fieldtype": "Check",
+   "label": "Include Tax"
+  },
+  {
+   "fieldname": "section_break_kkcy",
+   "fieldtype": "Section Break",
+   "label": "Default Accounts"
+  },
+  {
+   "fieldname": "ar_city_ledger_invoice_payment_account",
+   "fieldtype": "Link",
+   "label": "AR City Ledger Invoice Payment Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "column_break_wphq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "housekeeping",
+   "fieldtype": "Link",
+   "label": "Housekeeping",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_assistant",
+   "fieldtype": "Link",
+   "label": "Housekeeping Assistant",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_user",
+   "fieldtype": "Link",
+   "label": "Restaurant User",
+   "options": "Role"
+  },
+  {
+   "fieldname": "restaurant_supervisor",
+   "fieldtype": "Link",
+   "label": "Restaurant Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "housekeeping_supervisor",
+   "fieldtype": "Link",
+   "label": "Housekeeping Supervisor",
+   "options": "Role"
+  },
+  {
+   "fieldname": "booking_approver",
+   "fieldtype": "Link",
+   "label": "Booking Approver",
+   "options": "Role"
+  },
+  {
+   "fieldname": "default_roles_section",
+   "fieldtype": "Section Break",
+   "label": "Default Roles"
+  },
+  {
+   "fieldname": "column_break_dynj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mode_of_payment_section",
+   "fieldtype": "Section Break",
+   "label": "Mode Of Payment"
+  },
+  {
+   "fieldname": "city_ledger_mode_of_payment",
+   "fieldtype": "Link",
+   "label": "City Ledger Mode of Payment",
+   "options": "Mode of Payment",
+   "reqd": 1
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-08-13 14:06:36.577463",
+ "modified": "2025-02-03 15:07:07.007333",
  "modified_by": "Administrator",
  "module": "Inn Hotels",
  "name": "Inn Hotels Setting",

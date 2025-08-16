@@ -15,7 +15,7 @@ from inn.helper import role
 
 
 class InnHotelsSetting(Document):
-	pass
+     pass
 
 @frappe.whitelist()
 def generate_folio_transaction_type():
@@ -298,110 +298,200 @@ def generate_folio_transaction_type():
 	make_records(folio_transaction_type_records)
 	frappe.msgprint("Generating Default Folio Transaction Type Success")
 
-@frappe.whitelist()
-def generate_bed_type():
-	bed_records = []
-	if not frappe.db.exists('Inn Bed Type', {'name': 'Single'}):
-		bed_records += [{
-			'doctype': 'Inn Bed Type',
-			'name': _('Single'),
-			'description': _('Single Bed')
-		}]
-	if not frappe.db.exists('Inn Bed Type', {'name': 'Double'}):
-		bed_records += [{
-			'doctype': 'Inn Bed Type',
-			'name': _('Double'),
-			'description': _('Double Bed')
-		}]
-	if not frappe.db.exists('Inn Bed Type', {'name': 'Twin'}):
-		bed_records += [{
-			'doctype': 'Inn Bed Type',
-			'name': _('Twin'),
-			'description': _('Twin Bed')
-		}]
-	make_records(bed_records)
-	frappe.msgprint("Generating Default Bed Type Success")
+# @frappe.whitelist()
+# def generate_bed_type():
+# 	bed_records = []
+# 	if not frappe.db.exists('Inn Bed Type', {'name': 'Single'}):
+# 		bed_records += [{
+# 			'doctype': 'Inn Bed Type',
+# 			'name': _('Single'),
+# 			'description': _('Single Bed')
+# 		}]
+# 	if not frappe.db.exists('Inn Bed Type', {'name': 'Double'}):
+# 		bed_records += [{
+# 			'doctype': 'Inn Bed Type',
+# 			'name': _('Double'),
+# 			'description': _('Double Bed')
+# 		}]
+# 	if not frappe.db.exists('Inn Bed Type', {'name': 'Twin'}):
+# 		bed_records += [{
+# 			'doctype': 'Inn Bed Type',
+# 			'name': _('Twin'),
+# 			'description': _('Twin Bed')
+# 		}]
+# 	make_records(bed_records)
+# 	frappe.msgprint("Generating Default Bed Type Success")
 
 @frappe.whitelist()
-def generate_room_type():
-	room_type_records = []
-	if not frappe.db.exists('Inn Room Type', {'name': 'Studio'}):
-		room_type_records += [{
-			'doctype': 'Inn Room Type',
-			'name': _('Studio'),
-			'description': _('Studio Room')
-		}]
-	if not frappe.db.exists('Inn Room Type', {'name': 'Superior'}):
-		room_type_records += [{
-			'doctype': 'Inn Room Type',
-			'name': _('Superior'),
-			'description': _('Superior Room')
-		}]
-	if not frappe.db.exists('Inn Room Type', {'name': 'Deluxe'}):
-		room_type_records += [{
-			'doctype': 'Inn Room Type',
-			'name': _('Deluxe'),
-			'description': _('Deluxe Room')
-		}]
-	if not frappe.db.exists('Inn Room Type', {'name': 'Executive'}):
-		room_type_records += [{
-			'doctype': 'Inn Room Type',
-			'name': _('Executive'),
-			'description': _('Executive Room')
-		}]
-	if not frappe.db.exists('Inn Room Type', {'name': 'Suite'}):
-		room_type_records += [{
-			'doctype': 'Inn Room Type',
-			'name': _('Suite'),
-			'description': _('Suite Room')
-		}]
-	make_records(room_type_records)
-	frappe.msgprint("Generating Default Room Type Success")
+def generate_bed_type(bed_type):
+   
+    if not bed_type:
+        frappe.throw(_("No bed type data provided."))
+
+    bed_type = frappe.parse_json(bed_type)
+
+    for bed in bed_type:
+        # Perform validation for required fields
+        if "name1" not in bed or "description" not in bed:
+            frappe.throw(_("Each bed type must have a name and description."))
+
+        # Check if the bed type already exists
+        if not frappe.db.exists("Inn Bed Type", bed.get("name1")):
+            new_bed = frappe.get_doc({
+                "doctype": "Inn Bed Type",
+                "name": bed.get("name1"),
+                "description": bed.get("description")
+            })
+            new_bed.insert()
+        else:
+            frappe.msgprint(_("Bed Type '{0}' already exists. Skipping.").format(bed.get("name1")))
+
+    return _("Bed types generated successfully.")
+
+
+# @frappe.whitelist()
+# def generate_room_type():
+# 	room_type_records = []
+# 	if not frappe.db.exists('Inn Room Type', {'name': 'Studio'}):
+# 		room_type_records += [{
+# 			'doctype': 'Inn Room Type',
+# 			'name': _('Studio'),
+# 			'description': _('Studio Room')
+# 		}]
+# 	if not frappe.db.exists('Inn Room Type', {'name': 'Superior'}):
+# 		room_type_records += [{
+# 			'doctype': 'Inn Room Type',
+# 			'name': _('Superior'),
+# 			'description': _('Superior Room')
+# 		}]
+# 	if not frappe.db.exists('Inn Room Type', {'name': 'Deluxe'}):
+# 		room_type_records += [{
+# 			'doctype': 'Inn Room Type',
+# 			'name': _('Deluxe'),
+# 			'description': _('Deluxe Room')
+# 		}]
+# 	if not frappe.db.exists('Inn Room Type', {'name': 'Executive'}):
+# 		room_type_records += [{
+# 			'doctype': 'Inn Room Type',
+# 			'name': _('Executive'),
+# 			'description': _('Executive Room')
+# 		}]
+# 	if not frappe.db.exists('Inn Room Type', {'name': 'Suite'}):
+# 		room_type_records += [{
+# 			'doctype': 'Inn Room Type',
+# 			'name': _('Suite'),
+# 			'description': _('Suite Room')
+# 		}]
+# 	make_records(room_type_records)
+# 	frappe.msgprint("Generating Default Room Type Success")
+
+
+
+
+
+
+
+@frappe.whitelist()
+def generate_room_type(room_type):
+   
+    if not room_type:
+        frappe.throw(_("No bed type data provided."))
+
+    room_type = frappe.parse_json(room_type)
+
+    for bed in room_type:
+        if "name1" not in bed or "description" not in bed:
+            frappe.throw(_("Each bed type must have a name and description."))
+
+        # Check if the Room type already exists
+        if not frappe.db.exists("Inn Room Type", bed.get("name1")):
+            new_bed = frappe.get_doc({
+                "doctype": "Inn Room Type",
+                "name": bed.get("name1"),
+                "description": bed.get("description")
+            })
+            new_bed.insert()
+        else:
+            frappe.msgprint(_("Room Type '{0}' already exists. Skipping.").format(bed.get("name1")))
+
+    return _("Room types generated successfully.")
+
+
+
+
+@frappe.whitelist()
+def insert_role(role):
+  
+    if not role:
+        frappe.throw(_("No Role data provided."))
+
+    role = frappe.parse_json(role)
+
+    for bed in role:
+        if "name1" not in bed:
+            frappe.throw(_("Each Rolemust have a name "))
+
+        if not frappe.db.exists("Role", bed.get("name1")):
+            new_bed = frappe.get_doc({
+                "doctype": "Role",
+                "role_name": bed.get("name1"),
+            })
+            new_bed.insert()
+        else:
+            frappe.msgprint(_("Role '{0}' already exists. Skipping.").format(bed.get("name1")))
+
+    return _("Role  generated successfully.")
+
+
 
 def create_account(account_name, parent_number, account_number, is_group, account_currency, account_type, root_type=None, company_name=None):
-	print('Create account start')
-	if company_name is None:
-		company_name = frappe.get_doc("Global Defaults").default_company
+    print('Create account start')
+    if company_name is None:
+        company_name = frappe.get_doc("Global Defaults").default_company
 
-	if frappe.db.exists('Account', {'account_number': account_number}):
-		update_account_number(frappe.db.get_list('Account', filters={'account_number': account_number})[0].name, account_name, account_number)
-		print('account '+ account_number +' name updated')
-		this_account = frappe.get_doc('Account', {'account_number': account_number})
-		print('this_account group = '+ str(this_account.is_group))
-		if int(is_group) == 1 and int(this_account.is_group) != int(is_group):
-			print("This non-group account need to changed to group")
-			this_account.account_type = ''
-			this_account.is_group = 1
-			this_account.save()
-			print("Account changed to group")
-	else:
-		new_account = frappe.new_doc("Account")
-		new_account.account_name = account_name
-		new_account.company = company_name
-		if parent_number == '':
-			new_account.flags.ignore_mandatory = True
-			new_account.parent_account = None
-		else:
-			new_account.parent_account = frappe.db.get_list('Account', filters={'account_number': parent_number})[0].name
-		new_account.account_number = account_number
-		new_account.is_group = is_group
-		new_account.account_currency = account_currency
-		new_account.account_type = account_type
-		if root_type is not None:
-			new_account.root_type = root_type
-		new_account.insert()
-		print('new account inserted')
-	print('Create account end')
-	print('===================')
-	print('===================')
+    # Check if the account already exists
+    existing_account = frappe.db.get_list('Account', filters={'account_number': account_number}, fields=['name'])
+    if existing_account:
+        account_name_in_db = existing_account[0].name
+        update_account_number(account_name_in_db, account_name, account_number)
+        print('Account ' + account_number + ' name updated')
+        this_account = frappe.get_doc('Account', account_name_in_db)
+        print('this_account group = ' + str(this_account.is_group))
+        if int(is_group) == 1 and int(this_account.is_group) != int(is_group):
+            print("This non-group account needs to be changed to group")
+            this_account.account_type = ''
+            this_account.is_group = 1
+            this_account.save()
+            print("Account changed to group")
+    else:
+        # If parent_number is provided, ensure the parent account exists
+        parent_account = None
+        if parent_number:
+            parent_account_query = frappe.db.get_list('Account', filters={'account_number': parent_number}, fields=['name'])
+            if not parent_account_query:
+                frappe.throw(_("Parent account with number {0} not found.").format(parent_number))
+            parent_account = parent_account_query[0].name
 
-@frappe.whitelist()
-def generate_hotel_account():
-	accounts = get_account()
-	for item in accounts:
-		create_account(item['account_name'], item['parent_number'], item['account_number'], item['is_group'],
-				   item['account_currency'], item['account_type'], item['root_type'])
-	frappe.msgprint("Generating Account Success")
+        new_account = frappe.new_doc("Account")
+        new_account.account_name = account_name
+        new_account.company = company_name
+        new_account.parent_account = parent_account
+        new_account.account_number = account_number
+        new_account.is_group = is_group
+        new_account.account_currency = account_currency
+        new_account.account_type = account_type
+        new_account.root_type = root_type
+        new_account.insert()
+        # print('New account inserted')
+        # print('Create account end')
+        # print('===================')
+# @frappe.whitelist()
+# def generate_hotel_account():
+# 	accounts = get_account()
+# 	for item in accounts:
+# 		create_account(item['account_name'], item['parent_number'], item['account_number'], item['is_group'],
+# 				   item['account_currency'], item['account_type'], item['root_type'])
+# 	frappe.msgprint("Generating Account Success")
 	# create_account('Payroll', '', '6000.000', 1, 'IDR', '', frappe.get_doc("Global Defaults").default_company, 'Expense')
 	# if frappe.db.exists('Account', {'account_number': '6000.000'}) and frappe.db.exists('Account', {'account_number': '7000.000'}):
 	# 	accounts = get_account()
@@ -410,6 +500,44 @@ def generate_hotel_account():
 	# 	frappe.msgprint("Generating Account Success")
 	# else:
 	# 	frappe.msgprint("Please Create account 6000.0000 and 7000.000 in the Chart of Account First")
+
+
+
+
+@frappe.whitelist()
+def generate_hotel_account(inn_account_setting):
+    if not inn_account_setting:
+        frappe.throw(_("No inn_account_setting data provided."))
+
+    try:
+        inn_account_setting = frappe.parse_json(inn_account_setting)
+    except Exception as e:
+        frappe.throw(_("Invalid JSON format: {0}").format(str(e)))
+
+    if not isinstance(inn_account_setting, list):
+        frappe.throw(_("Input data must be a list of account settings."))
+
+    for item in inn_account_setting:
+        try:
+            required_keys = ['account_name', 'parent_number', 'account_number', 'is_group', 'account_currency', 'account_type', 'root_type']
+            for key in required_keys:
+                if key not in item:
+                    frappe.throw(_("Missing required key: {0} in account setting").format(key))
+
+            create_account(
+                account_name=item['account_name'],
+                parent_number=item['parent_number'],
+                account_number=item['account_number'],
+                is_group=item['is_group'],
+                account_currency=item['account_currency'],
+                account_type=item['account_type'],
+                root_type=item['root_type']
+            )
+        except Exception as e:
+            frappe.msgprint(_("Failed to create account: {0}. Error: {1}").format(item.get('account_name', 'Unknown'), str(e)))
+
+    frappe.msgprint(_("Account generation process completed."))
+
 
 @frappe.whitelist()
 def generate_supervisor_passcode():
@@ -425,6 +553,6 @@ def show_supervisor_passcode():
 		generate_supervisor_passcode()
 		show_supervisor_passcode()
 
-@frappe.whitelist()
-def insert_role():
-	role.insert_role()
+# @frappe.whitelist()
+# def insert_role():
+# 	role.insert_role()

@@ -5,6 +5,8 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe import cache
+import json
 
 class InnFolioTransactionType(Document):
 	pass
@@ -26,9 +28,47 @@ def get_accounts_from_id(id):
 def get_transaction_type(type):
 	return_list = []
 	type_list = frappe.get_all('Inn Folio Transaction Type',
-							   filters=[['type', '=', type], ['is_included', '=', 1]],
-							   fields=['name'])
+							filters=[['type', '=', type], ['is_included', '=', 1]],
+							fields=['name'])
 	for item in type_list:
 		option_item = {'label': item.name, 'value': item.name}
 		return_list.append(option_item)
 	return return_list
+
+
+
+
+@frappe.whitelist()
+def get_exchange_rate(reservation_id):
+    try:
+        reservation = frappe.get_doc("Inn Reservation", reservation_id)
+    except frappe.DoesNotExistError:
+        return {
+            "exchange_rate": 0,
+            "currency_symbol": ""
+        }
+
+    exchange_rate = reservation.exchange_rate
+    # Instead of throwing an error, return exchange_rate as 0 if missing or invalid
+    if not exchange_rate or exchange_rate <= 0:
+        result = {
+            "exchange_rate": 0,
+            "currency_symbol": reservation.currency  
+        }
+        cache_key = f"exchange_rate:{reservation_id}"
+        frappe.cache().setex(cache_key, 3600, json.dumps(result))
+        return result
+
+    currency_symbol = frappe.db.get_value("Currency", reservation.currency, "symbol")
+    result = {
+        "exchange_rate": exchange_rate,
+        "currency_symbol": currency_symbol or reservation.currency  
+    }
+    cache_key = f"exchange_rate:{reservation_id}"
+    frappe.cache().setex(cache_key, 3600, json.dumps(result))
+    return result
+# @frappe.whitelist()
+# def get_exchange_rate(reservation_id):
+# 	reservation = frappe.get_doc("Inn Reservation", reservation_id)
+# 	print("3333333333333333333333333333333333333333333333",reservation)
+# 	return reservation.exchange_rate 
