@@ -254,6 +254,13 @@ def calculate_total_rate_and_sold(start_date, end_date):
         '''
         today = frappe.db.sql(today_query, as_dict=1)
         today = today[0]
+        
+        # Handle None values to prevent TypeError
+        if today.total is None:
+            today.total = 0
+        if today.count is None:
+            today.count = 0
+            
         total.total += today.total
         count.count += today.count
 
