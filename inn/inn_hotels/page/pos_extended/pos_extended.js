@@ -109,6 +109,7 @@ frappe.pages['pos-extended'].on_page_load = function (wrapper) {
 			init_payments() {
 				this.payment = new inn.PointOfSale.PosExtendedPayment({
 					wrapper: this.$components_wrapper,
+					settings: this.settings,
 					events: {
 						get_frm: () => this.frm || {},
 
